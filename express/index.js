@@ -174,8 +174,8 @@ const Validate = function () {
       .default("none"),
     departmentName: Joi.string().required(),
     batch: Joi.string().required(),
-    mealCard: Joi.string()
-      .pattern(/^[0-9]{4}$/)
+   mealCard: Joi.string()
+      .pattern(/^[0-9]{3,4}$/)
       .allow("")
       .optional(),
     sponsorshipType: Joi.string()
