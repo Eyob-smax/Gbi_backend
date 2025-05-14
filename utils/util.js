@@ -13,17 +13,20 @@ export function JoiValidator() {
     useremail: Joi.string().email().max(320).required(),
     nationality: Joi.string().max(20).required(),
     regionnumber: Joi.number().integer().required(),
-
-    departmentname: Joi.string().max(100).required(),
+    disabled: Joi.string().valid("Yes", "No"),
+    zonename: Joi.string().max(50),
+    mothertongue: Joi.string(),
+    departmentname: Joi.string().required(),
     sponsorshiptype: Joi.string()
       .valid("Government", "Self_Sponsored")
       .required(),
     participation: Joi.string().required(),
+    cafeteriaaccess: Joi.string().required(),
     batch: Joi.string().max(4).required(),
     confessionfather: Joi.string().allow(null, ""),
-    isAdvisor: Joi.string().valid("yes", "no").required(),
-    roleType: Joi.string().required(),
-    mealCard: Joi.string().allow(null, ""),
+    advisors: Joi.string().required(),
+    role: Joi.string().required(),
+    mealcard: Joi.string().allow(null, ""),
   });
 }
 

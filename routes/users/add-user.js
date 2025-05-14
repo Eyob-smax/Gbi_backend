@@ -2,12 +2,17 @@ import express from "express";
 import { JoiValidator } from "../../utils/util.js";
 const schema = JoiValidator();
 import { prisma } from "../../models/DatabaseConfig.js";
+import { handleError } from "../../utils/util.js";
 
 const add = express.Router();
 
 add.post("/user", async (req, res) => {
+  console.log(req.body);
   const { error } = schema.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error)
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
 
   try {
     const user = await prisma.user.create({
@@ -22,6 +27,9 @@ add.post("/user", async (req, res) => {
         useremail: req.body.useremail,
         nationality: req.body.nationality,
         regionnumber: req.body.regionnumber,
+        disabled: req.body.disabled || "No",
+        mothertongue: req.body.mothertongue,
+        zonename: req.body.zonename,
         universityusers: {
           create: {
             departmentname: req.body.departmentname,
@@ -29,10 +37,10 @@ add.post("/user", async (req, res) => {
             participation: req.body.participation,
             batch: req.body.batch,
             confessionfather: req.body.confessionfather || null,
-            advisors: req.body.isAdvisor === "yes" ? "yes" : "no",
-            role: req.body.roleType,
-            mealcard: req.body.mealCard || null,
-            cafeteriaaccess: !!req.body.mealCard,
+            advisors: "yes",
+            role: req.body.role,
+            mealcard: req.body.mealcard || null,
+            cafeteriaaccess: !!req.body.mealcard,
           },
         },
       },

@@ -32,6 +32,6 @@ app.use("/api/get-admins", getAdmins);
 app.use("/api/update-admins", updateAdmin);
 app.use("/api/get-admin", getAdmin);
 
-app.listen(process.env.PORT || 3500, () =>
-  console.log("the server running on https://localhost:3500")
+app.listen(process.env.PORT || 4500, () =>
+  console.log("the server running on https://localhost:4500")
 );
