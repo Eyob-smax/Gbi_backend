@@ -3,6 +3,7 @@ import { JoiAdminValidator } from "../../utils/util.js";
 const schema = JoiAdminValidator();
 import { prisma } from "../../models/DatabaseConfig.js";
 import { handleError } from "../../utils/util.js";
+import { hashPassword } from "../../utils/util.js";
 
 const addAdmin = express.Router();
 
@@ -16,7 +17,7 @@ addAdmin.post("/admin", async (req, res) => {
       data: {
         studentid: studentId,
         adminusername: adminUsername,
-        adminpassword: adminPassword,
+        adminpassword: await hashPassword(adminPassword),
       },
     });
 

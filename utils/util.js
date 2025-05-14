@@ -76,3 +76,12 @@ export function handleError(err) {
 export async function checkPassword(password, storedpassword) {
   return await bcrypt.compare(password, storedpassword);
 }
+
+export async function hashPassword(password) {
+  try {
+    return await bcrypt.hash(password, 10);
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
