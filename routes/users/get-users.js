@@ -1,7 +1,4 @@
-import { JoiValidator } from "../../utils/util.js";
 import { prisma } from "../../models/DatabaseConfig.js";
-
-const schema = JoiValidator();
 import express from "express";
 
 const getusers = express.Router();
