@@ -4,7 +4,7 @@ import checkUser from "../auth/auth.js";
 
 const login = express.Router();
 
-login.get("/", async (req, res) => {
+login.post("/", async (req, res) => {
   try {
     const { studentId, password } = req.body;
     const { success, message } = await checkUser(studentId, password);

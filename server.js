@@ -18,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/login", login);
+app.use("/api/login", login);
 
 app.use("/api/create", add);
 app.use("/api/getAll", getusers);
