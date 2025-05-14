@@ -13,7 +13,7 @@ export function JoiValidator() {
     useremail: Joi.string().email().max(320).required(),
     nationality: Joi.string().max(20).required(),
     regionnumber: Joi.number().integer().required(),
-    disabled: Joi.string().valid("Yes", "No"),
+    disabled: Joi.string(),
     zonename: Joi.string().max(50),
     mothertongue: Joi.string(),
     departmentname: Joi.string().required(),
@@ -21,7 +21,7 @@ export function JoiValidator() {
       .valid("Government", "Self_Sponsored")
       .required(),
     participation: Joi.string().required(),
-    cafeteriaaccess: Joi.string().required(),
+    cafeteriaaccess: Joi.boolean().required(),
     batch: Joi.string().max(4).required(),
     confessionfather: Joi.string().allow(null, ""),
     advisors: Joi.string().required(),
