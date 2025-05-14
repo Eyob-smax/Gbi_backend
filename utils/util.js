@@ -1,4 +1,5 @@
 import Joi from "joi";
+import bcrypt from "bcrypt";
 
 export function JoiValidator() {
   return Joi.object({
@@ -70,4 +71,8 @@ export function handleError(err) {
   }
 
   return { success: false, message: err.message };
+}
+
+export async function checkPassword(password, storedpassword) {
+  return await bcrypt.compare(password, storedpassword);
 }

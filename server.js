@@ -12,9 +12,13 @@ import getAdmins from "./routes/admin/get-admins.js";
 import updateAdmin from "./routes/admin/update-admin.js";
 import getAdmin from "./routes/admin/get-admin.js";
 
+import login from "./routes/login.js";
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/login", login);
 
 app.use("/api/create", add);
 app.use("/api/getAll", getusers);
