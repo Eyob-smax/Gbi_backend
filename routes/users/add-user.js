@@ -51,8 +51,6 @@ add.post("/user", async (req, res) => {
 
     res.status(201).json({ success: true, user });
   } catch (err) {
-    console.error("❌ Database error:", err);
-
     const errResult = handleError(err);
     res.status(500).json(errResult);
   }

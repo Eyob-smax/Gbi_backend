@@ -40,7 +40,6 @@ updateAdmin.put("/:id", async (req, res) => {
 
     res.json({ success: true, updatedAdmin });
   } catch (err) {
-    console.error("❌ Error updating user:", err);
     const errorResult = handleError(err);
     res.status(500).json(errorResult);
   }

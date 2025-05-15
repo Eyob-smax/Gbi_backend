@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "../../models/DatabaseConfig.js";
-
+import { handleError } from "../../utils/util.js";
 const deleteAdmin = express.Router();
 
 deleteAdmin.delete("/admin/:id", async (req, res) => {
@@ -31,8 +31,8 @@ deleteAdmin.delete("/admin/:id", async (req, res) => {
       .status(200)
       .json({ success: true, message: "User deleted successfully" });
   } catch (err) {
-    console.error("❌ Error deleting user:", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 

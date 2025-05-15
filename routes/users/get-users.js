@@ -1,6 +1,6 @@
 import { prisma } from "../../models/DatabaseConfig.js";
 import express from "express";
-
+import { handleError } from "../../utils/util.js";
 const getusers = express.Router();
 
 getusers.get("/users", async (req, res) => {
@@ -33,8 +33,8 @@ getusers.get("/users", async (req, res) => {
       users,
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 

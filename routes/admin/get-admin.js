@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "../../models/DatabaseConfig.js";
-
+import { handleError } from "../../utils/util.js";
 const getAdmin = express.Router();
 
 getAdmin.get("/:id", async (req, res) => {
@@ -22,8 +22,8 @@ getAdmin.get("/:id", async (req, res) => {
 
     res.json({ success: true, admin });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 

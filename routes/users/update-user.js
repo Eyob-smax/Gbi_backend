@@ -84,7 +84,6 @@ updateUser.put("/user/:id", async (req, res) => {
 
     res.json({ success: true, updatedUser });
   } catch (err) {
-    console.error("❌ Error updating user:", err);
     const errorResult = handleError(err);
     res.status(500).json(errorResult);
   }
