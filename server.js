@@ -29,7 +29,7 @@ app.use("/api/delete", deleteUser);
 app.use("/api/assign", addAdmin);
 app.use("/api/remove", deleteAdmin);
 app.use("/api/get-admins", getAdmins);
-app.use("/api/update-admins", updateAdmin);
+app.use("/api/update-admin", updateAdmin);
 app.use("/api/get-admin", getAdmin);
 
 app.listen(process.env.PORT || 4500, () =>

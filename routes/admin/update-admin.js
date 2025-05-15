@@ -7,10 +7,13 @@ import { prisma } from "../../models/DatabaseConfig.js";
 const updateAdmin = express.Router();
 
 updateAdmin.put("/:id", async (req, res) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(userId))
-    return res.status(400).json({ error: "Invalid ID format" });
-
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ error: "Invalid ID format" });
+  if (id.includes("/"))
+    return res.status(400).json({
+      success: false,
+      error: "Invalid ID format, hint: don't use / use - instead",
+    });
   const { error } = schema.validate(req.body);
   if (error)
     return res
@@ -37,7 +40,6 @@ updateAdmin.put("/:id", async (req, res) => {
 
     res.json({ success: true, updatedAdmin });
   } catch (err) {
-    console.error("❌ Error updating user:", err);
     const errorResult = handleError(err);
     res.status(500).json(errorResult);
   }

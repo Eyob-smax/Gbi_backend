@@ -1,13 +1,15 @@
 import express from "express";
 import { prisma } from "../../models/DatabaseConfig.js";
-
+import { handleError } from "../../utils/util.js";
 const deleteAdmin = express.Router();
 
 deleteAdmin.delete("/admin/:id", async (req, res) => {
-  const studentId = parseInt(req.params.id);
-
-  if (isNaN(studentId)) {
-    return res.status(400).json({ success: false, message: "Invalid user ID" });
+  const studentId = req.params.id;
+  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
+  if (studentId.includes("/")) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid user ID format!" });
   }
 
   try {
@@ -29,8 +31,8 @@ deleteAdmin.delete("/admin/:id", async (req, res) => {
       .status(200)
       .json({ success: true, message: "User deleted successfully" });
   } catch (err) {
-    console.error("❌ Error deleting user:", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 

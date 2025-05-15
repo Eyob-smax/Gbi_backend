@@ -16,6 +16,7 @@ add.post("/user", async (req, res) => {
   try {
     const user = await prisma.user.create({
       data: {
+        studentid: req.body.studentid,
         firstname: req.body.firstname,
         middlename: req.body.middlename,
         lastname: req.body.lastname,
@@ -50,8 +51,6 @@ add.post("/user", async (req, res) => {
 
     res.status(201).json({ success: true, user });
   } catch (err) {
-    console.error("❌ Database error:", err);
-
     const errResult = handleError(err);
     res.status(500).json(errResult);
   }

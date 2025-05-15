@@ -1,16 +1,20 @@
 import express from "express";
 import { prisma } from "../../models/DatabaseConfig.js";
-
+import { handleError } from "../../utils/util.js";
 const getAdmin = express.Router();
 
 getAdmin.get("/:id", async (req, res) => {
-  const id = req.params.id;
+  const studentId = req.params.id;
 
-  if (!id.match(/\d+/g))
-    return res.status(400).json({ success: false, error: "Invalid ID format" });
+  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
+  if (studentId.includes("/"))
+    return res.status(400).json({
+      success: false,
+      error: "Invalid ID format, hint: don't use / use - instead",
+    });
   try {
     const admin = await prisma.admin.findUnique({
-      where: { studentid: id },
+      where: { studentid: studentId },
     });
 
     if (!admin)
@@ -18,8 +22,8 @@ getAdmin.get("/:id", async (req, res) => {
 
     res.json({ success: true, admin });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 

@@ -1,12 +1,18 @@
 import { prisma } from "../../models/DatabaseConfig.js";
 import express from "express";
-
+import { handleError } from "../../utils/util.js";
 const getusers = express.Router();
 
 getusers.get("/users", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
+  if (isNaN(page) || isNaN(limit)) {
+    return res.status(400).json({
+      success: false,
+      message: "page or limit query format is not valid!",
+    });
+  }
 
   try {
     const [users, totalUsers] = await Promise.all([
@@ -27,8 +33,8 @@ getusers.get("/users", async (req, res) => {
       users,
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Server error" });
+    const errorResult = handleError(err);
+    res.status(500).json(errorResult);
   }
 });
 
