@@ -7,6 +7,12 @@ getusers.get("/users", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
+  if (isNaN(page) || isNaN(limit)) {
+    return res.status(400).json({
+      success: false,
+      message: "page or limit query format is not valid!",
+    });
+  }
 
   try {
     const [users, totalUsers] = await Promise.all([

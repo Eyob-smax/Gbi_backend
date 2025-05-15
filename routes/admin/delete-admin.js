@@ -4,10 +4,12 @@ import { prisma } from "../../models/DatabaseConfig.js";
 const deleteAdmin = express.Router();
 
 deleteAdmin.delete("/admin/:id", async (req, res) => {
-  const studentId = parseInt(req.params.id);
-
-  if (isNaN(studentId)) {
-    return res.status(400).json({ success: false, message: "Invalid user ID" });
+  const studentId = req.params.id;
+  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
+  if (studentId.includes("/")) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid user ID format!" });
   }
 
   try {

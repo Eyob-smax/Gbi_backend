@@ -4,14 +4,17 @@ import { prisma } from "../../models/DatabaseConfig.js";
 const getUser = express.Router();
 
 getUser.get("/user/:id", async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const studentId = req.params.id;
 
-  if (isNaN(userId))
-    return res.status(400).json({ error: "Invalid ID format" });
-
+  if (!studentId) return res.status(400).json({ error: "Invalid ID" });
+  if (id.includes("/"))
+    return res.status(400).json({
+      success: false,
+      error: "Invalid ID format, hint: don't use / use - instead",
+    });
   try {
     const user = await prisma.user.findUnique({
-      where: { userid: userId },
+      where: { studentid: studentId },
       include: { universityusers: true },
     });
 

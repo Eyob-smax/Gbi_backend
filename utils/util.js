@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 export function JoiValidator() {
   return Joi.object({
+    studentid: Joi.string(),
     firstname: Joi.string().max(50).required(),
     middlename: Joi.string().max(50).required(),
     lastname: Joi.string().max(50).required(),

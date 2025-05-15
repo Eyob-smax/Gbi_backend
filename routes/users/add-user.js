@@ -16,6 +16,7 @@ add.post("/user", async (req, res) => {
   try {
     const user = await prisma.user.create({
       data: {
+        studentid: req.body.studentid,
         firstname: req.body.firstname,
         middlename: req.body.middlename,
         lastname: req.body.lastname,

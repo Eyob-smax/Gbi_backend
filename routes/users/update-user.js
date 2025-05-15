@@ -7,24 +7,28 @@ import { prisma } from "../../models/DatabaseConfig.js";
 const updateUser = express.Router();
 
 updateUser.put("/user/:id", async (req, res) => {
-  const userId = parseInt(req.params.id);
-  if (isNaN(userId))
-    return res.status(400).json({ error: "Invalid ID format" });
-
+  const studentId = req.params.id;
+  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
+  if (studentId.includes("/"))
+    return res.status(400).json({
+      success: false,
+      error: "Invalid ID format, hint: don't use / use - instead!",
+    });
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   try {
     const existingUser = await prisma.user.findUnique({
-      where: { userid: userId },
+      where: { studentid: studentId },
       include: { universityusers: true },
     });
 
     if (!existingUser) return res.status(404).json({ error: "User not found" });
 
     const updatedUser = await prisma.user.update({
-      where: { userid: userId },
+      where: { studentid: studentId },
       data: {
+        studentid: req.body.studentid || existingUser.studentid,
         firstname: req.body.firstname || existingUser.firstname,
         middlename: req.body.middlename || existingUser.middlename,
         lastname: req.body.lastname || existingUser.lastname,
