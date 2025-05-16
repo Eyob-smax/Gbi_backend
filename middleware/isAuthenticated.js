@@ -4,7 +4,9 @@ import { prisma } from "../models/DatabaseConfig.js";
 async function protect(req, res, next) {
   let token = req.cookies.jwt;
   if (!token) {
-    return res.status(401).json({ message: "Not authorized, no token" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authorized, no token" });
   }
 
   try {
@@ -30,14 +32,18 @@ async function protect(req, res, next) {
     next();
   } catch (error) {
     console.error(error);
-    res.status(401).json({ message: "Not authorized, token failed" });
+    res
+      .status(401)
+      .json({ success: false, message: "Not authorized, token failed" });
   }
 }
 
 export async function isGeneralAdmin(req, res, next) {
   const token = req.cookies.jwt;
   if (!token) {
-    return res.status(401).json({ message: "Not authorized, no token" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authorized, no token" });
   }
 
   try {
@@ -51,19 +57,21 @@ export async function isGeneralAdmin(req, res, next) {
       },
     });
 
-    if (!admin) {
+    if (!generalAdmin) {
       return res.status(400).json({
         success: false,
         message: "General admin not found, with the give token!",
       });
     }
 
-    req.admin = admin;
+    req.admin = generalAdmin;
 
     next();
   } catch (error) {
     console.error(error);
-    res.status(401).json({ message: "Not authorized, token failed" });
+    res
+      .status(401)
+      .json({ success: false, message: "Not authorized, token failed" });
   }
 }
 
