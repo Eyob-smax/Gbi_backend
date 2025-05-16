@@ -89,8 +89,7 @@ Some routes are protected and require:
 ---
 
 gbi_backend/
-├── auth/
-│ └── auth.js
+
 ├── controller/
 │ ├── admin.controller.js
 │ └── user.controller.js
