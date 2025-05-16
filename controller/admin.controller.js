@@ -75,7 +75,7 @@ const getAdmins = asyncHandler(async (req, res) => {
     prisma.admin.findMany({
       skip,
       take: limit,
-      orderBy: { id: "desc" },
+      orderBy: { createdAt: "desc" },
     }),
     prisma.admin.count(),
   ]);
