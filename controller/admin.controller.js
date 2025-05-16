@@ -13,7 +13,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
       message: "studentId or admin credentials not found",
     });
   }
-  console.log("kasdjhflkasjdfhlaskj");
 
   const isAdminExist = await prisma.admin.findUnique({
     where: { studentid: studentId },
@@ -23,7 +22,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
       .status(400)
       .json({ success: false, message: "User already existed!" });
   }
-  console.log("kasdjhflkasjdfhlaskj");
 
   const admin = await prisma.admin.create({
     data: {
@@ -42,7 +40,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentId, adminPassword } = req.body;
-  console.log(req.body);
   const admin = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
