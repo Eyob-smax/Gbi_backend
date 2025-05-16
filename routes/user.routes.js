@@ -7,10 +7,16 @@ import {
   updateUser,
 } from "../controller/user.controller.js";
 
+import protect from "../middleware/isAuthenticated.js";
+
 const router = express.Router();
 
-router.route("/").post(addUser).get(getUsers);
+router.route("/").post(protect, addUser).get(protect, getUsers);
 
-router.route("/:id").put(updateUser).delete(deleteUser).get(getUser);
+router
+  .route("/:id")
+  .put(protect, updateUser)
+  .delete(protect, deleteUser)
+  .get(protect, getUser);
 
 export default router;
