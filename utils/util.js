@@ -1,6 +1,33 @@
 import Joi from "joi";
-import bcrypt from "bcrypt";
+import { promisify } from "util";
+import { scrypt, randomBytes } from "crypto";
 
+const scryptAsync = promisify(scrypt);
+
+export const hashPassword = async (password) => {
+  if (!password || typeof password !== "string") {
+    throw new Error("Password must be a non-empty string");
+  }
+
+  const salt = randomBytes(16).toString("hex");
+  const buf = await scryptAsync(password, salt, 64);
+  const final = `${buf.toString("hex")}.${salt}`;
+  return final;
+};
+
+export const comparePassword = async (storedPassword, suppliedPassword) => {
+  if (!storedPassword || !suppliedPassword) {
+    throw new Error("Both passwords must be provided");
+  }
+
+  const [hashedPassword, salt] = storedPassword.split(".");
+  if (!hashedPassword || !salt) {
+    throw new Error("Stored password has incorrect format");
+  }
+
+  const buf = await scryptAsync(suppliedPassword, salt, 64);
+  return buf.toString("hex") === hashedPassword;
+};
 export function JoiValidator() {
   return Joi.object({
     studentid: Joi.string(),
@@ -27,7 +54,7 @@ export function JoiValidator() {
     confessionfather: Joi.string().allow(null, ""),
     advisors: Joi.string().required(),
     role: Joi.string().required(),
-    mealcard: Joi.string().allow(null, ""),
+    mealcard: Joi.string().allow(null, "").pattern(/\d+/).max(10),
   });
 }
 
@@ -77,15 +104,6 @@ export function handleError(err) {
   return { success: false, message: err.message };
 }
 
-export async function checkPassword(password, storedpassword) {
-  return await bcrypt.compare(password, storedpassword);
-}
-
-export async function hashPassword(password) {
-  try {
-    return await bcrypt.hash(password, 10);
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-}
+export const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
