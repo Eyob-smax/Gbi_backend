@@ -9,7 +9,14 @@ const addUser = asyncHandler(async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
-
+  const existingUser = await prisma.user.findUnique({
+    where: { studentid: studentId },
+  });
+  if (existingUser) {
+    return res
+      .status(200)
+      .json({ success: false, message: "User already existed!" });
+  }
   const user = await prisma.user.create({
     data: {
       studentid: req.body.studentid,
