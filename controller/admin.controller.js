@@ -34,7 +34,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   if (!admin) {
     throw new Error("can't create an admin!");
   }
-  buildToken(res, studentId);
+  buildToken(res, studentId, adminUsername);
   res.status(201).json({ success: false, message: "Admin created!" });
 });
 
@@ -45,7 +45,7 @@ const logAdmin = asyncHandler(async (req, res) => {
   });
 
   if (admin && (await comparePassword(admin.adminpassword, adminPassword))) {
-    buildToken(res, admin.studentid);
+    buildToken(res, admin.studentid, admin.adminusername);
     res.status(200).json({
       success: false,
       message: "Admin logged in successfully!",
