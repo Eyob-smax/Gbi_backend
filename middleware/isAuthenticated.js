@@ -21,7 +21,7 @@ async function protect(req, res, next) {
     if (!admin) {
       return res
         .status(401)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "Unathorized user!" });
     }
 
     req.admin = admin;
