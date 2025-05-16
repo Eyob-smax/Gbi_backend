@@ -20,8 +20,11 @@ async function protect(req, res, next) {
 
     if (!admin) {
       return res
-        .status(401)
-        .json({ success: false, message: "User not found" });
+        .status(400)
+        .json({
+          success: false,
+          message: "User not found, with the give token",
+        });
     }
 
     req.admin = admin;
