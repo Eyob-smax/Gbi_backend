@@ -1,17 +1,24 @@
 # 🧠 Gbi Backend API
 
-A RESTful backend built with **Express.js** that handles **Admin** and **User** management. This project uses **JWT-based authentication**, **Prisma ORM**, and role-based middleware for route protection. also uses **supabase** for database service.
+A RESTful backend built with **Express.js** that handles **Admin** and **User** management.  
+This project includes:
+
+- **JWT-based authentication**
+- **Prisma ORM**
+- **Role-based middleware protection**
+- **Supabase** as a PostgreSQL database service
+- **Railway** for backend deployment
 
 ---
 
 ## 🚀 Tech Stack
 
-- Node.js
-- Express.js
-- Prisma ORM
-- PostgreSQL (via Supabase)
-- Railway (for deployment)
-- JSON Web Tokens (JWT)
+- **Node.js**
+- **Express.js**
+- **Prisma ORM**
+- **PostgreSQL** (via Supabase)
+- **Railway** (deployment)
+- **JWT** (JSON Web Tokens for auth)
 
 ---
 
@@ -19,57 +26,90 @@ A RESTful backend built with **Express.js** that handles **Admin** and **User** 
 
 Some routes are protected and require:
 
-- A valid JWT in the `Authorization`.
-- Some routes also require the admin to have **general(super) admin privileges**
+- A valid **JWT token** in the `Authorization` header as `Bearer <token>`
+- Some routes require the admin to have **general (super) admin privileges**
 
 ---
 
-### 🧑‍💼 Admin Routes
+## 🧑‍💼 Admin Routes
 
 **Base URL**: `/api/admin`
 
-| Method | Endpoint | Description          | Auth Required                                                                                                                            |
-| ------ | -------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET`  | `/`      | Get all admins       | ✅ `protect` <this is to check is the adminis authenticated>, `isGeneralAdmin`                                                           |
-|        |
-| `POST` | `/`      | Register a new admin | ✅ `protect`<this is to check is the adminis authenticated>, `isGeneralAdmin`<this is to check weather the user is general(super) admin> |
+| Method   | Endpoint    | Description               | Auth Middleware                |
+| -------- | ----------- | ------------------------- | ------------------------------ |
+| `GET`    | `/`         | Get all admins            | ✅ `protect`, `isGeneralAdmin` |
+| `POST`   | `/`         | Register a new admin      | ✅ `protect`, `isGeneralAdmin` |
+| `POST`   | `/login`    | Login admin               | ❌ Public                      |
+| `POST`   | `/register` | Public admin registration | ❌ Public                      |
+| `GET`    | `/:id`      | Get admin by ID           | ✅ `protect`, `isGeneralAdmin` |
+| `PUT`    | `/:id`      | Update admin by ID        | ✅ `protect`, `isGeneralAdmin` |
+| `DELETE` | `/:id`      | Delete admin by ID        | ✅ `protect`, `isGeneralAdmin` |
 
-| `POST` | `/login` | Login admin | ❌ Public |
-
-| `POST` | `/register` | Public admin registration | ❌ Public |
-
-| `GET` | `/:id` | Get admin by ID | ✅ `protect`, `isGeneralAdmin` |
-
-| `PUT` | `/:id` | Update admin by ID | ✅ `protect`, `isGeneralAdmin` |
-
-| `DELETE` | `/:id` | Delete admin by ID | ✅ `protect`, `isGeneralAdmin` |
+> 🔐 `protect` checks if the admin is authenticated.  
+> 🛡️ `isGeneralAdmin` checks if the authenticated admin has general/super admin privileges.
 
 ---
 
-### 👤 User Routes
+## 👤 User Routes
 
 **Base URL**: `/api/user`
 
-| Method   | Endpoint | Description       | Auth Required                                               |
-| -------- | -------- | ----------------- | ----------------------------------------------------------- |
-| `GET`    | `/`      | Get all users     | ✅ `protect`<this is to check is the adminis authenticated> |
-| `POST`   | `/`      | Add new user      | ✅ `protect`                                                |
-| `GET`    | `/:id`   | Get user by ID    | ✅ `protect`                                                |
-| `PUT`    | `/:id`   | Update user by ID | ✅ `protect`                                                |
-| `DELETE` | `/:id`   | Delete user by ID | ✅ `protect`                                                |
+| Method   | Endpoint | Description       | Auth Middleware |
+| -------- | -------- | ----------------- | --------------- |
+| `GET`    | `/`      | Get all users     | ✅ `protect`    |
+| `POST`   | `/`      | Add a new user    | ✅ `protect`    |
+| `GET`    | `/:id`   | Get user by ID    | ✅ `protect`    |
+| `PUT`    | `/:id`   | Update user by ID | ✅ `protect`    |
+| `DELETE` | `/:id`   | Delete user by ID | ✅ `protect`    |
+
+> 🔐 All user routes are protected and require a valid JWT token.
 
 ---
 
-## 🔐 Auth Middleware Overview
+## 🧱 Auth Middleware Overview
 
-- **`protect`**: Verifies JWT and adds user info to `req.admin`.
-- **`isGeneralAdmin`**: Verifies if the user has a `assign the above req.use with generalAdmin by checking general admin credentials` role.
+- **`protect`**  
+  Verifies JWT token and adds the authenticated admin info to `req.admin`.
+
+- **`isGeneralAdmin`**  
+  Checks if the authenticated admin has a `generalAdmin` role by validating credentials attached to `req.admin`.
+
+---
+
+## 🌍 Deployment Info
+
+- **Backend (API Base URL)**:  
+  [https://gbibackend-production.up.railway.app](https://gbibackend-production.up.railway.app)
+
+  > Use this base URL when consuming API endpoints.
+
+- **Database**:  
+  Hosted on **[Supabase PostgreSQL](https://supabase.com/)**
 
 ---
 
-## 📦 Deployment
+gbi_backend/
+├── auth/
+│ └── auth.js
+├── controller/
+│ ├── admin.controller.js
+│ └── user.controller.js
+├── middleware/
+│ ├── isAuthenticated.js
+│ └── adminAuth.js
+├── model/
+│ └── DatabaseConfig.js
+├── prisma/
+│ └── schema.prisma
+│ └── migration/
+├── routes/
+│ ├── admin.routes.js
+│ └── user.routes.js
+├── utils/
+│ └── utils.js
+├── server.js
+└── README.md
 
-- **Backend**: [Railway](https://gbibackend-production.up.railway.app)`you should use this base url to connect with the backend`
-- **Database**: [Supabase PostgreSQL](https://supabase.com/)
+```
 
----
+```
