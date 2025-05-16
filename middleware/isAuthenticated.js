@@ -50,7 +50,10 @@ export async function isGeneralAdmin(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const generalAdmin = await prisma.admin.findUnique({
-      where: { studentid: decoded.studentid, adminusername: decoded.isAdmin },
+      where: {
+        studentid: decoded.studentid,
+        adminusername: decoded.generalAdmin,
+      },
       select: {
         studentid: true,
         adminusername: true,
