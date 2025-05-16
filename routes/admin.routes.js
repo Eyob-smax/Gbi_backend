@@ -8,16 +8,20 @@ import {
   registerAdmin,
 } from "../controller/admin.controller.js";
 import protect from "../middleware/isAuthenticated.js";
+import { isGeneralAdmin } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
-router.route("/").get(protect, getAdmins).post(protect, registerAdmin);
+router
+  .route("/")
+  .get(protect, isGeneralAdmin, getAdmins)
+  .post(protect, isGeneralAdmin, registerAdmin);
 
 router
   .route("/:id")
-  .get(protect, getAdmin)
-  .put(protect, updateAdmin)
-  .delete(protect, deleteAdmin);
+  .get(protect, isGeneralAdmin, getAdmin)
+  .put(protect, isGeneralAdmin, updateAdmin)
+  .delete(protect, isGeneralAdmin, deleteAdmin);
 router.route("/login").post(logAdmin);
 router.route("/register").post(registerAdmin);
 
