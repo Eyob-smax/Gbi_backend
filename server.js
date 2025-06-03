@@ -17,7 +17,7 @@ app.use("/api/admin", AdminRoutes);
 
 app.use((err, req, res, next) => {
   const errorResponse = handleError(err);
-  res.status(errorResponse.statusCode || 500).json(errorResponse);
+  res.status(500).json(errorResponse);
 });
 
 app.listen(process.env.PORT || 4500, () =>
