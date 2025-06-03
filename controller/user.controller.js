@@ -14,7 +14,7 @@ const addUser = asyncHandler(async (req, res) => {
   });
   if (existingUser) {
     return res
-      .status(200)
+      .status(400)
       .json({ success: false, message: "User already existed!" });
   }
   const user = await prisma.user.create({
