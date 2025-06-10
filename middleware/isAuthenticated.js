@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../models/DatabaseConfig.js";
 
 async function protect(req, res, next) {
-  let token = req.cookies.jwt;
+  const token = req.cookies.jwt;
   if (!token) {
     return res
       .status(401)
@@ -11,6 +11,13 @@ async function protect(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      return res.status(400).json({
+        success: false,
+        message: "Token not found!",
+      });
+    }
 
     const admin = await prisma.admin.findUnique({
       where: { studentid: decoded.studentid },
@@ -48,6 +55,13 @@ export async function isGeneralAdmin(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      return res.status(400).json({
+        success: false,
+        message: "Token not found!",
+      });
+    }
 
     const generalAdmin = await prisma.admin.findUnique({
       where: {
