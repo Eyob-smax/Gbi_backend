@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 function buildToken(res, studentid, username) {
-  const generalAdmin = "Gbi_Admin@123";
+  const generalAdmin = process.env.ADMIN_USERNAME;
   const isAdmin = username === generalAdmin ? true : false;
   const token = jwt.sign(
     { studentid, isAdmin, generalAdmin },
