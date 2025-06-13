@@ -16,6 +16,7 @@ function buildToken(res, studentid, username) {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
     sameSite: "strict",
+    path: "/",
     maxAge: 3 * 24 * 60 * 60 * 1000,
   });
 }
