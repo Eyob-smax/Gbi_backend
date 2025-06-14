@@ -22,7 +22,9 @@ async function checkUser(id, password) {
     }
 
     return { success: true, message: "User authenticated" };
-  } catch (err) {}
+  } catch (err) {
+    return { success: false, message: "User not authenticated " };
+  }
 }
 
 export default checkUser;
