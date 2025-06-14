@@ -4,9 +4,12 @@ import { asyncHandler } from "../utils/util.js";
 import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 const schema = JoiAdminValidator();
+import dotenv from "dotenv";
+dotenv.config();
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { studentId, adminUsername, adminPassword } = req.body;
+
   if (!studentId || !adminPassword || !adminUsername) {
     return res.status(400).json({
       success: true,
@@ -17,6 +20,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   const isAdminExist = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
+
   if (isAdminExist) {
     return res
       .status(400)
@@ -34,6 +38,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   if (!admin) {
     throw new Error("can't create an admin!");
   }
+
   buildToken(res, studentId, adminUsername);
   res.status(201).json({ success: false, message: "Admin created!" });
 });
@@ -46,6 +51,7 @@ const logAdmin = asyncHandler(async (req, res) => {
 
   if (admin && (await comparePassword(admin.adminpassword, adminPassword))) {
     buildToken(res, admin.studentid, admin.adminusername);
+
     res.status(200).json({
       success: false,
       message: "Admin logged in successfully!",
@@ -166,6 +172,43 @@ const deleteAdmin = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "User deleted successfully" });
 });
 
+const deleteAllAdmins = asyncHandler(async (req, res) => {
+  const studentsToExclude = JSON.parse(process.env.SUPER_ADMINS);
+
+  if (!Array.isArray(studentsToExclude) || studentsToExclude.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: "No super admins defined in environment variables",
+    });
+  }
+  const userExists = await prisma.admin.findMany({
+    where: {
+      adminusername: {
+        notIn: studentsToExclude,
+      },
+    },
+  });
+
+  if (userExists.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "No admins found to delete",
+    });
+  }
+
+  await prisma.admin.deleteMany({
+    where: {
+      adminusername: {
+        notIn: studentsToExclude,
+      },
+    },
+  });
+  res.status(200).json({
+    success: true,
+    message: "All admins deleted successfully, except super admins",
+  });
+});
+
 export {
   registerAdmin,
   getAdmin,
@@ -173,4 +216,5 @@ export {
   deleteAdmin,
   updateAdmin,
   logAdmin,
+  deleteAllAdmins,
 };

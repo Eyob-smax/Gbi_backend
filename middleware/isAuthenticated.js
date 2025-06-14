@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../models/DatabaseConfig.js";
 
-// Shared token decoder
 function verifyToken(req) {
   const token = req.cookies.jwt;
   if (!token) throw new Error("No token");
@@ -13,7 +12,6 @@ function verifyToken(req) {
 export async function protect(req, res, next) {
   try {
     const decoded = verifyToken(req);
-
     const admin = await prisma.admin.findUnique({
       where: { studentid: decoded.studentid },
       select: {
@@ -47,7 +45,7 @@ export async function isGeneralAdmin(req, res, next) {
     const generalAdmin = await prisma.admin.findUnique({
       where: {
         studentid: decoded.studentid,
-        adminusername: process.env.ADMIN_USERNAME, // compare against env, not decoded.generalAdmin
+        adminusername: process.env.SUPER_ADMIN_USERNAME,
       },
       select: {
         studentid: true,
