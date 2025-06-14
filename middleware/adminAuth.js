@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 function buildToken(res, studentid, username) {
-  const generalAdmin = process.env.ADMIN_USERNAME;
+  const generalAdmin = process.env.SUPER_ADMIN_USERNAME;
   const isAdmin = username === generalAdmin;
 
   const token = jwt.sign({ studentid, isAdmin }, process.env.JWT_SECRET, {
-    expiresIn: "3d",
+    expiresIn: "10d",
   });
 
   res.cookie("jwt", token, {
@@ -15,7 +15,7 @@ function buildToken(res, studentid, username) {
     secure: process.env.NODE_ENV !== "development",
     sameSite: "strict",
     path: "/",
-    maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+    maxAge: 10 * 24 * 60 * 60 * 1000,
   });
 }
 
