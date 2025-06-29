@@ -51,12 +51,18 @@ const logAdmin = asyncHandler(async (req, res) => {
 
   if (admin && (await comparePassword(admin.adminpassword, adminPassword))) {
     buildToken(res, admin.studentid, admin.adminusername);
-
-    res.status(200).json({
-      success: false,
-      message: "Admin logged in successfully!",
+    const adminObject = {
       studentid: admin.studentid,
-      username: admin.adminusername,
+      adminusername: admin.adminusername,
+      createdAt: admin.createdAt.toISOString(),
+      isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
+        admin.adminusername
+      ),
+    };
+    res.status(200).json({
+      success: true,
+      message: "Admin logged in successfully!",
+      admin: adminObject,
     });
   } else {
     res
