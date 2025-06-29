@@ -215,6 +215,24 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
   });
 });
 
+const logoutAdmin = asyncHandler(async (req, res) => {
+  try {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      path: "/",
+    });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      message:
+        "Something went wront when logging out the admin: " + err.message,
+    });
+  }
+});
+
 export {
   registerAdmin,
   getAdmin,
@@ -223,4 +241,5 @@ export {
   updateAdmin,
   logAdmin,
   deleteAllAdmins,
+  logoutAdmin,
 };
