@@ -45,18 +45,25 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentId, adminPassword } = req.body;
+
   const admin = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
 
   if (admin && (await comparePassword(admin.adminpassword, adminPassword))) {
     buildToken(res, admin.studentid, admin.adminusername);
-
-    res.status(200).json({
-      success: false,
-      message: "Admin logged in successfully!",
+    const adminObject = {
       studentid: admin.studentid,
-      username: admin.adminusername,
+      adminusername: admin.adminusername,
+      createdAt: admin.createdAt.toISOString(),
+      isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
+        admin.adminusername
+      ),
+    };
+    res.status(200).json({
+      success: true,
+      message: "Admin logged in successfully!",
+      admin: adminObject,
     });
   } else {
     res
@@ -209,6 +216,25 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
   });
 });
 
+const logoutAdmin = asyncHandler(async (req, res) => {
+  console.log("Logging out admin...");
+  try {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      path: "/",
+    });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      message:
+        "Something went wront when logging out the admin: " + err.message,
+    });
+  }
+});
+
 export {
   registerAdmin,
   getAdmin,
@@ -217,4 +243,5 @@ export {
   updateAdmin,
   logAdmin,
   deleteAllAdmins,
+  logoutAdmin,
 };

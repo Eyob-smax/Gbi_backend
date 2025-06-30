@@ -40,6 +40,7 @@ export async function protect(req, res, next) {
 
 export async function isGeneralAdmin(req, res, next) {
   try {
+    console.log("Checking if user is a general admin...");
     const decoded = verifyToken(req);
 
     const generalAdmin = await prisma.admin.findUnique({
