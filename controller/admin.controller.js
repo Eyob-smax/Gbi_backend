@@ -45,6 +45,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentId, adminPassword } = req.body;
+
   const admin = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
@@ -216,6 +217,7 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
 });
 
 const logoutAdmin = asyncHandler(async (req, res) => {
+  console.log("Logging out admin...");
   try {
     res.clearCookie("jwt", {
       httpOnly: true,

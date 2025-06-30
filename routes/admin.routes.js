@@ -7,6 +7,7 @@ import {
   logAdmin,
   registerAdmin,
   deleteAllAdmins,
+  logoutAdmin,
 } from "../controller/admin.controller.js";
 import protect from "../middleware/isAuthenticated.js";
 import { isGeneralAdmin } from "../middleware/isAuthenticated.js";
