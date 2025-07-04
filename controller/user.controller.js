@@ -5,12 +5,15 @@ const schema = JoiValidator();
 
 const addUser = asyncHandler(async (req, res) => {
   const { error } = schema.validate(req.body);
-  if (error)
+  console.log(req.body);
+  if (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
+  }
   const existingUser = await prisma.user.findUnique({
-    where: { studentid: studentId },
+    where: { studentid: req.body.studentid },
   });
   if (existingUser) {
     return res
@@ -19,31 +22,34 @@ const addUser = asyncHandler(async (req, res) => {
   }
   const user = await prisma.user.create({
     data: {
-      studentid: req.body.studentid,
-      firstname: req.body.firstname,
-      middlename: req.body.middlename,
-      lastname: req.body.lastname,
-      gender: req.body.gender,
-      baptismalname: req.body.baptismalname,
-      phone: req.body.phone,
-      birthdate: new Date(req.body.birthdate),
-      useremail: req.body.useremail,
-      nationality: req.body.nationality,
-      regionnumber: req.body.regionnumber,
-      mothertongue: req.body.mothertongue,
-      zonename: req.body.zonename,
-      disabled: req.body.disabled,
+      studentid: req.body?.studentid,
+      firstname: req.body?.firstname,
+      middlename: req.body?.middlename,
+      lastname: req.body?.lastname,
+      gender: req.body?.gender,
+      baptismalname: req.body?.baptismalname,
+      phone: req.body?.phone,
+      birthdate: new Date(req.body?.birthdate),
+      useremail: req.body?.useremail,
+      nationality: req.body?.nationality,
+      regionnumber: req.body?.regionnumber,
+      mothertongue: req.body?.mothertongue,
+      zonename: req.body?.zonename,
+      isphysicallydisabled: req.body?.isphysicallydisabled,
       universityusers: {
         create: {
-          departmentname: req.body.departmentname,
-          sponsorshiptype: req.body.sponsorshiptype,
-          participation: req.body.participation,
-          batch: req.body.batch,
-          confessionfather: req.body.confessionfather || null,
-          advisors: req.body.advisors,
-          role: req.body.participation === "None" ? "None" : req.body.role,
-          mealcard: req.body.mealcard || "non",
-          cafeteriaaccess: !!req.body.mealcard,
+          departmentname: req.body?.universityusers?.departmentname,
+          sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
+          participation: req.body?.universityusers?.participation,
+          batch: req.body?.universityusers?.batch,
+          confessionfather: req.body?.universityusers?.confessionfather || null,
+          advisors: req.body?.universityusers?.advisors,
+          role:
+            req.body?.universityusers?.participation === "None"
+              ? "None"
+              : req.body?.universityusers?.role,
+          mealcard: req.body?.universityusers?.mealcard || "non",
+          cafeteriaaccess: !!req.body?.universityusers?.mealcard,
         },
       },
     },
@@ -56,31 +62,15 @@ const addUser = asyncHandler(async (req, res) => {
 });
 
 const getUsers = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
-  if (isNaN(page) || isNaN(limit)) {
-    return res.status(400).json({
-      success: false,
-      message: "page or limit query format is not valid!",
-    });
-  }
-
-  const [users, totalUsers] = await Promise.all([
+  const [users] = await Promise.all([
     prisma.user.findMany({
-      skip,
-      take: limit,
       orderBy: { userid: "desc" },
       include: { universityusers: true },
     }),
-    prisma.user.count(),
   ]);
 
   res.status(200).json({
     success: true,
-    page,
-    totalPages: Math.ceil(totalUsers / limit),
-    totalUsers,
     users,
   });
 });
@@ -119,7 +109,6 @@ const updateUser = asyncHandler(async (req, res) => {
       useremail: req.body.useremail || existingUser.useremail,
       nationality: req.body.nationality || existingUser.nationality,
       regionnumber: req.body.regionnumber || existingUser.regionnumber,
-
       universityusers: {
         update: {
           where: {
@@ -184,12 +173,11 @@ const getUser = asyncHandler(async (req, res) => {
 
 const deleteUser = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
-
   if (!studentId) {
     return res.status(400).json({ success: false, message: "ID not found" });
   }
 
-  if (id.includes("/"))
+  if (studentId.includes("/"))
     return res.status(400).json({
       success: false,
       error: "Invalid ID format, hint: don't use / use - instead",
