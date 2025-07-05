@@ -5,13 +5,18 @@ import {
   getUser,
   getUsers,
   updateUser,
+  deleteAllUsers,
 } from "../controller/user.controller.js";
 
-import protect from "../middleware/isAuthenticated.js";
+import protect, { isGeneralAdmin } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
-router.route("/").post(protect, addUser).get(protect, getUsers);
+router
+  .route("/")
+  .post(protect, addUser)
+  .get(protect, getUsers)
+  .delete(protect, isGeneralAdmin, deleteAllUsers);
 
 router
   .route("/:id")

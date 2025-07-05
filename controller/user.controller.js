@@ -5,7 +5,6 @@ const schema = JoiValidator();
 
 const addUser = asyncHandler(async (req, res) => {
   const { error } = schema.validate(req.body);
-  console.log(req.body);
   if (error) {
     console.log(error);
     return res
@@ -77,21 +76,34 @@ const getUsers = asyncHandler(async (req, res) => {
 
 const updateUser = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
-  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
-  if (studentId.includes("/"))
+  console.log("Updating user with ID:", req.body);
+  console.log(studentId);
+  if (!studentId)
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid ID format" });
+  if (studentId.includes("/")) {
     return res.status(400).json({
       success: false,
-      error: "Invalid ID format, hint: don't use / use - instead!",
+      message: "Invalid ID format, hint: don't use / use - instead!",
     });
+  }
+
   const { error } = schema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+  if (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
+  }
 
   const existingUser = await prisma.user.findUnique({
     where: { studentid: studentId },
     include: { universityusers: true },
   });
 
-  if (!existingUser) return res.status(404).json({ error: "User not found" });
+  if (!existingUser)
+    return res.status(404).json({ success: false, message: "User not found" });
 
   const updatedUser = await prisma.user.update({
     where: { studentid: studentId },
@@ -198,4 +210,17 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "User deleted successfully" });
 });
 
-export { getUser, updateUser, getUsers, addUser, deleteUser };
+const deleteAllUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany();
+
+  if (users.length === 0) {
+    return res.status(404).json({ success: false, message: "No users found" });
+  }
+
+  await prisma.user.deleteMany({});
+  res
+    .status(200)
+    .json({ success: true, message: "All users deleted successfully" });
+});
+
+export { getUser, updateUser, getUsers, addUser, deleteUser, deleteAllUsers };
