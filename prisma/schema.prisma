@@ -1,12 +1,12 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./prisma/@prisma/client"
 }
+
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  directUrl  = env("DIRECT_URL")
 }
 
 model User {
@@ -22,18 +22,18 @@ model User {
   useremail       String           @unique @db.VarChar(320)
   nationality     String           @db.VarChar(50)
   regionnumber    Int?
-  disabled        disability_type  @default(No)
+  isphysicallydisabled        disability_type  @default(None)
   zonename        String           @db.VarChar(50) @default("not_specified") 
-  mothertongue    languages_type   @default(not_specified) 
+  mothertongue    languages_type   @default(Not_Specified) 
   createdAt       DateTime?         @default(now()) 
-  universityusers universityusers?
+  universityusers universityusers? 
 }
 
 model admin {
-  adminid       Int    @id @default(autoincrement())
-  studentid     String @unique  @db.VarChar(20)
-  adminusername String @db.VarChar(50)
-  adminpassword String @db.VarChar(1000)
+  adminid         Int    @id @default(autoincrement())
+  studentid       String @unique  @db.VarChar(20)
+  adminusername   String @db.VarChar(50)
+  adminpassword   String @db.VarChar(1000)
   createdAt       DateTime?         @default(now()) 
 }
 
@@ -44,11 +44,11 @@ model universityusers {
   participation    participation_type @default(None)
   cafeteriaaccess  Boolean?           @default(false)
   mealcard         String?            @db.VarChar(100)
-  batch            String             @db.VarChar(4)
+  batch            Int             
   confessionfather String?            @db.VarChar(100)
   advisors         advisor_type       
   role             role_type          @default(None)
-  User             User               @relation(fields: [userid], references: [userid], onDelete: NoAction, onUpdate: NoAction)
+  User             User               @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum gender_type {
@@ -65,12 +65,20 @@ enum advisor_type {
 enum languages_type{
   Amharic
   Oromifa
-  not_specified
+  Tigrigna
+  Not_Specified
+  English
+  Other
 }
 
 enum disability_type {
-  Yes
-  No
+  None
+  Physical
+  Visual
+  Hearing
+  Intellectual
+  Psychosocial
+  Other
 }
 
 enum participation_type {
