@@ -86,8 +86,7 @@ const getUsers = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-  const studentId = req.body?.studentid;
-  console.log("Updating user with ID:", req.body);
+  const studentId = req.params?.id;
   if (!studentId)
     return res
       .status(400)
@@ -128,39 +127,45 @@ const updateUser = asyncHandler(async (req, res) => {
       birthdate: new Date(req.body.birthdate) || existingUser.birthdate,
       useremail: req.body.useremail || existingUser.useremail,
       nationality: req.body.nationality || existingUser.nationality,
+      mothertongue: req.body.mothertongue || existingUser.mothertongue,
+      zonename: req.body.zonename || existingUser.zonename,
+      isphysicallydisabled: req.body.isphysicallydisabled,
       regionnumber:
         parseInt(req.body.regionnumber) || existingUser.regionnumber,
       universityusers: {
         update: {
           where: {
-            id: existingUser.universityusers[0]?.id,
+            userid: existingUser.universityusers?.userid,
           },
           data: {
             departmentname:
-              req.body.departmentname ||
-              existingUser.universityusers[0]?.departmentname,
+              req.body?.universityusers.departmentname ||
+              existingUser.universityusers?.departmentname,
             sponsorshiptype:
-              req.body.sponsorshiptype ||
-              existingUser.universityusers[0]?.sponsorshiptype,
+              req.body?.universityusers?.sponsorshiptype ||
+              existingUser.universityusers?.sponsorshiptype,
             participation:
-              req.body.participation ||
-              existingUser.universityusers[0]?.participation,
-            batch: req.body.batch || existingUser.universityusers[0]?.batch,
+              req.body?.universityusers?.participation ||
+              existingUser.universityusers?.participation,
+            batch:
+              req.body?.universityusers?.batch ||
+              existingUser.universityusers?.batch,
             confessionfather:
-              req.body.confessionfather !== undefined
-                ? req.body.confessionfather
-                : existingUser.universityusers[0]?.confessionfather,
+              req.body?.universityusers?.confessionfather !== undefined
+                ? req.body?.universityusers?.confessionfather
+                : existingUser.universityusers?.confessionfather,
             advisors:
-              req.body.isAdvisor || existingUser.universityusers[0]?.advisors,
-            role: req.body.roleType || existingUser.universityusers[0]?.role,
+              req.body?.universityusers?.universityusers?.advisors ||
+              existingUser.universityusers?.advisors,
+            role: req.body?.role || existingUser.universityusers?.role,
             mealcard:
-              req.body.mealCard !== undefined
+              req.body?.universityusers?.mealCard !== undefined
                 ? req.body.mealCard
-                : existingUser.universityusers[0]?.mealcard,
+                : existingUser.universityusers?.mealcard,
             cafeteriaaccess:
-              req.body.mealCard !== undefined
-                ? !!req.body.mealCard
-                : existingUser.universityusers[0]?.cafeteriaaccess,
+              req.body?.universityusers?.mealCard !== undefined
+                ? !!req.body?.universityusers?.mealCard
+                : existingUser.universityusers?.cafeteriaaccess,
           },
         },
       },

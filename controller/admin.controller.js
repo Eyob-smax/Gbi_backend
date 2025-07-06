@@ -5,20 +5,22 @@ import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 const schema = JoiAdminValidator();
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
 dotenv.config();
 
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { studentId, adminUsername, adminPassword } = req.body;
+  const { studentid, adminusername, adminpassword } = req.body;
 
-  if (!studentId || !adminPassword || !adminUsername) {
+  if (!studentid || !adminpassword || !adminusername) {
     return res.status(400).json({
-      success: true,
-      message: "studentId or admin credentials not found",
+      success: false,
+      message: "studentid or admin credentials not found",
     });
   }
 
   const isAdminExist = await prisma.admin.findUnique({
-    where: { studentid: studentId },
+    where: { studentid },
   });
 
   if (isAdminExist) {
@@ -29,9 +31,9 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
   const admin = await prisma.admin.create({
     data: {
-      studentid: studentId,
-      adminusername: adminUsername,
-      adminpassword: await hashPassword(adminPassword),
+      studentid,
+      adminusername,
+      adminpassword: await hashPassword(adminpassword),
     },
   });
 
@@ -39,8 +41,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
     throw new Error("can't create an admin!");
   }
 
-  buildToken(res, studentId, adminUsername);
-  res.status(201).json({ success: false, message: "Admin created!" });
+  // buildToken(res, studentid, adminusername);
+  res.status(201).json({ success: true, message: "Admin created!" });
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
@@ -73,32 +75,23 @@ const logAdmin = asyncHandler(async (req, res) => {
 });
 
 const getAdmins = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const admins = await prisma.admin.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
-  if (isNaN(page) || isNaN(limit)) {
-    return res.status(400).json({
-      success: false,
-      message: "page or limit query format is not valid!",
-    });
-  }
-
-  const [admins, totalAdmins] = await Promise.all([
-    prisma.admin.findMany({
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.admin.count(),
-  ]);
+  const adminsWithSuperStatus = admins.map((admin) => ({
+    ...admin,
+    isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
+      admin.adminusername
+    ),
+    role: JSON.parse(process.env.SUPER_ADMINS).includes(admin.adminusername)
+      ? "Super Admin"
+      : "Admin",
+  }));
 
   res.status(200).json({
     success: true,
-    page,
-    totalPages: Math.ceil(totalAdmins / limit),
-    totalAdmins,
-    admins,
+    admins: adminsWithSuperStatus,
   });
 });
 
@@ -123,45 +116,71 @@ const getAdmin = asyncHandler(async (req, res) => {
 
 const updateAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  if (!id) return res.status(400).json({ error: "Invalid ID format" });
+  console.log("Updating admin with ID:", req.body);
+  if (!id)
+    return res
+      .status(400)
+      .json({ success: false, message: "Please Provide a valid id!" });
   if (id.includes("/"))
     return res.status(400).json({
       success: false,
-      error: "Invalid ID format, hint: don't use / use - instead",
+      message: "Invalid ID format, hint: don't use / use - instead",
     });
   const { error } = schema.validate(req.body);
   if (error)
     return res
       .status(400)
-      .json({ success: false, error: error.details[0].message });
-  const { studentId, adminUsername, adminPassword } = req.body;
+      .json({ success: false, message: error.details[0].message });
+  const { studentid, adminusername, adminpassword } = req.body;
 
   const existingUser = await prisma.admin.findUnique({
     where: { studentid: id },
   });
 
   if (!existingUser)
-    return res.status(404).json({ success: false, error: "User not found" });
+    return res.status(404).json({ success: false, message: "User not found" });
 
   const updatedAdmin = await prisma.admin.update({
-    where: { studentid: studentId },
+    where: { studentid },
     data: {
-      studentid: adminUsername || existingUser.studentid,
-      adminusername: adminUsername || existingUser.adminusername,
-      adminpassword: adminPassword || existingUser.adminpassword,
+      studentid: studentid || existingUser.studentid,
+      adminusername: adminusername || existingUser.adminusername,
+      adminpassword:
+        (await hashPassword(adminpassword)) || existingUser.adminpassword,
     },
   });
+
+  console.log("Updated admin:", updatedAdmin);
 
   res.json({ success: true, updatedAdmin });
 });
 
 const deleteAdmin = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
-  if (!studentId) return res.status(400).json({ error: "Invalid ID format" });
+  if (!studentId)
+    return res
+      .status(400)
+      .json({ error: "Please, provide a student Id to delete admin" });
   if (studentId.includes("/")) {
     return res
       .status(400)
       .json({ success: false, message: "Invalid user ID format!" });
+  }
+
+  const token = req.cookies.jwt;
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authenticated" });
+  }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  if (!decoded) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token or token expired, can't delete admin",
+    });
   }
 
   const userExists = await prisma.admin.findUnique({
@@ -170,6 +189,17 @@ const deleteAdmin = asyncHandler(async (req, res) => {
 
   if (!userExists) {
     return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (
+    decoded.studentid !== studentId &&
+    JSON.parse(process.env.SUPER_ADMINS).includes(userExists.adminusername)
+  ) {
+    return res.status(403).json({
+      success: false,
+      message:
+        "You are not authorized to delete this admin (Super admins can't delete each other)",
+    });
   }
 
   await prisma.admin.delete({
