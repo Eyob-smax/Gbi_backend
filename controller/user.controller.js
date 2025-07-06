@@ -11,9 +11,17 @@ const addUser = asyncHandler(async (req, res) => {
       .status(400)
       .json({ success: false, message: error.details[0].message });
   }
+  if (req.body?.studentid.includes("/")) {
+    return res.status(400).json({
+      success: false,
+      message: "Please only USE Hyphen(-), for Student Id",
+    });
+  }
+
   const existingUser = await prisma.user.findUnique({
     where: { studentid: req.body.studentid },
   });
+
   if (existingUser) {
     return res
       .status(400)
@@ -31,7 +39,7 @@ const addUser = asyncHandler(async (req, res) => {
       birthdate: new Date(req.body?.birthdate),
       useremail: req.body?.useremail,
       nationality: req.body?.nationality,
-      regionnumber: req.body?.regionnumber,
+      regionnumber: parseInt(req.body?.regionnumber),
       mothertongue: req.body?.mothertongue,
       zonename: req.body?.zonename,
       isphysicallydisabled: req.body?.isphysicallydisabled,
@@ -57,7 +65,10 @@ const addUser = asyncHandler(async (req, res) => {
     },
   });
 
-  res.status(201).json({ success: true, user });
+  res.status(201).json({
+    success: true,
+    user: { ...user, birthdate: new Date(user.birthdate) },
+  });
 });
 
 const getUsers = asyncHandler(async (req, res) => {
@@ -75,9 +86,8 @@ const getUsers = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-  const studentId = req.params.id;
+  const studentId = req.body?.studentid;
   console.log("Updating user with ID:", req.body);
-  console.log(studentId);
   if (!studentId)
     return res
       .status(400)
@@ -115,12 +125,11 @@ const updateUser = asyncHandler(async (req, res) => {
       gender: req.body.gender || existingUser.gender,
       baptismalname: req.body.baptismalname || existingUser.baptismalname,
       phone: req.body.phone || existingUser.phone,
-      birthdate: req.body.birthdate
-        ? new Date(req.body.birthdate)
-        : existingUser.birthdate,
+      birthdate: new Date(req.body.birthdate) || existingUser.birthdate,
       useremail: req.body.useremail || existingUser.useremail,
       nationality: req.body.nationality || existingUser.nationality,
-      regionnumber: req.body.regionnumber || existingUser.regionnumber,
+      regionnumber:
+        parseInt(req.body.regionnumber) || existingUser.regionnumber,
       universityusers: {
         update: {
           where: {
@@ -161,7 +170,10 @@ const updateUser = asyncHandler(async (req, res) => {
     },
   });
 
-  res.json({ success: true, updatedUser });
+  res.json({
+    success: true,
+    updatedUser: { ...updatedUser, birthdate: new Date(updatedUser.birthdate) },
+  });
 });
 
 const getUser = asyncHandler(async (req, res) => {

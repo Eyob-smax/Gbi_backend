@@ -41,12 +41,16 @@ export async function protect(req, res, next) {
 export async function isGeneralAdmin(req, res, next) {
   try {
     console.log("Checking if user is a general admin...");
-    const decoded = verifyToken(req);
+    const decoded = verifyToken(req); // should return { studentid, adminusername }
 
-    const generalAdmin = await prisma.admin.findUnique({
+    const superAdmins = JSON.parse(process.env.SUPER_ADMINS || "[]");
+
+    const generalAdmin = await prisma.admin.findFirst({
       where: {
         studentid: decoded.studentid,
-        adminusername: process.env.SUPER_ADMIN_USERNAME,
+        adminusername: {
+          in: superAdmins,
+        },
       },
       select: {
         studentid: true,
@@ -55,16 +59,16 @@ export async function isGeneralAdmin(req, res, next) {
     });
 
     if (!generalAdmin) {
-      return res.status(400).json({
+      return res.status(403).json({
         success: false,
-        message: "General admin not found with the given token!",
+        message: "General admin not found or unauthorized!",
       });
     }
 
     req.admin = generalAdmin;
     next();
   } catch (error) {
-    console.error(error);
+    console.error("General admin check failed:", error);
     res.status(401).json({
       success: false,
       message: "Not authorized: " + error.message,
