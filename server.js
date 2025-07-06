@@ -7,15 +7,15 @@ import jwt from "jsonwebtoken";
 import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
+import { prisma } from "./models/DatabaseConfig.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
-
 app.get("/api/logout", logoutAdmin);
 
 app.get("/api/auth/current", async (req, res) => {
@@ -27,8 +27,20 @@ app.get("/api/auth/current", async (req, res) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.json({ success: true, user: { ...decoded, isAuthenticated: true } });
-    console.log("Current user:", decoded);
+    const user = await prisma.admin.findUnique({
+      where: { studentid: decoded?.studentid },
+    });
+    res.json({
+      success: true,
+      user: {
+        studentid: user.studentid,
+        adminusername: user.adminusername,
+        isAuthenticated: true,
+        isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
+          user.adminusername
+        ),
+      },
+    });
   } catch (error) {
     console.error("JWT verification failed:", error);
     res.status(401).json({ success: false, message: "Invalid token" });
@@ -37,9 +49,10 @@ app.get("/api/auth/current", async (req, res) => {
 
 app.use((err, req, res, next) => {
   const errorResponse = handleError(err);
+  console.log(errorResponse);
   res.status(500).json(errorResponse);
 });
 
-app.listen(process.env.PORT || 4500, () =>
-  console.log("the server running on https://localhost:4500")
+app.listen(process.env.PORT || 5500, () =>
+  console.log("the server running on https://localhost:5500")
 );
