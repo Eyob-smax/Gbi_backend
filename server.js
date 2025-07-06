@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-
 import UserRoutes from "./routes/user.routes.js";
 import AdminRoutes from "./routes/admin.routes.js";
 import jwt from "jsonwebtoken";

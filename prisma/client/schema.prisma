@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  userid               Int              @id @default(autoincrement())
+  studentid            String           @unique @db.VarChar(20)
+  firstname            String           @db.VarChar(50)
+  middlename           String           @db.VarChar(50)
+  lastname             String           @db.VarChar(50)
+  gender               gender_type
+  baptismalname        String           @db.VarChar(50)
+  phone                String           @unique @db.VarChar(20)
+  birthdate            DateTime         @db.Date
+  useremail            String           @unique @db.VarChar(320)
+  nationality          String           @db.VarChar(50)
+  regionnumber         Int?
+  isphysicallydisabled disability_type  @default(None)
+  zonename             String           @default("not_specified") @db.VarChar(50)
+  mothertongue         languages_type   @default(Not_Specified)
+  createdAt            DateTime?        @default(now())
+  universityusers      universityusers?
+}
+
+model admin {
+  adminid       Int       @id @default(autoincrement())
+  studentid     String    @unique @db.VarChar(20)
+  adminusername String    @db.VarChar(50)
+  adminpassword String    @db.VarChar(1000)
+  createdAt     DateTime? @default(now())
+}
+
+model universityusers {
+  userid           Int                @id
+  departmentname   String             @db.VarChar(100)
+  sponsorshiptype  sponsorship_type
+  participation    participation_type @default(None)
+  cafeteriaaccess  Boolean?           @default(false)
+  mealcard         String?            @db.VarChar(100)
+  batch            Int
+  confessionfather String?            @db.VarChar(100)
+  advisors         advisor_type
+  role             role_type          @default(None)
+  User             User               @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum gender_type {
+  Female
+  Male
+}
+
+enum advisor_type {
+  Yes
+  No
+}
+
+enum languages_type {
+  Amharic
+  Oromifa
+  Tigrigna
+  Not_Specified
+  English
+  Other
+}
+
+enum disability_type {
+  None
+  Physical
+  Visual
+  Hearing
+  Intellectual
+  Psychosocial
+  Other
+}
+
+enum participation_type {
+  Gbi_Gubaye_Secretariat                                         @map("Gbi Gubaye Secretariat")
+  Audit_and_Inspection_Section                                   @map("Audit and Inspection Section")
+  Education_and_Apostolic_Service_Section                        @map("Education and Apostolic Service Section")
+  Accounting_and_Assets_Section                                  @map("Accounting and Assets Section")
+  Development_and_Income_Collection_Section                      @map("Development and Income Collection Section")
+  Languages_and_Special_Interests_Section                        @map("Languages and Special Interests Section")
+  Hymns_and_Arts_Section                                         @map("Hymns and Arts Section")
+  Planning_Monitoring_Reports_and_Information_Management_Section @map("Planning Monitoring Reports and Information Management Section")
+  Professional_and_Community_Development_Section                 @map("Professional and Community Development Section")
+  Batch_and_Programs_Coordination_Section                        @map("Batch and Programs Coordination Section")
+  Member_Care_Advice_and_Capacity_Building_Section               @map("Member Care Advice and Capacity Building Section")
+  None
+}
+
+enum role_type {
+  Member
+  ClassSecretary
+  ClassTeamLead
+  ClassManager
+  SubclassSecretary
+  SubclassTeamLead
+  SubclassManager
+  None
+}
+
+enum sponsorship_type {
+  Government
+  Self_Sponsored
+}
