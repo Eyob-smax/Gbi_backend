@@ -9,7 +9,7 @@ import { logoutAdmin } from "./controller/admin.controller.js";
 import { prisma } from "./models/DatabaseConfig.js";
 
 const app = express();
-app.use(cors({ origin: "https://6kilogbigubae.vercel.app/" }));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(cookieParser());
 
