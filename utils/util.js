@@ -30,6 +30,7 @@ export const comparePassword = async (storedPassword, suppliedPassword) => {
 };
 export function JoiValidator() {
   return Joi.object({
+    userid: Joi.string().max(15).optional(),
     studentid: Joi.string(),
     firstname: Joi.string().max(50).required(),
     middlename: Joi.string().max(50).required(),
@@ -39,32 +40,34 @@ export function JoiValidator() {
     phone: Joi.string().required(),
     birthdate: Joi.date().required(),
     useremail: Joi.string().email().max(320).required(),
-    nationality: Joi.string().max(20).required(),
+    nationality: Joi.string().max(50).required(),
     regionnumber: Joi.number().integer().required(),
     disabled: Joi.string(),
     zonename: Joi.string().max(50),
     mothertongue: Joi.string(),
+    isphysicallydisabled: Joi.string().required(),
     universityuser: {
+      userid: Joi.string().max(15).optional(),
       departmentname: Joi.string().required(),
       sponsorshiptype: Joi.string()
-        .valid("Government", "Self_Sponsored")
+        .valid("Government", "Self_Sponsored", "Scholarship")
         .required(),
       participation: Joi.string().required(),
       cafeteriaaccess: Joi.boolean().required(),
-      batch: Joi.string().max(4).required(),
+      batch: Joi.number().max(10).required(),
       confessionfather: Joi.string().allow(null, ""),
       advisors: Joi.string().required(),
       role: Joi.string().required(),
-      mealcard: Joi.string().allow(null, "").pattern(/\d+/).max(10),
+      mealcard: Joi.string().allow(null, "").optional().max(10),
     },
   });
 }
 
 export function JoiAdminValidator() {
   return Joi.object({
-    studentId: Joi.string().max(15).required().pattern(/^UGR/),
-    adminUsername: Joi.string().max(50).required(),
-    adminPassword: Joi.string().max(50).required(),
+    studentid: Joi.string().max(15).required(),
+    adminusername: Joi.string().max(50).required(),
+    adminpassword: Joi.string().required(),
   });
 }
 
