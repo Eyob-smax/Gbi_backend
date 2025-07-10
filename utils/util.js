@@ -30,7 +30,7 @@ export const comparePassword = async (storedPassword, suppliedPassword) => {
 };
 export function JoiValidator() {
   return Joi.object({
-    userid: Joi.string().max(15).optional(),
+    userid: Joi.number().max(15).optional(),
     studentid: Joi.string(),
     firstname: Joi.string().max(50).required(),
     middlename: Joi.string().max(50).required(),
@@ -47,7 +47,7 @@ export function JoiValidator() {
     mothertongue: Joi.string(),
     isphysicallydisabled: Joi.string().required(),
     universityusers: {
-      userid: Joi.string().max(15).optional(),
+      userid: Joi.number().max(15).optional(),
       departmentname: Joi.string().required(),
       sponsorshiptype: Joi.string()
         .valid("Government", "Self_Sponsored", "Scholarship")
