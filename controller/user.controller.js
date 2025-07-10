@@ -6,7 +6,6 @@ const schema = JoiValidator();
 const addUser = asyncHandler(async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) {
-    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
