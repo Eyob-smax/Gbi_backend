@@ -46,6 +46,7 @@ export function JoiValidator() {
     zonename: Joi.string().max(50),
     mothertongue: Joi.string(),
     isphysicallydisabled: Joi.string().required(),
+    createdAt: Joi.date().optional(),
     universityusers: {
       userid: Joi.number().max(15).optional(),
       departmentname: Joi.string().required(),
@@ -59,6 +60,7 @@ export function JoiValidator() {
       advisors: Joi.string().required(),
       role: Joi.string().required(),
       mealcard: Joi.string().allow(null, "").optional().max(10),
+      createdAt: Joi.date().optional(),
     },
   });
 }
