@@ -44,17 +44,19 @@ export function JoiValidator() {
     disabled: Joi.string(),
     zonename: Joi.string().max(50),
     mothertongue: Joi.string(),
-    departmentname: Joi.string().required(),
-    sponsorshiptype: Joi.string()
-      .valid("Government", "Self_Sponsored")
-      .required(),
-    participation: Joi.string().required(),
-    cafeteriaaccess: Joi.boolean().required(),
-    batch: Joi.string().max(4).required(),
-    confessionfather: Joi.string().allow(null, ""),
-    advisors: Joi.string().required(),
-    role: Joi.string().required(),
-    mealcard: Joi.string().allow(null, "").pattern(/\d+/).max(10),
+    universityuser: {
+      departmentname: Joi.string().required(),
+      sponsorshiptype: Joi.string()
+        .valid("Government", "Self_Sponsored")
+        .required(),
+      participation: Joi.string().required(),
+      cafeteriaaccess: Joi.boolean().required(),
+      batch: Joi.string().max(4).required(),
+      confessionfather: Joi.string().allow(null, ""),
+      advisors: Joi.string().required(),
+      role: Joi.string().required(),
+      mealcard: Joi.string().allow(null, "").pattern(/\d+/).max(10),
+    },
   });
 }
 
