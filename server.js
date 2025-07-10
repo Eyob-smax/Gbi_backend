@@ -9,7 +9,12 @@ import { logoutAdmin } from "./controller/admin.controller.js";
 import { prisma } from "./models/DatabaseConfig.js";
 
 const app = express();
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: ["https://6kilogbigubae.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -26,6 +31,7 @@ app.get("/api/auth/current", async (req, res) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
     const user = await prisma.admin.findUnique({
       where: { studentid: decoded?.studentid },
     });

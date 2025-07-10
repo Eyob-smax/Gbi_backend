@@ -3,17 +3,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 function buildToken(res, studentid, username) {
-  const generalAdmin = process.env.SUPER_ADMIN_USERNAME;
-  const isAdmin = username === generalAdmin;
+  const generalAdmin = JSON.parse(process.env.SUPER_ADMINS);
+  const isAdmin = generalAdmin.includes(username);
 
   const token = jwt.sign({ studentid, isAdmin }, process.env.JWT_SECRET, {
     expiresIn: "10d",
   });
 
+  console.log("Token generated for:", token, "Is Admin:", isAdmin);
+
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
     path: "/",
     maxAge: 10 * 24 * 60 * 60 * 1000,
   });
