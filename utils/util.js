@@ -36,7 +36,7 @@ export function JoiValidator() {
     lastname: Joi.string().max(50).required(),
     gender: Joi.string().valid("Male", "Female").required(),
     baptismalname: Joi.string().max(50).required(),
-    phone: Joi.string().max(10).required(),
+    phone: Joi.string().required(),
     birthdate: Joi.date().required(),
     useremail: Joi.string().email().max(320).required(),
     nationality: Joi.string().max(20).required(),
