@@ -262,7 +262,7 @@ const logoutAdmin = asyncHandler(async (req, res) => {
       secure: true,
       sameSite: "none",
       path: "/",
-      maxAge: 0, // optional
+      maxAge: 0,
     });
 
     res.status(200).json({ success: true, message: "Logged out successfully" });
