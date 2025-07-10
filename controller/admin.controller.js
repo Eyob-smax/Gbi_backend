@@ -41,18 +41,25 @@ const registerAdmin = asyncHandler(async (req, res) => {
     throw new Error("can't create an admin!");
   }
 
-  // buildToken(res, studentid, adminusername);
+  buildToken(res, studentid, adminusername);
   res.status(201).json({ success: true, message: "Admin created!" });
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
-  const { studentId, adminPassword } = req.body;
+  const { studentid, adminpassword } = req.body;
+
+  if (!studentid || !adminpassword) {
+    return res.status(400).json({
+      success: false,
+      message: "studentid or admin credentials not found",
+    });
+  }
 
   const admin = await prisma.admin.findUnique({
-    where: { studentid: studentId },
+    where: { studentid },
   });
 
-  if (admin && (await comparePassword(admin.adminpassword, adminPassword))) {
+  if (admin && (await comparePassword(admin.adminpassword, adminpassword))) {
     buildToken(res, admin.studentid, admin.adminusername);
     const adminObject = {
       studentid: admin.studentid,
@@ -248,19 +255,23 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
 
 const logoutAdmin = asyncHandler(async (req, res) => {
   console.log("Logging out admin...");
+
   try {
     res.clearCookie("jwt", {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       path: "/",
+      maxAge: 0, // optional
     });
+
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (err) {
-    res.status(200).json({
+    console.error("Logout error:", err);
+    res.status(500).json({
       success: false,
       message:
-        "Something went wront when logging out the admin: " + err.message,
+        "Something went wrong when logging out the admin: " + err.message,
     });
   }
 });
