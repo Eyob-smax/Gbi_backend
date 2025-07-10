@@ -46,7 +46,7 @@ export function JoiValidator() {
     zonename: Joi.string().max(50),
     mothertongue: Joi.string(),
     isphysicallydisabled: Joi.string().required(),
-    universityuser: {
+    universityusers: {
       userid: Joi.string().max(15).optional(),
       departmentname: Joi.string().required(),
       sponsorshiptype: Joi.string()
