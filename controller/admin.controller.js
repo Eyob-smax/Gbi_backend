@@ -123,7 +123,6 @@ const getAdmin = asyncHandler(async (req, res) => {
 
 const updateAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  console.log("Updating admin with ID:", req.body);
   if (!id)
     return res
       .status(400)
@@ -145,7 +144,7 @@ const updateAdmin = asyncHandler(async (req, res) => {
   });
 
   if (!existingUser)
-    return res.status(404).json({ success: false, message: "User not found" });
+    return res.status(404).json({ success: false, message: "Admin not found" });
 
   const updatedAdmin = await prisma.admin.update({
     where: { studentid },
