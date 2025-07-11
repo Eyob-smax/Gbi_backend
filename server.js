@@ -3,7 +3,7 @@ import cors from "cors";
 import UserRoutes from "./routes/user.routes.js";
 import AdminRoutes from "./routes/admin.routes.js";
 import jwt from "jsonwebtoken";
-import { handleError } from "./utils/util.js";
+import { handleError, hashPassword } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
 import { prisma } from "./models/DatabaseConfig.js";
