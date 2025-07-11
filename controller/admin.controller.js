@@ -41,7 +41,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
     throw new Error("can't create an admin!");
   }
 
-  buildToken(res, studentid, adminusername);
   res.status(201).json({ success: true, message: "Admin created!" });
 });
 
