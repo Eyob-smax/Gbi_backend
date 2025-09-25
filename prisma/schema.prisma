@@ -18,7 +18,7 @@ model User {
   middlename      String           @db.VarChar(50)
   lastname        String           @db.VarChar(50)
   gender          gender_type
-  baptismalname   String           @db.VarChar(50)
+  baptismalname   String           @db.VarChar(50) @default("None")
   phone           String           @unique @db.VarChar(20)
   birthdate       DateTime         @db.Date
   useremail       String           @unique @db.VarChar(320)
