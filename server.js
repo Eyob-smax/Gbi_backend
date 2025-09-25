@@ -11,7 +11,11 @@ import { prisma } from "./models/DatabaseConfig.js";
 const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: [
+      "https://gbi-gubae-frontend.vercel.app",
+      "http://10.4.192.207:5173",
+      "http://localhost:5173",
+    ],
     credentials: true,
   })
 );
@@ -31,10 +35,15 @@ app.get("/api/auth/current", async (req, res) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
     const user = await prisma.admin.findUnique({
       where: { studentid: decoded?.studentid },
     });
+
+    if (!user || !decoded) {
+      throw new Error(
+        "Please provide valid token or this user didn't access in our DB!"
+      );
+    }
     res.json({
       success: true,
       user: {
@@ -47,14 +56,12 @@ app.get("/api/auth/current", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("JWT verification failed:", error);
     res.status(401).json({ success: false, message: "Invalid token" });
   }
 });
 
 app.use((err, req, res, next) => {
   const errorResponse = handleError(err);
-  console.log(errorResponse);
   res.status(500).json(errorResponse);
 });
 
