@@ -10,8 +10,6 @@ function buildToken(res, studentid, username) {
     expiresIn: "10d",
   });
 
-  console.log("Token generated for:", token, "Is Admin:", isAdmin);
-
   res.cookie("jwt", token, {
     httpOnly: true,
     secure: true,

@@ -30,7 +30,6 @@ export async function protect(req, res, next) {
     req.admin = admin;
     next();
   } catch (error) {
-    console.error(error);
     res.status(401).json({
       success: false,
       message: "Not authorized: " + error.message,
@@ -40,8 +39,7 @@ export async function protect(req, res, next) {
 
 export async function isGeneralAdmin(req, res, next) {
   try {
-    console.log("Checking if user is a general admin...");
-    const decoded = verifyToken(req); // should return { studentid, adminusername }
+    const decoded = verifyToken(req);
 
     const superAdmins = JSON.parse(process.env.SUPER_ADMINS || "[]");
 

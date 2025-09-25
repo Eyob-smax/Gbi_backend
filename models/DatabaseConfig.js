@@ -2,7 +2,7 @@ import { PrismaClient } from "../prisma/client/index.js";
 export const prisma = new PrismaClient();
 
 const MAX_RETRIES = 5;
-const RETRY_DELAY_MS = 5000;
+const RETRY_DELAY_MS = 2000;
 
 async function connectPrismaWithRetry(attempt = 1) {
   try {
@@ -19,19 +19,20 @@ async function connectPrismaWithRetry(attempt = 1) {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       await connectPrismaWithRetry(attempt + 1);
     } else {
-      console.error("❌ All retry attempts failed. Exiting...");
+      console.error(
+        "❌ All retry attempts(please check your db config) failed. Exiting..."
+      );
       process.exit(1);
     }
   }
 }
 
 (async () => {
-  await connectPrismaWithRetry();
+  await connectPrismaWithRetry(3);
 })();
 
-// Graceful shutdown
 process.on("SIGINT", async () => {
-  console.log("📴 Disconnecting Prisma...");
+  console.warn("📴 Disconnecting Prisma...");
   await prisma.$disconnect();
-  process.exit();
+  process.exit(0);
 });
