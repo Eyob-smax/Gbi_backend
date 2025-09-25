@@ -47,7 +47,7 @@ const addUser = asyncHandler(async (req, res) => {
           departmentname: req.body?.universityusers?.departmentname,
           sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
           participation: req.body?.universityusers?.participation,
-          batch: req.body?.universityusers?.batch,
+          batch: Number(req.body?.universityusers?.batch),
           confessionfather: req.body?.universityusers?.confessionfather || null,
           advisors: req.body?.universityusers?.advisors,
           role:

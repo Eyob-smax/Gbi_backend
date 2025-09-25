@@ -57,7 +57,7 @@ export function JoiValidator() {
       cafeteriaaccess: Joi.boolean().required(),
       batch: Joi.number().required(),
       confessionfather: Joi.string().allow(null, ""),
-      advisors: Joi.string().required(),
+      advisors: Joi.string(),
       role: Joi.string().required(),
       mealcard: Joi.string().allow(null, "").optional().max(10),
       createdAt: Joi.date().optional(),
