@@ -3497,7 +3497,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type | null
     role: $Enums.role_type | null
     coursetaken: boolean | null
-    disabilityinfo: string | null
     holidayincampus: boolean | null
   }
 
@@ -3513,7 +3512,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type | null
     role: $Enums.role_type | null
     coursetaken: boolean | null
-    disabilityinfo: string | null
     holidayincampus: boolean | null
   }
 
@@ -3529,7 +3527,6 @@ export namespace Prisma {
     advisors: number
     role: number
     coursetaken: number
-    disabilityinfo: number
     holidayincampus: number
     _all: number
   }
@@ -3557,7 +3554,6 @@ export namespace Prisma {
     advisors?: true
     role?: true
     coursetaken?: true
-    disabilityinfo?: true
     holidayincampus?: true
   }
 
@@ -3573,7 +3569,6 @@ export namespace Prisma {
     advisors?: true
     role?: true
     coursetaken?: true
-    disabilityinfo?: true
     holidayincampus?: true
   }
 
@@ -3589,7 +3584,6 @@ export namespace Prisma {
     advisors?: true
     role?: true
     coursetaken?: true
-    disabilityinfo?: true
     holidayincampus?: true
     _all?: true
   }
@@ -3692,7 +3686,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role: $Enums.role_type
     coursetaken: boolean
-    disabilityinfo: string | null
     holidayincampus: boolean | null
     _count: UniversityusersCountAggregateOutputType | null
     _avg: UniversityusersAvgAggregateOutputType | null
@@ -3727,7 +3720,6 @@ export namespace Prisma {
     advisors?: boolean
     role?: boolean
     coursetaken?: boolean
-    disabilityinfo?: boolean
     holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
@@ -3744,7 +3736,6 @@ export namespace Prisma {
     advisors?: boolean
     role?: boolean
     coursetaken?: boolean
-    disabilityinfo?: boolean
     holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
@@ -3761,7 +3752,6 @@ export namespace Prisma {
     advisors?: boolean
     role?: boolean
     coursetaken?: boolean
-    disabilityinfo?: boolean
     holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
@@ -3778,11 +3768,10 @@ export namespace Prisma {
     advisors?: boolean
     role?: boolean
     coursetaken?: boolean
-    disabilityinfo?: boolean
     holidayincampus?: boolean
   }
 
-  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "disabilityinfo" | "holidayincampus", ExtArgs["result"]["universityusers"]>
+  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "holidayincampus", ExtArgs["result"]["universityusers"]>
   export type universityusersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     User?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3810,7 +3799,6 @@ export namespace Prisma {
       advisors: $Enums.advisor_type
       role: $Enums.role_type
       coursetaken: boolean
-      disabilityinfo: string | null
       holidayincampus: boolean | null
     }, ExtArgs["result"]["universityusers"]>
     composites: {}
@@ -4247,7 +4235,6 @@ export namespace Prisma {
     readonly advisors: FieldRef<"universityusers", 'advisor_type'>
     readonly role: FieldRef<"universityusers", 'role_type'>
     readonly coursetaken: FieldRef<"universityusers", 'Boolean'>
-    readonly disabilityinfo: FieldRef<"universityusers", 'String'>
     readonly holidayincampus: FieldRef<"universityusers", 'Boolean'>
   }
     
@@ -4723,7 +4710,6 @@ export namespace Prisma {
     advisors: 'advisors',
     role: 'role',
     coursetaken: 'coursetaken',
-    disabilityinfo: 'disabilityinfo',
     holidayincampus: 'holidayincampus'
   };
 
@@ -5123,7 +5109,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolFilter<"universityusers"> | boolean
-    disabilityinfo?: StringNullableFilter<"universityusers"> | string | null
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -5140,7 +5125,6 @@ export namespace Prisma {
     advisors?: SortOrder
     role?: SortOrder
     coursetaken?: SortOrder
-    disabilityinfo?: SortOrderInput | SortOrder
     holidayincampus?: SortOrderInput | SortOrder
     User?: UserOrderByWithRelationInput
   }
@@ -5160,7 +5144,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolFilter<"universityusers"> | boolean
-    disabilityinfo?: StringNullableFilter<"universityusers"> | string | null
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "userid">
@@ -5177,7 +5160,6 @@ export namespace Prisma {
     advisors?: SortOrder
     role?: SortOrder
     coursetaken?: SortOrder
-    disabilityinfo?: SortOrderInput | SortOrder
     holidayincampus?: SortOrderInput | SortOrder
     _count?: universityusersCountOrderByAggregateInput
     _avg?: universityusersAvgOrderByAggregateInput
@@ -5201,7 +5183,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeWithAggregatesFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeWithAggregatesFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolWithAggregatesFilter<"universityusers"> | boolean
-    disabilityinfo?: StringNullableWithAggregatesFilter<"universityusers"> | string | null
     holidayincampus?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
   }
 
@@ -5410,7 +5391,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
-    disabilityinfo?: string | null
     holidayincampus?: boolean | null
     User: UserCreateNestedOneWithoutUniversityusersInput
   }
@@ -5427,7 +5407,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
-    disabilityinfo?: string | null
     holidayincampus?: boolean | null
   }
 
@@ -5442,7 +5421,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     User?: UserUpdateOneRequiredWithoutUniversityusersNestedInput
   }
@@ -5459,7 +5437,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
@@ -5475,7 +5452,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
-    disabilityinfo?: string | null
     holidayincampus?: boolean | null
   }
 
@@ -5490,7 +5466,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
@@ -5506,7 +5481,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
@@ -5868,7 +5842,6 @@ export namespace Prisma {
     advisors?: SortOrder
     role?: SortOrder
     coursetaken?: SortOrder
-    disabilityinfo?: SortOrder
     holidayincampus?: SortOrder
   }
 
@@ -5889,7 +5862,6 @@ export namespace Prisma {
     advisors?: SortOrder
     role?: SortOrder
     coursetaken?: SortOrder
-    disabilityinfo?: SortOrder
     holidayincampus?: SortOrder
   }
 
@@ -5905,7 +5877,6 @@ export namespace Prisma {
     advisors?: SortOrder
     role?: SortOrder
     coursetaken?: SortOrder
-    disabilityinfo?: SortOrder
     holidayincampus?: SortOrder
   }
 
@@ -6432,7 +6403,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
-    disabilityinfo?: string | null
     holidayincampus?: boolean | null
   }
 
@@ -6447,7 +6417,6 @@ export namespace Prisma {
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
-    disabilityinfo?: string | null
     holidayincampus?: boolean | null
   }
 
@@ -6478,7 +6447,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
@@ -6493,7 +6461,6 @@ export namespace Prisma {
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
-    disabilityinfo?: NullableStringFieldUpdateOperationsInput | string | null
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 

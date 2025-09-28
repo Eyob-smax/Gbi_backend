@@ -51,7 +51,6 @@ model universityusers {
   advisors         advisor_type
   role             role_type          @default(None)
   coursetaken      Boolean       @default(true)
-  disabilityinfo   String?            @db.VarChar(100)
   holidayincampus  Boolean?           @default(false)
   User             User               @relation(fields: [userid], references: [userid], onUpdate:Cascade, onDelete: Cascade)
 }

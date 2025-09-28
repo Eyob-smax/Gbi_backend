@@ -160,7 +160,6 @@ exports.Prisma.UniversityusersScalarFieldEnum = {
   advisors: 'advisors',
   role: 'role',
   coursetaken: 'coursetaken',
-  disabilityinfo: 'disabilityinfo',
   holidayincampus: 'holidayincampus'
 };
 
