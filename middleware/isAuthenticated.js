@@ -42,7 +42,6 @@ export async function isGeneralAdmin(req, res, next) {
     const decoded = verifyToken(req);
 
     const superAdmins = JSON.parse(process.env.SUPER_ADMINS || "[]");
-
     const generalAdmin = await prisma.admin.findFirst({
       where: {
         studentid: decoded.studentid,

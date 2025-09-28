@@ -32,13 +32,14 @@ const addUser = asyncHandler(async (req, res) => {
       firstname: req.body?.firstname,
       middlename: req.body?.middlename,
       lastname: req.body?.lastname,
+      telegram_username: req.body?.telegram_username,
       gender: req.body?.gender,
       baptismalname: req.body?.baptismalname,
       phone: req.body?.phone,
       birthdate: new Date(req.body?.birthdate),
       useremail: req.body?.useremail,
       nationality: req.body?.nationality,
-      regionnumber: parseInt(req.body?.regionnumber),
+      region: req.body?.region,
       mothertongue: req.body?.mothertongue,
       zonename: req.body?.zonename,
       isphysicallydisabled: req.body?.isphysicallydisabled,
@@ -56,6 +57,11 @@ const addUser = asyncHandler(async (req, res) => {
               : req.body?.universityusers?.role,
           mealcard: req.body?.universityusers?.mealcard || "non",
           cafeteriaaccess: !!req.body?.universityusers?.mealcard,
+          holidayincampus:
+            req.body?.universityusers?.mealcard &&
+            req.body?.universityusers?.holidayincampus
+              ? true
+              : false,
         },
       },
     },
@@ -120,6 +126,8 @@ const updateUser = asyncHandler(async (req, res) => {
       firstname: req.body.firstname || existingUser.firstname,
       middlename: req.body.middlename || existingUser.middlename,
       lastname: req.body.lastname || existingUser.lastname,
+      telegram_username:
+        req.body?.telegram_username || existingUser.telegram_username,
       gender: req.body.gender || existingUser.gender,
       baptismalname: req.body.baptismalname || existingUser.baptismalname,
       phone: req.body.phone || existingUser.phone,
@@ -129,12 +137,11 @@ const updateUser = asyncHandler(async (req, res) => {
       mothertongue: req.body.mothertongue || existingUser.mothertongue,
       zonename: req.body.zonename || existingUser.zonename,
       isphysicallydisabled: req.body.isphysicallydisabled,
-      regionnumber:
-        parseInt(req.body.regionnumber) || existingUser.regionnumber,
+      region: req.body?.region || existingUser.region,
       universityusers: {
         update: {
           where: {
-            userid: existingUser.universityusers?.userid,
+            userid: req.body?.userid,
           },
           data: {
             departmentname:
@@ -147,7 +154,7 @@ const updateUser = asyncHandler(async (req, res) => {
               req.body?.universityusers?.participation ||
               existingUser.universityusers?.participation,
             batch:
-              req.body?.universityusers?.batch ||
+              Number(req.body?.universityusers?.batch) ||
               existingUser.universityusers?.batch,
             confessionfather:
               req.body?.universityusers?.confessionfather !== undefined
@@ -156,15 +163,17 @@ const updateUser = asyncHandler(async (req, res) => {
             advisors:
               req.body?.universityusers?.universityusers?.advisors ||
               existingUser.universityusers?.advisors,
-            role: req.body?.role || existingUser.universityusers?.role,
+            role:
+              req.body?.universityusers?.role ||
+              existingUser.universityusers?.role,
             mealcard:
-              req.body?.universityusers?.mealCard !== undefined
-                ? req.body.mealCard
-                : existingUser.universityusers?.mealcard,
+              req.body?.universityusers?.mealcard ||
+              existingUser.universityusers?.mealcard,
             cafeteriaaccess:
               req.body?.universityusers?.mealCard !== undefined
                 ? !!req.body?.universityusers?.mealCard
                 : existingUser.universityusers?.cafeteriaaccess,
+            holidayincampus: req.body?.universityusers?.holidayincampus,
           },
         },
       },

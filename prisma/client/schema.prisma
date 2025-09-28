@@ -17,16 +17,17 @@ model User {
   middlename           String           @db.VarChar(50)
   lastname             String           @db.VarChar(50)
   gender               gender_type
-  baptismalname        String           @db.VarChar(50)
+  baptismalname        String           @default("None") @db.VarChar(50)
   phone                String           @unique @db.VarChar(20)
   birthdate            DateTime         @db.Date
   useremail            String           @unique @db.VarChar(320)
   nationality          String           @db.VarChar(50)
-  regionnumber         Int?
   isphysicallydisabled disability_type  @default(None)
   zonename             String           @default("not_specified") @db.VarChar(50)
   mothertongue         languages_type   @default(Not_Specified)
   createdAt            DateTime?        @default(now())
+  region               regions_type     @default(Not_Specified)
+  telegram_username    String           @unique @default("not_specified") @db.VarChar(50)
   universityusers      universityusers?
 }
 
@@ -49,7 +50,8 @@ model universityusers {
   confessionfather String?            @db.VarChar(100)
   advisors         advisor_type
   role             role_type          @default(None)
-  User             User               @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+  holidayincampus  Boolean?           @default(false)
+  User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
 }
 
 enum gender_type {
@@ -60,6 +62,24 @@ enum gender_type {
 enum advisor_type {
   Yes
   No
+}
+
+enum regions_type {
+  Addis_Ababa
+  Dire_Dawa
+  Tigray
+  Afar
+  Amhara
+  Oromia
+  Somali
+  Benishangul_Gumuz
+  SNNPR
+  Sidama
+  South_West_Ethiopia_Peoples_Region
+  Central_Ethiopia_Region
+  South_Ethiopia_Region
+  Harari
+  Not_Specified
 }
 
 enum languages_type {
