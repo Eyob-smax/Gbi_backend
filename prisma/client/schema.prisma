@@ -50,7 +50,7 @@ model universityusers {
   confessionfather String?            @db.VarChar(100)
   advisors         advisor_type
   role             role_type          @default(None)
-  coursetaken      Boolean            @default(false)
+  coursetaken      Boolean            @default(true)
   disabilityinfo   String?            @db.VarChar(100)
   holidayincampus  Boolean?           @default(false)
   User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
