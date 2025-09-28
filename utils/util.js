@@ -56,6 +56,7 @@ export function JoiValidator() {
         .valid("Government", "Self_Sponsored", "Scholarship")
         .required(),
       participation: Joi.string().required(),
+      coursetaken: Joi.boolean().optional(),
       cafeteriaaccess: Joi.boolean().required(),
       holidayincampus: Joi.boolean().optional(),
       batch: Joi.number().required(),

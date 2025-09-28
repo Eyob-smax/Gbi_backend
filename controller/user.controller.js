@@ -46,6 +46,7 @@ const addUser = asyncHandler(async (req, res) => {
       universityusers: {
         create: {
           departmentname: req.body?.universityusers?.departmentname,
+          coursetaken: req.body?.universityusers?.coursetaken,
           sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
           participation: req.body?.universityusers?.participation,
           batch: Number(req.body?.universityusers?.batch),
@@ -156,6 +157,7 @@ const updateUser = asyncHandler(async (req, res) => {
             batch:
               Number(req.body?.universityusers?.batch) ||
               existingUser.universityusers?.batch,
+            coursetaken: req.body?.universityusers?.coursetaken,
             confessionfather:
               req.body?.universityusers?.confessionfather !== undefined
                 ? req.body?.universityusers?.confessionfather
