@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://gbi-gubae-frontend.vercel.app",
+      "https://6kilogbigubae.vercel.app",
       "http://10.4.192.207:5173",
       "http://localhost:5173",
     ],
