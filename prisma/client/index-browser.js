@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.11.1
- * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+ * Prisma Client JS version: 6.16.2
+ * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.11.1",
-  engine: "f40f79ec31188888a2e33acda0ecc8fd10a853a9"
+  client: "6.16.2",
+  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -132,11 +132,12 @@ exports.Prisma.UserScalarFieldEnum = {
   birthdate: 'birthdate',
   useremail: 'useremail',
   nationality: 'nationality',
-  regionnumber: 'regionnumber',
   isphysicallydisabled: 'isphysicallydisabled',
   zonename: 'zonename',
   mothertongue: 'mothertongue',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  region: 'region',
+  telegram_username: 'telegram_username'
 };
 
 exports.Prisma.AdminScalarFieldEnum = {
@@ -157,7 +158,8 @@ exports.Prisma.UniversityusersScalarFieldEnum = {
   batch: 'batch',
   confessionfather: 'confessionfather',
   advisors: 'advisors',
-  role: 'role'
+  role: 'role',
+  holidayincampus: 'holidayincampus'
 };
 
 exports.Prisma.SortOrder = {
@@ -196,6 +198,24 @@ exports.languages_type = exports.$Enums.languages_type = {
   Not_Specified: 'Not_Specified',
   English: 'English',
   Other: 'Other'
+};
+
+exports.regions_type = exports.$Enums.regions_type = {
+  Addis_Ababa: 'Addis_Ababa',
+  Dire_Dawa: 'Dire_Dawa',
+  Tigray: 'Tigray',
+  Afar: 'Afar',
+  Amhara: 'Amhara',
+  Oromia: 'Oromia',
+  Somali: 'Somali',
+  Benishangul_Gumuz: 'Benishangul_Gumuz',
+  SNNPR: 'SNNPR',
+  Sidama: 'Sidama',
+  South_West_Ethiopia_Peoples_Region: 'South_West_Ethiopia_Peoples_Region',
+  Central_Ethiopia_Region: 'Central_Ethiopia_Region',
+  South_Ethiopia_Region: 'South_Ethiopia_Region',
+  Harari: 'Harari',
+  Not_Specified: 'Not_Specified'
 };
 
 exports.sponsorship_type = exports.$Enums.sponsorship_type = {

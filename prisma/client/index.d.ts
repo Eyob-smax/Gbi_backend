@@ -49,6 +49,27 @@ export const advisor_type: {
 export type advisor_type = (typeof advisor_type)[keyof typeof advisor_type]
 
 
+export const regions_type: {
+  Addis_Ababa: 'Addis_Ababa',
+  Dire_Dawa: 'Dire_Dawa',
+  Tigray: 'Tigray',
+  Afar: 'Afar',
+  Amhara: 'Amhara',
+  Oromia: 'Oromia',
+  Somali: 'Somali',
+  Benishangul_Gumuz: 'Benishangul_Gumuz',
+  SNNPR: 'SNNPR',
+  Sidama: 'Sidama',
+  South_West_Ethiopia_Peoples_Region: 'South_West_Ethiopia_Peoples_Region',
+  Central_Ethiopia_Region: 'Central_Ethiopia_Region',
+  South_Ethiopia_Region: 'South_Ethiopia_Region',
+  Harari: 'Harari',
+  Not_Specified: 'Not_Specified'
+};
+
+export type regions_type = (typeof regions_type)[keyof typeof regions_type]
+
+
 export const languages_type: {
   Amharic: 'Amharic',
   Oromifa: 'Oromifa',
@@ -123,6 +144,10 @@ export type advisor_type = $Enums.advisor_type
 
 export const advisor_type: typeof $Enums.advisor_type
 
+export type regions_type = $Enums.regions_type
+
+export const regions_type: typeof $Enums.regions_type
+
 export type languages_type = $Enums.languages_type
 
 export const languages_type: typeof $Enums.languages_type
@@ -159,7 +184,7 @@ export const sponsorship_type: typeof $Enums.sponsorship_type
  */
 export class PrismaClient<
   ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
-  U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
+  const U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
   ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -191,13 +216,6 @@ export class PrismaClient<
    * Disconnect from the database
    */
   $disconnect(): $Utils.JsPromise<void>;
-
-  /**
-   * Add a middleware
-   * @deprecated since 4.16.0. For new code, prefer client extensions instead.
-   * @see https://pris.ly/d/extensions
-   */
-  $use(cb: Prisma.Middleware): void
 
 /**
    * Executes a prepared raw query and returns the number of affected rows.
@@ -355,8 +373,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.11.1
-   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+   * Prisma Client JS version: 6.16.2
+   * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
    */
   export type PrismaVersion = {
     client: string
@@ -1027,16 +1045,24 @@ export namespace Prisma {
     /**
      * @example
      * ```
-     * // Defaults to stdout
+     * // Shorthand for `emit: 'stdout'`
      * log: ['query', 'info', 'warn', 'error']
      * 
-     * // Emit as events
+     * // Emit as events only
      * log: [
-     *   { emit: 'stdout', level: 'query' },
-     *   { emit: 'stdout', level: 'info' },
-     *   { emit: 'stdout', level: 'warn' }
-     *   { emit: 'stdout', level: 'error' }
+     *   { emit: 'event', level: 'query' },
+     *   { emit: 'event', level: 'info' },
+     *   { emit: 'event', level: 'warn' }
+     *   { emit: 'event', level: 'error' }
      * ]
+     * 
+     * / Emit as events and log to stdout
+     * og: [
+     *  { emit: 'stdout', level: 'query' },
+     *  { emit: 'stdout', level: 'info' },
+     *  { emit: 'stdout', level: 'warn' }
+     *  { emit: 'stdout', level: 'error' }
+     * 
      * ```
      * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
      */
@@ -1051,6 +1077,10 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     */
+    adapter?: runtime.SqlDriverAdapterFactory | null
     /**
      * Global configuration for omitting model fields by default.
      * 
@@ -1080,10 +1110,15 @@ export namespace Prisma {
     emit: 'stdout' | 'event'
   }
 
-  export type GetLogType<T extends LogLevel | LogDefinition> = T extends LogDefinition ? T['emit'] extends 'event' ? T['level'] : never : never
-  export type GetEvents<T extends any> = T extends Array<LogLevel | LogDefinition> ?
-    GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]>
-    : never
+  export type CheckIsLogLevel<T> = T extends LogLevel ? T : never;
+
+  export type GetLogType<T> = CheckIsLogLevel<
+    T extends LogDefinition ? T['level'] : T
+  >;
+
+  export type GetEvents<T extends any[]> = T extends Array<LogLevel | LogDefinition>
+    ? GetLogType<T[number]>
+    : never;
 
   export type QueryEvent = {
     timestamp: Date
@@ -1124,25 +1159,6 @@ export namespace Prisma {
     | 'findRaw'
     | 'groupBy'
 
-  /**
-   * These options are being passed into the middleware as "params"
-   */
-  export type MiddlewareParams = {
-    model?: ModelName
-    action: PrismaAction
-    args: any
-    dataPath: string[]
-    runInTransaction: boolean
-  }
-
-  /**
-   * The `T` type makes sure, that the `return proceed` is not forgotten in the middleware implementation
-   */
-  export type Middleware<T = any> = (
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
-  ) => $Utils.JsPromise<T>
-
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
 
@@ -1179,12 +1195,10 @@ export namespace Prisma {
 
   export type UserAvgAggregateOutputType = {
     userid: number | null
-    regionnumber: number | null
   }
 
   export type UserSumAggregateOutputType = {
     userid: number | null
-    regionnumber: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1199,11 +1213,12 @@ export namespace Prisma {
     birthdate: Date | null
     useremail: string | null
     nationality: string | null
-    regionnumber: number | null
     isphysicallydisabled: $Enums.disability_type | null
     zonename: string | null
     mothertongue: $Enums.languages_type | null
     createdAt: Date | null
+    region: $Enums.regions_type | null
+    telegram_username: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1218,11 +1233,12 @@ export namespace Prisma {
     birthdate: Date | null
     useremail: string | null
     nationality: string | null
-    regionnumber: number | null
     isphysicallydisabled: $Enums.disability_type | null
     zonename: string | null
     mothertongue: $Enums.languages_type | null
     createdAt: Date | null
+    region: $Enums.regions_type | null
+    telegram_username: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1237,23 +1253,22 @@ export namespace Prisma {
     birthdate: number
     useremail: number
     nationality: number
-    regionnumber: number
     isphysicallydisabled: number
     zonename: number
     mothertongue: number
     createdAt: number
+    region: number
+    telegram_username: number
     _all: number
   }
 
 
   export type UserAvgAggregateInputType = {
     userid?: true
-    regionnumber?: true
   }
 
   export type UserSumAggregateInputType = {
     userid?: true
-    regionnumber?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -1268,11 +1283,12 @@ export namespace Prisma {
     birthdate?: true
     useremail?: true
     nationality?: true
-    regionnumber?: true
     isphysicallydisabled?: true
     zonename?: true
     mothertongue?: true
     createdAt?: true
+    region?: true
+    telegram_username?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1287,11 +1303,12 @@ export namespace Prisma {
     birthdate?: true
     useremail?: true
     nationality?: true
-    regionnumber?: true
     isphysicallydisabled?: true
     zonename?: true
     mothertongue?: true
     createdAt?: true
+    region?: true
+    telegram_username?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1306,11 +1323,12 @@ export namespace Prisma {
     birthdate?: true
     useremail?: true
     nationality?: true
-    regionnumber?: true
     isphysicallydisabled?: true
     zonename?: true
     mothertongue?: true
     createdAt?: true
+    region?: true
+    telegram_username?: true
     _all?: true
   }
 
@@ -1412,11 +1430,12 @@ export namespace Prisma {
     birthdate: Date
     useremail: string
     nationality: string
-    regionnumber: number | null
     isphysicallydisabled: $Enums.disability_type
     zonename: string
     mothertongue: $Enums.languages_type
     createdAt: Date | null
+    region: $Enums.regions_type
+    telegram_username: string
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1450,11 +1469,12 @@ export namespace Prisma {
     birthdate?: boolean
     useremail?: boolean
     nationality?: boolean
-    regionnumber?: boolean
     isphysicallydisabled?: boolean
     zonename?: boolean
     mothertongue?: boolean
     createdAt?: boolean
+    region?: boolean
+    telegram_username?: boolean
     universityusers?: boolean | User$universityusersArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1470,11 +1490,12 @@ export namespace Prisma {
     birthdate?: boolean
     useremail?: boolean
     nationality?: boolean
-    regionnumber?: boolean
     isphysicallydisabled?: boolean
     zonename?: boolean
     mothertongue?: boolean
     createdAt?: boolean
+    region?: boolean
+    telegram_username?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1489,11 +1510,12 @@ export namespace Prisma {
     birthdate?: boolean
     useremail?: boolean
     nationality?: boolean
-    regionnumber?: boolean
     isphysicallydisabled?: boolean
     zonename?: boolean
     mothertongue?: boolean
     createdAt?: boolean
+    region?: boolean
+    telegram_username?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1508,14 +1530,15 @@ export namespace Prisma {
     birthdate?: boolean
     useremail?: boolean
     nationality?: boolean
-    regionnumber?: boolean
     isphysicallydisabled?: boolean
     zonename?: boolean
     mothertongue?: boolean
     createdAt?: boolean
+    region?: boolean
+    telegram_username?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "studentid" | "firstname" | "middlename" | "lastname" | "gender" | "baptismalname" | "phone" | "birthdate" | "useremail" | "nationality" | "regionnumber" | "isphysicallydisabled" | "zonename" | "mothertongue" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "studentid" | "firstname" | "middlename" | "lastname" | "gender" | "baptismalname" | "phone" | "birthdate" | "useremail" | "nationality" | "isphysicallydisabled" | "zonename" | "mothertongue" | "createdAt" | "region" | "telegram_username", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     universityusers?: boolean | User$universityusersArgs<ExtArgs>
   }
@@ -1539,11 +1562,12 @@ export namespace Prisma {
       birthdate: Date
       useremail: string
       nationality: string
-      regionnumber: number | null
       isphysicallydisabled: $Enums.disability_type
       zonename: string
       mothertongue: $Enums.languages_type
       createdAt: Date | null
+      region: $Enums.regions_type
+      telegram_username: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1979,11 +2003,12 @@ export namespace Prisma {
     readonly birthdate: FieldRef<"User", 'DateTime'>
     readonly useremail: FieldRef<"User", 'String'>
     readonly nationality: FieldRef<"User", 'String'>
-    readonly regionnumber: FieldRef<"User", 'Int'>
     readonly isphysicallydisabled: FieldRef<"User", 'disability_type'>
     readonly zonename: FieldRef<"User", 'String'>
     readonly mothertongue: FieldRef<"User", 'languages_type'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
+    readonly region: FieldRef<"User", 'regions_type'>
+    readonly telegram_username: FieldRef<"User", 'String'>
   }
     
 
@@ -3471,6 +3496,7 @@ export namespace Prisma {
     confessionfather: string | null
     advisors: $Enums.advisor_type | null
     role: $Enums.role_type | null
+    holidayincampus: boolean | null
   }
 
   export type UniversityusersMaxAggregateOutputType = {
@@ -3484,6 +3510,7 @@ export namespace Prisma {
     confessionfather: string | null
     advisors: $Enums.advisor_type | null
     role: $Enums.role_type | null
+    holidayincampus: boolean | null
   }
 
   export type UniversityusersCountAggregateOutputType = {
@@ -3497,6 +3524,7 @@ export namespace Prisma {
     confessionfather: number
     advisors: number
     role: number
+    holidayincampus: number
     _all: number
   }
 
@@ -3522,6 +3550,7 @@ export namespace Prisma {
     confessionfather?: true
     advisors?: true
     role?: true
+    holidayincampus?: true
   }
 
   export type UniversityusersMaxAggregateInputType = {
@@ -3535,6 +3564,7 @@ export namespace Prisma {
     confessionfather?: true
     advisors?: true
     role?: true
+    holidayincampus?: true
   }
 
   export type UniversityusersCountAggregateInputType = {
@@ -3548,6 +3578,7 @@ export namespace Prisma {
     confessionfather?: true
     advisors?: true
     role?: true
+    holidayincampus?: true
     _all?: true
   }
 
@@ -3648,6 +3679,7 @@ export namespace Prisma {
     confessionfather: string | null
     advisors: $Enums.advisor_type
     role: $Enums.role_type
+    holidayincampus: boolean | null
     _count: UniversityusersCountAggregateOutputType | null
     _avg: UniversityusersAvgAggregateOutputType | null
     _sum: UniversityusersSumAggregateOutputType | null
@@ -3680,6 +3712,7 @@ export namespace Prisma {
     confessionfather?: boolean
     advisors?: boolean
     role?: boolean
+    holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3694,6 +3727,7 @@ export namespace Prisma {
     confessionfather?: boolean
     advisors?: boolean
     role?: boolean
+    holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3708,6 +3742,7 @@ export namespace Prisma {
     confessionfather?: boolean
     advisors?: boolean
     role?: boolean
+    holidayincampus?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3722,9 +3757,10 @@ export namespace Prisma {
     confessionfather?: boolean
     advisors?: boolean
     role?: boolean
+    holidayincampus?: boolean
   }
 
-  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role", ExtArgs["result"]["universityusers"]>
+  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "holidayincampus", ExtArgs["result"]["universityusers"]>
   export type universityusersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     User?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3751,6 +3787,7 @@ export namespace Prisma {
       confessionfather: string | null
       advisors: $Enums.advisor_type
       role: $Enums.role_type
+      holidayincampus: boolean | null
     }, ExtArgs["result"]["universityusers"]>
     composites: {}
   }
@@ -4185,6 +4222,7 @@ export namespace Prisma {
     readonly confessionfather: FieldRef<"universityusers", 'String'>
     readonly advisors: FieldRef<"universityusers", 'advisor_type'>
     readonly role: FieldRef<"universityusers", 'role_type'>
+    readonly holidayincampus: FieldRef<"universityusers", 'Boolean'>
   }
     
 
@@ -4625,11 +4663,12 @@ export namespace Prisma {
     birthdate: 'birthdate',
     useremail: 'useremail',
     nationality: 'nationality',
-    regionnumber: 'regionnumber',
     isphysicallydisabled: 'isphysicallydisabled',
     zonename: 'zonename',
     mothertongue: 'mothertongue',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    region: 'region',
+    telegram_username: 'telegram_username'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4656,7 +4695,8 @@ export namespace Prisma {
     batch: 'batch',
     confessionfather: 'confessionfather',
     advisors: 'advisors',
-    role: 'role'
+    role: 'role',
+    holidayincampus: 'holidayincampus'
   };
 
   export type UniversityusersScalarFieldEnum = (typeof UniversityusersScalarFieldEnum)[keyof typeof UniversityusersScalarFieldEnum]
@@ -4776,6 +4816,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'regions_type'
+   */
+  export type Enumregions_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'regions_type'>
+    
+
+
+  /**
+   * Reference to a field of type 'regions_type[]'
+   */
+  export type ListEnumregions_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'regions_type[]'>
+    
+
+
+  /**
    * Reference to a field of type 'sponsorship_type'
    */
   export type Enumsponsorship_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'sponsorship_type'>
@@ -4870,11 +4924,12 @@ export namespace Prisma {
     birthdate?: DateTimeFilter<"User"> | Date | string
     useremail?: StringFilter<"User"> | string
     nationality?: StringFilter<"User"> | string
-    regionnumber?: IntNullableFilter<"User"> | number | null
     isphysicallydisabled?: Enumdisability_typeFilter<"User"> | $Enums.disability_type
     zonename?: StringFilter<"User"> | string
     mothertongue?: Enumlanguages_typeFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    region?: Enumregions_typeFilter<"User"> | $Enums.regions_type
+    telegram_username?: StringFilter<"User"> | string
     universityusers?: XOR<UniversityusersNullableScalarRelationFilter, universityusersWhereInput> | null
   }
 
@@ -4890,11 +4945,12 @@ export namespace Prisma {
     birthdate?: SortOrder
     useremail?: SortOrder
     nationality?: SortOrder
-    regionnumber?: SortOrderInput | SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
     mothertongue?: SortOrder
     createdAt?: SortOrderInput | SortOrder
+    region?: SortOrder
+    telegram_username?: SortOrder
     universityusers?: universityusersOrderByWithRelationInput
   }
 
@@ -4903,6 +4959,7 @@ export namespace Prisma {
     studentid?: string
     phone?: string
     useremail?: string
+    telegram_username?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -4913,13 +4970,13 @@ export namespace Prisma {
     baptismalname?: StringFilter<"User"> | string
     birthdate?: DateTimeFilter<"User"> | Date | string
     nationality?: StringFilter<"User"> | string
-    regionnumber?: IntNullableFilter<"User"> | number | null
     isphysicallydisabled?: Enumdisability_typeFilter<"User"> | $Enums.disability_type
     zonename?: StringFilter<"User"> | string
     mothertongue?: Enumlanguages_typeFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    region?: Enumregions_typeFilter<"User"> | $Enums.regions_type
     universityusers?: XOR<UniversityusersNullableScalarRelationFilter, universityusersWhereInput> | null
-  }, "userid" | "studentid" | "phone" | "useremail">
+  }, "userid" | "studentid" | "phone" | "useremail" | "telegram_username">
 
   export type UserOrderByWithAggregationInput = {
     userid?: SortOrder
@@ -4933,11 +4990,12 @@ export namespace Prisma {
     birthdate?: SortOrder
     useremail?: SortOrder
     nationality?: SortOrder
-    regionnumber?: SortOrderInput | SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
     mothertongue?: SortOrder
     createdAt?: SortOrderInput | SortOrder
+    region?: SortOrder
+    telegram_username?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -4960,11 +5018,12 @@ export namespace Prisma {
     birthdate?: DateTimeWithAggregatesFilter<"User"> | Date | string
     useremail?: StringWithAggregatesFilter<"User"> | string
     nationality?: StringWithAggregatesFilter<"User"> | string
-    regionnumber?: IntNullableWithAggregatesFilter<"User"> | number | null
     isphysicallydisabled?: Enumdisability_typeWithAggregatesFilter<"User"> | $Enums.disability_type
     zonename?: StringWithAggregatesFilter<"User"> | string
     mothertongue?: Enumlanguages_typeWithAggregatesFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    region?: Enumregions_typeWithAggregatesFilter<"User"> | $Enums.regions_type
+    telegram_username?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type adminWhereInput = {
@@ -5035,6 +5094,7 @@ export namespace Prisma {
     confessionfather?: StringNullableFilter<"universityusers"> | string | null
     advisors?: Enumadvisor_typeFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
+    holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -5049,6 +5109,7 @@ export namespace Prisma {
     confessionfather?: SortOrderInput | SortOrder
     advisors?: SortOrder
     role?: SortOrder
+    holidayincampus?: SortOrderInput | SortOrder
     User?: UserOrderByWithRelationInput
   }
 
@@ -5066,6 +5127,7 @@ export namespace Prisma {
     confessionfather?: StringNullableFilter<"universityusers"> | string | null
     advisors?: Enumadvisor_typeFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
+    holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "userid">
 
@@ -5080,6 +5142,7 @@ export namespace Prisma {
     confessionfather?: SortOrderInput | SortOrder
     advisors?: SortOrder
     role?: SortOrder
+    holidayincampus?: SortOrderInput | SortOrder
     _count?: universityusersCountOrderByAggregateInput
     _avg?: universityusersAvgOrderByAggregateInput
     _max?: universityusersMaxOrderByAggregateInput
@@ -5101,6 +5164,7 @@ export namespace Prisma {
     confessionfather?: StringNullableWithAggregatesFilter<"universityusers"> | string | null
     advisors?: Enumadvisor_typeWithAggregatesFilter<"universityusers"> | $Enums.advisor_type
     role?: Enumrole_typeWithAggregatesFilter<"universityusers"> | $Enums.role_type
+    holidayincampus?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
   }
 
   export type UserCreateInput = {
@@ -5109,16 +5173,17 @@ export namespace Prisma {
     middlename: string
     lastname: string
     gender: $Enums.gender_type
-    baptismalname: string
+    baptismalname?: string
     phone: string
     birthdate: Date | string
     useremail: string
     nationality: string
-    regionnumber?: number | null
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
+    region?: $Enums.regions_type
+    telegram_username?: string
     universityusers?: universityusersCreateNestedOneWithoutUserInput
   }
 
@@ -5129,16 +5194,17 @@ export namespace Prisma {
     middlename: string
     lastname: string
     gender: $Enums.gender_type
-    baptismalname: string
+    baptismalname?: string
     phone: string
     birthdate: Date | string
     useremail: string
     nationality: string
-    regionnumber?: number | null
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
+    region?: $Enums.regions_type
+    telegram_username?: string
     universityusers?: universityusersUncheckedCreateNestedOneWithoutUserInput
   }
 
@@ -5153,11 +5219,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
     universityusers?: universityusersUpdateOneWithoutUserNestedInput
   }
 
@@ -5173,11 +5240,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
     universityusers?: universityusersUncheckedUpdateOneWithoutUserNestedInput
   }
 
@@ -5188,16 +5256,17 @@ export namespace Prisma {
     middlename: string
     lastname: string
     gender: $Enums.gender_type
-    baptismalname: string
+    baptismalname?: string
     phone: string
     birthdate: Date | string
     useremail: string
     nationality: string
-    regionnumber?: number | null
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
+    region?: $Enums.regions_type
+    telegram_username?: string
   }
 
   export type UserUpdateManyMutationInput = {
@@ -5211,11 +5280,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -5230,11 +5300,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
   export type adminCreateInput = {
@@ -5300,6 +5371,7 @@ export namespace Prisma {
     confessionfather?: string | null
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
+    holidayincampus?: boolean | null
     User: UserCreateNestedOneWithoutUniversityusersInput
   }
 
@@ -5314,6 +5386,7 @@ export namespace Prisma {
     confessionfather?: string | null
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
+    holidayincampus?: boolean | null
   }
 
   export type universityusersUpdateInput = {
@@ -5326,6 +5399,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     User?: UserUpdateOneRequiredWithoutUniversityusersNestedInput
   }
 
@@ -5340,6 +5414,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersCreateManyInput = {
@@ -5353,6 +5428,7 @@ export namespace Prisma {
     confessionfather?: string | null
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
+    holidayincampus?: boolean | null
   }
 
   export type universityusersUpdateManyMutationInput = {
@@ -5365,6 +5441,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersUncheckedUpdateManyInput = {
@@ -5378,6 +5455,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -5424,17 +5502,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type Enumdisability_typeFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -5460,6 +5527,13 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type Enumregions_typeFilter<$PrismaModel = never> = {
+    equals?: $Enums.regions_type | Enumregions_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumregions_typeFilter<$PrismaModel> | $Enums.regions_type
+  }
+
   export type UniversityusersNullableScalarRelationFilter = {
     is?: universityusersWhereInput | null
     isNot?: universityusersWhereInput | null
@@ -5482,16 +5556,16 @@ export namespace Prisma {
     birthdate?: SortOrder
     useremail?: SortOrder
     nationality?: SortOrder
-    regionnumber?: SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
     mothertongue?: SortOrder
     createdAt?: SortOrder
+    region?: SortOrder
+    telegram_username?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
     userid?: SortOrder
-    regionnumber?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -5506,11 +5580,12 @@ export namespace Prisma {
     birthdate?: SortOrder
     useremail?: SortOrder
     nationality?: SortOrder
-    regionnumber?: SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
     mothertongue?: SortOrder
     createdAt?: SortOrder
+    region?: SortOrder
+    telegram_username?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -5525,16 +5600,16 @@ export namespace Prisma {
     birthdate?: SortOrder
     useremail?: SortOrder
     nationality?: SortOrder
-    regionnumber?: SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
     mothertongue?: SortOrder
     createdAt?: SortOrder
+    region?: SortOrder
+    telegram_username?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
     userid?: SortOrder
-    regionnumber?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -5595,22 +5670,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
   export type Enumdisability_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -5643,6 +5702,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type Enumregions_typeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.regions_type | Enumregions_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumregions_typeWithAggregatesFilter<$PrismaModel> | $Enums.regions_type
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumregions_typeFilter<$PrismaModel>
+    _max?: NestedEnumregions_typeFilter<$PrismaModel>
   }
 
   export type adminCountOrderByAggregateInput = {
@@ -5741,6 +5810,7 @@ export namespace Prisma {
     confessionfather?: SortOrder
     advisors?: SortOrder
     role?: SortOrder
+    holidayincampus?: SortOrder
   }
 
   export type universityusersAvgOrderByAggregateInput = {
@@ -5759,6 +5829,7 @@ export namespace Prisma {
     confessionfather?: SortOrder
     advisors?: SortOrder
     role?: SortOrder
+    holidayincampus?: SortOrder
   }
 
   export type universityusersMinOrderByAggregateInput = {
@@ -5772,6 +5843,7 @@ export namespace Prisma {
     confessionfather?: SortOrder
     advisors?: SortOrder
     role?: SortOrder
+    holidayincampus?: SortOrder
   }
 
   export type universityusersSumOrderByAggregateInput = {
@@ -5869,14 +5941,6 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type Enumdisability_typeFieldUpdateOperationsInput = {
     set?: $Enums.disability_type
   }
@@ -5887,6 +5951,10 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type Enumregions_typeFieldUpdateOperationsInput = {
+    set?: $Enums.regions_type
   }
 
   export type universityusersUpdateOneWithoutUserNestedInput = {
@@ -5998,17 +6066,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumdisability_typeFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -6032,6 +6089,13 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumregions_typeFilter<$PrismaModel = never> = {
+    equals?: $Enums.regions_type | Enumregions_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumregions_typeFilter<$PrismaModel> | $Enums.regions_type
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6102,33 +6166,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumdisability_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -6161,6 +6198,27 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumregions_typeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.regions_type | Enumregions_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumregions_typeWithAggregatesFilter<$PrismaModel> | $Enums.regions_type
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumregions_typeFilter<$PrismaModel>
+    _max?: NestedEnumregions_typeFilter<$PrismaModel>
   }
 
   export type NestedEnumsponsorship_typeFilter<$PrismaModel = never> = {
@@ -6285,6 +6343,7 @@ export namespace Prisma {
     confessionfather?: string | null
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
+    holidayincampus?: boolean | null
   }
 
   export type universityusersUncheckedCreateWithoutUserInput = {
@@ -6297,6 +6356,7 @@ export namespace Prisma {
     confessionfather?: string | null
     advisors: $Enums.advisor_type
     role?: $Enums.role_type
+    holidayincampus?: boolean | null
   }
 
   export type universityusersCreateOrConnectWithoutUserInput = {
@@ -6325,6 +6385,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersUncheckedUpdateWithoutUserInput = {
@@ -6337,6 +6398,7 @@ export namespace Prisma {
     confessionfather?: NullableStringFieldUpdateOperationsInput | string | null
     advisors?: Enumadvisor_typeFieldUpdateOperationsInput | $Enums.advisor_type
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
+    holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type UserCreateWithoutUniversityusersInput = {
@@ -6345,16 +6407,17 @@ export namespace Prisma {
     middlename: string
     lastname: string
     gender: $Enums.gender_type
-    baptismalname: string
+    baptismalname?: string
     phone: string
     birthdate: Date | string
     useremail: string
     nationality: string
-    regionnumber?: number | null
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
+    region?: $Enums.regions_type
+    telegram_username?: string
   }
 
   export type UserUncheckedCreateWithoutUniversityusersInput = {
@@ -6364,16 +6427,17 @@ export namespace Prisma {
     middlename: string
     lastname: string
     gender: $Enums.gender_type
-    baptismalname: string
+    baptismalname?: string
     phone: string
     birthdate: Date | string
     useremail: string
     nationality: string
-    regionnumber?: number | null
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
+    region?: $Enums.regions_type
+    telegram_username?: string
   }
 
   export type UserCreateOrConnectWithoutUniversityusersInput = {
@@ -6403,11 +6467,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateWithoutUniversityusersInput = {
@@ -6422,11 +6487,12 @@ export namespace Prisma {
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
     useremail?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
-    regionnumber?: NullableIntFieldUpdateOperationsInput | number | null
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
 
