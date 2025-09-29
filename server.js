@@ -3,7 +3,7 @@ import cors from "cors";
 import UserRoutes from "./routes/user.routes.js";
 import AdminRoutes from "./routes/admin.routes.js";
 import jwt from "jsonwebtoken";
-import { handleError, hashPassword } from "./utils/util.js";
+import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
 import { prisma } from "./models/DatabaseConfig.js";
@@ -11,11 +11,7 @@ import { prisma } from "./models/DatabaseConfig.js";
 const app = express();
 app.use(
   cors({
-    origin: [
-      "https://6kilogbigubae.vercel.app",
-      "http://10.4.192.207:5173",
-      "http://localhost:5173",
-    ],
+    origin: ["https://6kilogbigubae.vercel.app", "http://localhost:5173"],
     credentials: true,
   })
 );

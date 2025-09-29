@@ -61,6 +61,8 @@ export function JoiValidator() {
       holidayincampus: Joi.boolean().optional(),
       batch: Joi.number().required(),
       confessionfather: Joi.string().allow(null, ""),
+      tookcourse: Joi.boolean().optional(),
+      ispriestordeacon: Joi.boolean().optional(),
       advisors: Joi.string(),
       role: Joi.string().required(),
       mealcard: Joi.string().allow(null, "").optional().max(10),

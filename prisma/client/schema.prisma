@@ -52,6 +52,8 @@ model universityusers {
   role             role_type          @default(None)
   coursetaken      Boolean            @default(true)
   holidayincampus  Boolean?           @default(false)
+  tookcourse       Boolean?           @default(false)
+  ispriestordeacon Boolean?           @default(false)
   User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
 }
 

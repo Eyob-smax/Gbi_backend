@@ -160,7 +160,9 @@ exports.Prisma.UniversityusersScalarFieldEnum = {
   advisors: 'advisors',
   role: 'role',
   coursetaken: 'coursetaken',
-  holidayincampus: 'holidayincampus'
+  holidayincampus: 'holidayincampus',
+  tookcourse: 'tookcourse',
+  ispriestordeacon: 'ispriestordeacon'
 };
 
 exports.Prisma.SortOrder = {

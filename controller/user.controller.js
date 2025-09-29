@@ -57,12 +57,10 @@ const addUser = asyncHandler(async (req, res) => {
               ? "None"
               : req.body?.universityusers?.role,
           mealcard: req.body?.universityusers?.mealcard || "non",
-          cafeteriaaccess: !!req.body?.universityusers?.mealcard,
-          holidayincampus:
-            req.body?.universityusers?.mealcard &&
-            req.body?.universityusers?.holidayincampus
-              ? true
-              : false,
+          cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
+          holidayincampus: req.body?.universityusers?.holidayincampus,
+          tookcourse: req.body?.universityusers?.tookcourse,
+          ispriestordeacon: req.body?.universityusers?.ispriestordeacon,
         },
       },
     },
@@ -175,7 +173,15 @@ const updateUser = asyncHandler(async (req, res) => {
               req.body?.universityusers?.mealCard !== undefined
                 ? !!req.body?.universityusers?.mealCard
                 : existingUser.universityusers?.cafeteriaaccess,
-            holidayincampus: req.body?.universityusers?.holidayincampus,
+            holidayincampus:
+              req.body?.universityusers?.holidayincampus ||
+              existingUser.universityusers?.holidayincampus,
+            tookcourse:
+              req.body?.universityusers?.tookcourse ||
+              existingUser.universityusers?.tookcourse,
+            ispriestordeacon:
+              req.body?.universityusers?.ispriestordeacon ||
+              existingUser.universityusers?.ispriestordeacon,
           },
         },
       },

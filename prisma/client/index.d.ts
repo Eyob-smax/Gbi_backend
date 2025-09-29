@@ -3498,6 +3498,8 @@ export namespace Prisma {
     role: $Enums.role_type | null
     coursetaken: boolean | null
     holidayincampus: boolean | null
+    tookcourse: boolean | null
+    ispriestordeacon: boolean | null
   }
 
   export type UniversityusersMaxAggregateOutputType = {
@@ -3513,6 +3515,8 @@ export namespace Prisma {
     role: $Enums.role_type | null
     coursetaken: boolean | null
     holidayincampus: boolean | null
+    tookcourse: boolean | null
+    ispriestordeacon: boolean | null
   }
 
   export type UniversityusersCountAggregateOutputType = {
@@ -3528,6 +3532,8 @@ export namespace Prisma {
     role: number
     coursetaken: number
     holidayincampus: number
+    tookcourse: number
+    ispriestordeacon: number
     _all: number
   }
 
@@ -3555,6 +3561,8 @@ export namespace Prisma {
     role?: true
     coursetaken?: true
     holidayincampus?: true
+    tookcourse?: true
+    ispriestordeacon?: true
   }
 
   export type UniversityusersMaxAggregateInputType = {
@@ -3570,6 +3578,8 @@ export namespace Prisma {
     role?: true
     coursetaken?: true
     holidayincampus?: true
+    tookcourse?: true
+    ispriestordeacon?: true
   }
 
   export type UniversityusersCountAggregateInputType = {
@@ -3585,6 +3595,8 @@ export namespace Prisma {
     role?: true
     coursetaken?: true
     holidayincampus?: true
+    tookcourse?: true
+    ispriestordeacon?: true
     _all?: true
   }
 
@@ -3687,6 +3699,8 @@ export namespace Prisma {
     role: $Enums.role_type
     coursetaken: boolean
     holidayincampus: boolean | null
+    tookcourse: boolean | null
+    ispriestordeacon: boolean | null
     _count: UniversityusersCountAggregateOutputType | null
     _avg: UniversityusersAvgAggregateOutputType | null
     _sum: UniversityusersSumAggregateOutputType | null
@@ -3721,6 +3735,8 @@ export namespace Prisma {
     role?: boolean
     coursetaken?: boolean
     holidayincampus?: boolean
+    tookcourse?: boolean
+    ispriestordeacon?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3737,6 +3753,8 @@ export namespace Prisma {
     role?: boolean
     coursetaken?: boolean
     holidayincampus?: boolean
+    tookcourse?: boolean
+    ispriestordeacon?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3753,6 +3771,8 @@ export namespace Prisma {
     role?: boolean
     coursetaken?: boolean
     holidayincampus?: boolean
+    tookcourse?: boolean
+    ispriestordeacon?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3769,9 +3789,11 @@ export namespace Prisma {
     role?: boolean
     coursetaken?: boolean
     holidayincampus?: boolean
+    tookcourse?: boolean
+    ispriestordeacon?: boolean
   }
 
-  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "holidayincampus", ExtArgs["result"]["universityusers"]>
+  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "holidayincampus" | "tookcourse" | "ispriestordeacon", ExtArgs["result"]["universityusers"]>
   export type universityusersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     User?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3800,6 +3822,8 @@ export namespace Prisma {
       role: $Enums.role_type
       coursetaken: boolean
       holidayincampus: boolean | null
+      tookcourse: boolean | null
+      ispriestordeacon: boolean | null
     }, ExtArgs["result"]["universityusers"]>
     composites: {}
   }
@@ -4236,6 +4260,8 @@ export namespace Prisma {
     readonly role: FieldRef<"universityusers", 'role_type'>
     readonly coursetaken: FieldRef<"universityusers", 'Boolean'>
     readonly holidayincampus: FieldRef<"universityusers", 'Boolean'>
+    readonly tookcourse: FieldRef<"universityusers", 'Boolean'>
+    readonly ispriestordeacon: FieldRef<"universityusers", 'Boolean'>
   }
     
 
@@ -4710,7 +4736,9 @@ export namespace Prisma {
     advisors: 'advisors',
     role: 'role',
     coursetaken: 'coursetaken',
-    holidayincampus: 'holidayincampus'
+    holidayincampus: 'holidayincampus',
+    tookcourse: 'tookcourse',
+    ispriestordeacon: 'ispriestordeacon'
   };
 
   export type UniversityusersScalarFieldEnum = (typeof UniversityusersScalarFieldEnum)[keyof typeof UniversityusersScalarFieldEnum]
@@ -5110,6 +5138,8 @@ export namespace Prisma {
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
+    tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
+    ispriestordeacon?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -5126,6 +5156,8 @@ export namespace Prisma {
     role?: SortOrder
     coursetaken?: SortOrder
     holidayincampus?: SortOrderInput | SortOrder
+    tookcourse?: SortOrderInput | SortOrder
+    ispriestordeacon?: SortOrderInput | SortOrder
     User?: UserOrderByWithRelationInput
   }
 
@@ -5145,6 +5177,8 @@ export namespace Prisma {
     role?: Enumrole_typeFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
+    tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
+    ispriestordeacon?: BoolNullableFilter<"universityusers"> | boolean | null
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "userid">
 
@@ -5161,6 +5195,8 @@ export namespace Prisma {
     role?: SortOrder
     coursetaken?: SortOrder
     holidayincampus?: SortOrderInput | SortOrder
+    tookcourse?: SortOrderInput | SortOrder
+    ispriestordeacon?: SortOrderInput | SortOrder
     _count?: universityusersCountOrderByAggregateInput
     _avg?: universityusersAvgOrderByAggregateInput
     _max?: universityusersMaxOrderByAggregateInput
@@ -5184,6 +5220,8 @@ export namespace Prisma {
     role?: Enumrole_typeWithAggregatesFilter<"universityusers"> | $Enums.role_type
     coursetaken?: BoolWithAggregatesFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
+    tookcourse?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
+    ispriestordeacon?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
   }
 
   export type UserCreateInput = {
@@ -5392,6 +5430,8 @@ export namespace Prisma {
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
+    tookcourse?: boolean | null
+    ispriestordeacon?: boolean | null
     User: UserCreateNestedOneWithoutUniversityusersInput
   }
 
@@ -5408,6 +5448,8 @@ export namespace Prisma {
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
+    tookcourse?: boolean | null
+    ispriestordeacon?: boolean | null
   }
 
   export type universityusersUpdateInput = {
@@ -5422,6 +5464,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
     User?: UserUpdateOneRequiredWithoutUniversityusersNestedInput
   }
 
@@ -5438,6 +5482,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersCreateManyInput = {
@@ -5453,6 +5499,8 @@ export namespace Prisma {
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
+    tookcourse?: boolean | null
+    ispriestordeacon?: boolean | null
   }
 
   export type universityusersUpdateManyMutationInput = {
@@ -5467,6 +5515,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersUncheckedUpdateManyInput = {
@@ -5482,6 +5532,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -5843,6 +5895,8 @@ export namespace Prisma {
     role?: SortOrder
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
+    tookcourse?: SortOrder
+    ispriestordeacon?: SortOrder
   }
 
   export type universityusersAvgOrderByAggregateInput = {
@@ -5863,6 +5917,8 @@ export namespace Prisma {
     role?: SortOrder
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
+    tookcourse?: SortOrder
+    ispriestordeacon?: SortOrder
   }
 
   export type universityusersMinOrderByAggregateInput = {
@@ -5878,6 +5934,8 @@ export namespace Prisma {
     role?: SortOrder
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
+    tookcourse?: SortOrder
+    ispriestordeacon?: SortOrder
   }
 
   export type universityusersSumOrderByAggregateInput = {
@@ -6404,6 +6462,8 @@ export namespace Prisma {
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
+    tookcourse?: boolean | null
+    ispriestordeacon?: boolean | null
   }
 
   export type universityusersUncheckedCreateWithoutUserInput = {
@@ -6418,6 +6478,8 @@ export namespace Prisma {
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
+    tookcourse?: boolean | null
+    ispriestordeacon?: boolean | null
   }
 
   export type universityusersCreateOrConnectWithoutUserInput = {
@@ -6448,6 +6510,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type universityusersUncheckedUpdateWithoutUserInput = {
@@ -6462,6 +6526,8 @@ export namespace Prisma {
     role?: Enumrole_typeFieldUpdateOperationsInput | $Enums.role_type
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type UserCreateWithoutUniversityusersInput = {
