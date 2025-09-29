@@ -1428,7 +1428,7 @@ export namespace Prisma {
     baptismalname: string
     phone: string
     birthdate: Date
-    useremail: string
+    useremail: string | null
     nationality: string
     isphysicallydisabled: $Enums.disability_type
     zonename: string
@@ -1560,7 +1560,7 @@ export namespace Prisma {
       baptismalname: string
       phone: string
       birthdate: Date
-      useremail: string
+      useremail: string | null
       nationality: string
       isphysicallydisabled: $Enums.disability_type
       zonename: string
@@ -4964,7 +4964,7 @@ export namespace Prisma {
     baptismalname?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     birthdate?: DateTimeFilter<"User"> | Date | string
-    useremail?: StringFilter<"User"> | string
+    useremail?: StringNullableFilter<"User"> | string | null
     nationality?: StringFilter<"User"> | string
     isphysicallydisabled?: Enumdisability_typeFilter<"User"> | $Enums.disability_type
     zonename?: StringFilter<"User"> | string
@@ -4985,7 +4985,7 @@ export namespace Prisma {
     baptismalname?: SortOrder
     phone?: SortOrder
     birthdate?: SortOrder
-    useremail?: SortOrder
+    useremail?: SortOrderInput | SortOrder
     nationality?: SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
@@ -5030,7 +5030,7 @@ export namespace Prisma {
     baptismalname?: SortOrder
     phone?: SortOrder
     birthdate?: SortOrder
-    useremail?: SortOrder
+    useremail?: SortOrderInput | SortOrder
     nationality?: SortOrder
     isphysicallydisabled?: SortOrder
     zonename?: SortOrder
@@ -5058,7 +5058,7 @@ export namespace Prisma {
     baptismalname?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
     birthdate?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    useremail?: StringWithAggregatesFilter<"User"> | string
+    useremail?: StringNullableWithAggregatesFilter<"User"> | string | null
     nationality?: StringWithAggregatesFilter<"User"> | string
     isphysicallydisabled?: Enumdisability_typeWithAggregatesFilter<"User"> | $Enums.disability_type
     zonename?: StringWithAggregatesFilter<"User"> | string
@@ -5233,7 +5233,7 @@ export namespace Prisma {
     baptismalname?: string
     phone: string
     birthdate: Date | string
-    useremail: string
+    useremail?: string | null
     nationality: string
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
@@ -5254,7 +5254,7 @@ export namespace Prisma {
     baptismalname?: string
     phone: string
     birthdate: Date | string
-    useremail: string
+    useremail?: string | null
     nationality: string
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
@@ -5274,7 +5274,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
@@ -5295,7 +5295,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
@@ -5316,7 +5316,7 @@ export namespace Prisma {
     baptismalname?: string
     phone: string
     birthdate: Date | string
-    useremail: string
+    useremail?: string | null
     nationality: string
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
@@ -5335,7 +5335,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
@@ -5355,7 +5355,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
@@ -5426,7 +5426,7 @@ export namespace Prisma {
     mealcard?: string | null
     batch: number
     confessionfather?: string | null
-    advisors: $Enums.advisor_type
+    advisors?: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
@@ -5444,7 +5444,7 @@ export namespace Prisma {
     mealcard?: string | null
     batch: number
     confessionfather?: string | null
-    advisors: $Enums.advisor_type
+    advisors?: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
@@ -5495,7 +5495,7 @@ export namespace Prisma {
     mealcard?: string | null
     batch: number
     confessionfather?: string | null
-    advisors: $Enums.advisor_type
+    advisors?: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
@@ -5578,6 +5578,21 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type Enumdisability_typeFilter<$PrismaModel = never> = {
@@ -5748,6 +5763,24 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type Enumdisability_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -5841,21 +5874,6 @@ export namespace Prisma {
   export type BoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type Enumadvisor_typeFilter<$PrismaModel = never> = {
@@ -5971,24 +5989,6 @@ export namespace Prisma {
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type Enumadvisor_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.advisor_type | Enumadvisor_typeFieldRefInput<$PrismaModel>
     in?: $Enums.advisor_type[] | ListEnumadvisor_typeFieldRefInput<$PrismaModel>
@@ -6039,6 +6039,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type Enumdisability_typeFieldUpdateOperationsInput = {
@@ -6103,10 +6107,6 @@ export namespace Prisma {
     set?: boolean | null
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type Enumadvisor_typeFieldUpdateOperationsInput = {
     set?: $Enums.advisor_type
   }
@@ -6168,6 +6168,20 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumdisability_typeFilter<$PrismaModel = never> = {
@@ -6270,6 +6284,34 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumdisability_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.disability_type | Enumdisability_typeFieldRefInput<$PrismaModel>
     in?: $Enums.disability_type[] | ListEnumdisability_typeFieldRefInput<$PrismaModel>
@@ -6304,17 +6346,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumregions_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.regions_type | Enumregions_typeFieldRefInput<$PrismaModel>
     in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
@@ -6342,20 +6373,6 @@ export namespace Prisma {
   export type NestedBoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumadvisor_typeFilter<$PrismaModel = never> = {
@@ -6405,23 +6422,6 @@ export namespace Prisma {
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type NestedEnumadvisor_typeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.advisor_type | Enumadvisor_typeFieldRefInput<$PrismaModel>
     in?: $Enums.advisor_type[] | ListEnumadvisor_typeFieldRefInput<$PrismaModel>
@@ -6458,7 +6458,7 @@ export namespace Prisma {
     mealcard?: string | null
     batch: number
     confessionfather?: string | null
-    advisors: $Enums.advisor_type
+    advisors?: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
@@ -6474,7 +6474,7 @@ export namespace Prisma {
     mealcard?: string | null
     batch: number
     confessionfather?: string | null
-    advisors: $Enums.advisor_type
+    advisors?: $Enums.advisor_type
     role?: $Enums.role_type
     coursetaken?: boolean
     holidayincampus?: boolean | null
@@ -6539,7 +6539,7 @@ export namespace Prisma {
     baptismalname?: string
     phone: string
     birthdate: Date | string
-    useremail: string
+    useremail?: string | null
     nationality: string
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
@@ -6559,7 +6559,7 @@ export namespace Prisma {
     baptismalname?: string
     phone: string
     birthdate: Date | string
-    useremail: string
+    useremail?: string | null
     nationality: string
     isphysicallydisabled?: $Enums.disability_type
     zonename?: string
@@ -6594,7 +6594,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string
@@ -6614,7 +6614,7 @@ export namespace Prisma {
     baptismalname?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    useremail?: StringFieldUpdateOperationsInput | string
+    useremail?: NullableStringFieldUpdateOperationsInput | string | null
     nationality?: StringFieldUpdateOperationsInput | string
     isphysicallydisabled?: Enumdisability_typeFieldUpdateOperationsInput | $Enums.disability_type
     zonename?: StringFieldUpdateOperationsInput | string

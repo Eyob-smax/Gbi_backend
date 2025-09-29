@@ -121,67 +121,43 @@ const updateUser = asyncHandler(async (req, res) => {
   const updatedUser = await prisma.user.update({
     where: { studentid: studentId },
     data: {
-      studentid: req.body.studentid || existingUser.studentid,
-      firstname: req.body.firstname || existingUser.firstname,
-      middlename: req.body.middlename || existingUser.middlename,
-      lastname: req.body.lastname || existingUser.lastname,
-      telegram_username:
-        req.body?.telegram_username || existingUser.telegram_username,
-      gender: req.body.gender || existingUser.gender,
-      baptismalname: req.body.baptismalname || existingUser.baptismalname,
-      phone: req.body.phone || existingUser.phone,
-      birthdate: new Date(req.body.birthdate) || existingUser.birthdate,
-      useremail: req.body.useremail || existingUser.useremail,
-      nationality: req.body.nationality || existingUser.nationality,
-      mothertongue: req.body.mothertongue || existingUser.mothertongue,
-      zonename: req.body.zonename || existingUser.zonename,
+      studentid: req.body.studentid,
+      firstname: req.body.firstname,
+      middlename: req.body.middlename,
+      lastname: req.body.lastname,
+      telegram_username: req.body?.telegram_username,
+      gender: req.body.gender,
+      baptismalname: req.body.baptismalname,
+      phone: req.body.phone,
+      birthdate: new Date(req.body.birthdate),
+      useremail: req.body.useremail,
+      nationality: req.body.nationality,
+      mothertongue: req.body.mothertongue,
+      zonename: req.body.zonename,
       isphysicallydisabled: req.body.isphysicallydisabled,
-      region: req.body?.region || existingUser.region,
+      region: req.body?.region,
       universityusers: {
         update: {
           where: {
             userid: req.body?.userid,
           },
           data: {
-            departmentname:
-              req.body?.universityusers.departmentname ||
-              existingUser.universityusers?.departmentname,
-            sponsorshiptype:
-              req.body?.universityusers?.sponsorshiptype ||
-              existingUser.universityusers?.sponsorshiptype,
-            participation:
-              req.body?.universityusers?.participation ||
-              existingUser.universityusers?.participation,
-            batch:
-              Number(req.body?.universityusers?.batch) ||
-              existingUser.universityusers?.batch,
+            departmentname: req.body?.universityusers.departmentname,
+            sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
+            participation: req.body?.universityusers?.participation,
+            batch: Number(req.body?.universityusers?.batch),
             coursetaken: req.body?.universityusers?.coursetaken,
             confessionfather:
               req.body?.universityusers?.confessionfather !== undefined
                 ? req.body?.universityusers?.confessionfather
                 : existingUser.universityusers?.confessionfather,
-            advisors:
-              req.body?.universityusers?.universityusers?.advisors ||
-              existingUser.universityusers?.advisors,
-            role:
-              req.body?.universityusers?.role ||
-              existingUser.universityusers?.role,
-            mealcard:
-              req.body?.universityusers?.mealcard ||
-              existingUser.universityusers?.mealcard,
-            cafeteriaaccess:
-              req.body?.universityusers?.mealCard !== undefined
-                ? !!req.body?.universityusers?.mealCard
-                : existingUser.universityusers?.cafeteriaaccess,
-            holidayincampus:
-              req.body?.universityusers?.holidayincampus ||
-              existingUser.universityusers?.holidayincampus,
-            tookcourse:
-              req.body?.universityusers?.tookcourse ||
-              existingUser.universityusers?.tookcourse,
-            ispriestordeacon:
-              req.body?.universityusers?.ispriestordeacon ||
-              existingUser.universityusers?.ispriestordeacon,
+            advisors: req.body?.universityusers?.universityusers?.advisors,
+            role: req.body?.universityusers?.role,
+            mealcard: req.body?.universityusers?.mealcard,
+            cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
+            holidayincampus: req.body?.universityusers?.holidayincampus,
+            tookcourse: req.body?.universityusers?.tookcourse,
+            ispriestordeacon: req.body?.universityusers?.ispriestordeacon,
           },
         },
       },

@@ -1,7 +1,7 @@
 import { PrismaClient } from "../prisma/client/index.js";
 export const prisma = new PrismaClient();
 
-const MAX_RETRIES = 5;
+const MAX_RETRIES = 10;
 const RETRY_DELAY_MS = 2000;
 
 async function connectPrismaWithRetry(attempt = 1) {
