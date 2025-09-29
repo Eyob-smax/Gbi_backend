@@ -252,8 +252,6 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
 });
 
 const logoutAdmin = asyncHandler(async (req, res) => {
-  console.log("Logging out admin...");
-
   try {
     res.clearCookie("jwt", {
       httpOnly: true,
@@ -265,7 +263,6 @@ const logoutAdmin = asyncHandler(async (req, res) => {
 
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (err) {
-    console.error("Logout error:", err);
     res.status(500).json({
       success: false,
       message:
