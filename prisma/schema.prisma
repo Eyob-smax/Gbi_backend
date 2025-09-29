@@ -50,8 +50,10 @@ model universityusers {
   confessionfather String?            @db.VarChar(100)
   advisors         advisor_type
   role             role_type          @default(None)
-  coursetaken      Boolean       @default(true)
+  coursetaken      Boolean            @default(true)
   holidayincampus  Boolean?           @default(false)
+  tookcourse       Boolean?           @default(false)
+  ispriestordeacon Boolean?           @default(false)
   User             User               @relation(fields: [userid], references: [userid], onUpdate:Cascade, onDelete: Cascade)
 }
 
@@ -59,7 +61,6 @@ enum gender_type {
   Female
   Male
 }
-
 
 enum advisor_type {
   Yes
