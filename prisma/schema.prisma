@@ -27,7 +27,7 @@ model User {
   mothertongue         languages_type   @default(Not_Specified)
   createdAt            DateTime?        @default(now())
   region               regions_type     @default(Not_Specified)
-  clergicalstatus      clerical_status  @default(none)
+  clergicalstatus      clerical_status  @default(None)
   telegram_username    String           @unique @default("not_specified") @db.VarChar(50)
   universityusers      universityusers?
 }

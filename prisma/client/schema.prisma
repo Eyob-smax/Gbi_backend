@@ -27,6 +27,7 @@ model User {
   mothertongue         languages_type   @default(Not_Specified)
   createdAt            DateTime?        @default(now())
   region               regions_type     @default(Not_Specified)
+  clergicalstatus      clerical_status  @default(None)
   telegram_username    String           @unique @default("not_specified") @db.VarChar(50)
   universityusers      universityusers?
 }
@@ -53,7 +54,7 @@ model universityusers {
   coursetaken      Boolean            @default(true)
   holidayincampus  Boolean?           @default(false)
   tookcourse       Boolean?           @default(false)
-  ispriestordeacon Boolean?           @default(false)
+  activitylevel    activity           @default(Active)
   User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
 }
 
@@ -116,6 +117,19 @@ enum participation_type {
   Professional_and_Community_Development_Section                 @map("Professional and Community Development Section")
   Batch_and_Programs_Coordination_Section                        @map("Batch and Programs Coordination Section")
   Member_Care_Advice_and_Capacity_Building_Section               @map("Member Care Advice and Capacity Building Section")
+  None
+}
+
+enum activity {
+  Very_Active
+  Active
+  Less_Active
+  Not_Active
+}
+
+enum clerical_status {
+  Deacon
+  Priest
   None
 }
 
