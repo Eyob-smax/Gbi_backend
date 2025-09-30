@@ -80,41 +80,113 @@ export function JoiAdminValidator() {
 }
 
 export function handleError(err) {
+  // --- Common Database Errors (P2xxx) ---
+
+  // P2002: Unique Constraint Violation
   if (err.code === "P2002") {
-    return { success: false, message: "Email or phone already exists." };
+    // You can extract the violating fields from err.meta.target for a better message
+    const fields = err.meta?.target
+      ? ` on field(s): ${err.meta.target.join(", ")}`
+      : "";
+    return {
+      success: false,
+      message: `Unique constraint failed${fields}. The record already exists.`,
+    };
   }
 
-  if (err.code === "P2000") {
-    return { success: false, message: "Value too long for column!" };
+  if (err.code === "P2003") {
+    return {
+      success: false,
+      message: "Foreign key constraint failed. Related record not found.",
+    };
   }
 
   if (err.code === "P2005") {
     return {
       success: false,
-      message: "Null value in a non-nullable field",
+      message: "Invalid data value for a database field.",
     };
   }
-  if (err.code === "P2015") {
+
+  if (err.code === "P2010") {
     return {
       success: false,
-      message: "Missing required argument",
+      message: "Raw database query failed.",
+    };
+  }
+
+  if (err.code === "P2011") {
+    return {
+      success: false,
+      message: "Required field cannot be null.",
+    };
+  }
+
+  // P2012: Missing required value
+  if (err.code === "P2012") {
+    return {
+      success: false,
+      message: "Missing a required value for a model field.",
+    };
+  }
+
+  // P2013: Missing required argument
+  if (err.code === "P2013") {
+    return {
+      success: false,
+      message: "Missing a required argument in the query.",
     };
   }
 
   if (err.code === "P2014") {
     return {
       success: false,
-      message: "Unsupported data type",
-    };
-  }
-  if (err.code === "P2016") {
-    return {
-      success: false,
-      message: "Operation timed out",
+      message: "A required relationship link is missing or invalid.",
     };
   }
 
-  return { success: false, message: err.message };
+  if (err.code === "P2015") {
+    return {
+      success: false,
+      message:
+        "The record or related record you are looking for does not exist.",
+    };
+  }
+
+  if (err.code === "P2016") {
+    return {
+      success: false,
+      message: "Error in query interpretation. Please check the query format.",
+    };
+  }
+
+  if (err.code === "P2025") {
+    return {
+      success: false,
+      message: "Record to delete/update/connect does not exist.",
+    };
+  }
+
+  if (err.code === "P1012") {
+    return {
+      success: false,
+      message:
+        "Configuration error: Environment variable or database URL is missing/invalid.",
+    };
+  }
+
+  if (err.code && err.code.startsWith("P1")) {
+    return {
+      success: false,
+      message:
+        "Database connection error. Please check credentials or firewall settings.",
+    };
+  }
+
+  return {
+    success: false,
+    message: err.message || "An unknown error occurred.",
+  };
 }
 
 export const asyncHandler = (fn) => (req, res, next) => {
