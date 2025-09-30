@@ -49,6 +49,7 @@ export function JoiValidator() {
     mothertongue: Joi.string().optional(),
     isphysicallydisabled: Joi.string().optional(),
     createdAt: Joi.date().optional(),
+    clergicalstatus: Joi.string().allow("", null).optional(),
     universityusers: {
       userid: Joi.number().allow("", null).optional(),
       departmentname: Joi.string().required(),
@@ -62,7 +63,7 @@ export function JoiValidator() {
       batch: Joi.number().required(),
       confessionfather: Joi.string().allow("", null).optional(),
       tookcourse: Joi.boolean().allow("", null).optional(),
-      ispriestordeacon: Joi.boolean().allow("", null).optional(),
+      activitylevel: Joi.string().allow("", null).optional(),
       advisors: Joi.string().optional(),
       role: Joi.string().required(),
       mealcard: Joi.string().allow("", null).optional().max(20),

@@ -43,6 +43,7 @@ const addUser = asyncHandler(async (req, res) => {
       mothertongue: req.body?.mothertongue,
       zonename: req.body?.zonename,
       isphysicallydisabled: req.body?.isphysicallydisabled,
+      clergicalstatus: req.body?.clergicalstatus,
       universityusers: {
         create: {
           departmentname: req.body?.universityusers?.departmentname,
@@ -60,7 +61,7 @@ const addUser = asyncHandler(async (req, res) => {
           cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
           holidayincampus: req.body?.universityusers?.holidayincampus,
           tookcourse: req.body?.universityusers?.tookcourse,
-          ispriestordeacon: req.body?.universityusers?.ispriestordeacon,
+          activitylevel: req.body?.universityusers?.activitylevel,
         },
       },
     },
@@ -136,6 +137,7 @@ const updateUser = asyncHandler(async (req, res) => {
       zonename: req.body.zonename,
       isphysicallydisabled: req.body.isphysicallydisabled,
       region: req.body?.region,
+      clergicalstatus: req.body?.clergicalstatus,
       universityusers: {
         update: {
           where: {
@@ -157,7 +159,7 @@ const updateUser = asyncHandler(async (req, res) => {
             cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
             holidayincampus: req.body?.universityusers?.holidayincampus,
             tookcourse: req.body?.universityusers?.tookcourse,
-            ispriestordeacon: req.body?.universityusers?.ispriestordeacon,
+            activitylevel: req.body?.universityusers?.activitylevel,
           },
         },
       },
