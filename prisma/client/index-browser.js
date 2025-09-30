@@ -137,6 +137,7 @@ exports.Prisma.UserScalarFieldEnum = {
   mothertongue: 'mothertongue',
   createdAt: 'createdAt',
   region: 'region',
+  clergicalstatus: 'clergicalstatus',
   telegram_username: 'telegram_username'
 };
 
@@ -162,7 +163,7 @@ exports.Prisma.UniversityusersScalarFieldEnum = {
   coursetaken: 'coursetaken',
   holidayincampus: 'holidayincampus',
   tookcourse: 'tookcourse',
-  ispriestordeacon: 'ispriestordeacon'
+  activitylevel: 'activitylevel'
 };
 
 exports.Prisma.SortOrder = {
@@ -221,6 +222,12 @@ exports.regions_type = exports.$Enums.regions_type = {
   Not_Specified: 'Not_Specified'
 };
 
+exports.clerical_status = exports.$Enums.clerical_status = {
+  Deacon: 'Deacon',
+  Priest: 'Priest',
+  None: 'None'
+};
+
 exports.sponsorship_type = exports.$Enums.sponsorship_type = {
   Government: 'Government',
   Self_Sponsored: 'Self_Sponsored',
@@ -256,6 +263,13 @@ exports.role_type = exports.$Enums.role_type = {
   SubclassTeamLead: 'SubclassTeamLead',
   SubclassManager: 'SubclassManager',
   None: 'None'
+};
+
+exports.activity = exports.$Enums.activity = {
+  Very_Active: 'Very_Active',
+  Active: 'Active',
+  Less_Active: 'Less_Active',
+  Not_Active: 'Not_Active'
 };
 
 exports.Prisma.ModelName = {

@@ -113,6 +113,25 @@ export const participation_type: {
 export type participation_type = (typeof participation_type)[keyof typeof participation_type]
 
 
+export const activity: {
+  Very_Active: 'Very_Active',
+  Active: 'Active',
+  Less_Active: 'Less_Active',
+  Not_Active: 'Not_Active'
+};
+
+export type activity = (typeof activity)[keyof typeof activity]
+
+
+export const clerical_status: {
+  Deacon: 'Deacon',
+  Priest: 'Priest',
+  None: 'None'
+};
+
+export type clerical_status = (typeof clerical_status)[keyof typeof clerical_status]
+
+
 export const role_type: {
   Member: 'Member',
   ClassSecretary: 'ClassSecretary',
@@ -160,6 +179,14 @@ export const disability_type: typeof $Enums.disability_type
 export type participation_type = $Enums.participation_type
 
 export const participation_type: typeof $Enums.participation_type
+
+export type activity = $Enums.activity
+
+export const activity: typeof $Enums.activity
+
+export type clerical_status = $Enums.clerical_status
+
+export const clerical_status: typeof $Enums.clerical_status
 
 export type role_type = $Enums.role_type
 
@@ -1219,6 +1246,7 @@ export namespace Prisma {
     mothertongue: $Enums.languages_type | null
     createdAt: Date | null
     region: $Enums.regions_type | null
+    clergicalstatus: $Enums.clerical_status | null
     telegram_username: string | null
   }
 
@@ -1239,6 +1267,7 @@ export namespace Prisma {
     mothertongue: $Enums.languages_type | null
     createdAt: Date | null
     region: $Enums.regions_type | null
+    clergicalstatus: $Enums.clerical_status | null
     telegram_username: string | null
   }
 
@@ -1259,6 +1288,7 @@ export namespace Prisma {
     mothertongue: number
     createdAt: number
     region: number
+    clergicalstatus: number
     telegram_username: number
     _all: number
   }
@@ -1289,6 +1319,7 @@ export namespace Prisma {
     mothertongue?: true
     createdAt?: true
     region?: true
+    clergicalstatus?: true
     telegram_username?: true
   }
 
@@ -1309,6 +1340,7 @@ export namespace Prisma {
     mothertongue?: true
     createdAt?: true
     region?: true
+    clergicalstatus?: true
     telegram_username?: true
   }
 
@@ -1329,6 +1361,7 @@ export namespace Prisma {
     mothertongue?: true
     createdAt?: true
     region?: true
+    clergicalstatus?: true
     telegram_username?: true
     _all?: true
   }
@@ -1436,6 +1469,7 @@ export namespace Prisma {
     mothertongue: $Enums.languages_type
     createdAt: Date | null
     region: $Enums.regions_type
+    clergicalstatus: $Enums.clerical_status
     telegram_username: string
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
@@ -1475,6 +1509,7 @@ export namespace Prisma {
     mothertongue?: boolean
     createdAt?: boolean
     region?: boolean
+    clergicalstatus?: boolean
     telegram_username?: boolean
     universityusers?: boolean | User$universityusersArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1496,6 +1531,7 @@ export namespace Prisma {
     mothertongue?: boolean
     createdAt?: boolean
     region?: boolean
+    clergicalstatus?: boolean
     telegram_username?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1516,6 +1552,7 @@ export namespace Prisma {
     mothertongue?: boolean
     createdAt?: boolean
     region?: boolean
+    clergicalstatus?: boolean
     telegram_username?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1536,10 +1573,11 @@ export namespace Prisma {
     mothertongue?: boolean
     createdAt?: boolean
     region?: boolean
+    clergicalstatus?: boolean
     telegram_username?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "studentid" | "firstname" | "middlename" | "lastname" | "gender" | "baptismalname" | "phone" | "birthdate" | "useremail" | "nationality" | "isphysicallydisabled" | "zonename" | "mothertongue" | "createdAt" | "region" | "telegram_username", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "studentid" | "firstname" | "middlename" | "lastname" | "gender" | "baptismalname" | "phone" | "birthdate" | "useremail" | "nationality" | "isphysicallydisabled" | "zonename" | "mothertongue" | "createdAt" | "region" | "clergicalstatus" | "telegram_username", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     universityusers?: boolean | User$universityusersArgs<ExtArgs>
   }
@@ -1568,6 +1606,7 @@ export namespace Prisma {
       mothertongue: $Enums.languages_type
       createdAt: Date | null
       region: $Enums.regions_type
+      clergicalstatus: $Enums.clerical_status
       telegram_username: string
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2009,6 +2048,7 @@ export namespace Prisma {
     readonly mothertongue: FieldRef<"User", 'languages_type'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly region: FieldRef<"User", 'regions_type'>
+    readonly clergicalstatus: FieldRef<"User", 'clerical_status'>
     readonly telegram_username: FieldRef<"User", 'String'>
   }
     
@@ -3500,7 +3540,7 @@ export namespace Prisma {
     coursetaken: boolean | null
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    ispriestordeacon: boolean | null
+    activitylevel: $Enums.activity | null
   }
 
   export type UniversityusersMaxAggregateOutputType = {
@@ -3517,7 +3557,7 @@ export namespace Prisma {
     coursetaken: boolean | null
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    ispriestordeacon: boolean | null
+    activitylevel: $Enums.activity | null
   }
 
   export type UniversityusersCountAggregateOutputType = {
@@ -3534,7 +3574,7 @@ export namespace Prisma {
     coursetaken: number
     holidayincampus: number
     tookcourse: number
-    ispriestordeacon: number
+    activitylevel: number
     _all: number
   }
 
@@ -3563,7 +3603,7 @@ export namespace Prisma {
     coursetaken?: true
     holidayincampus?: true
     tookcourse?: true
-    ispriestordeacon?: true
+    activitylevel?: true
   }
 
   export type UniversityusersMaxAggregateInputType = {
@@ -3580,7 +3620,7 @@ export namespace Prisma {
     coursetaken?: true
     holidayincampus?: true
     tookcourse?: true
-    ispriestordeacon?: true
+    activitylevel?: true
   }
 
   export type UniversityusersCountAggregateInputType = {
@@ -3597,7 +3637,7 @@ export namespace Prisma {
     coursetaken?: true
     holidayincampus?: true
     tookcourse?: true
-    ispriestordeacon?: true
+    activitylevel?: true
     _all?: true
   }
 
@@ -3701,7 +3741,7 @@ export namespace Prisma {
     coursetaken: boolean
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    ispriestordeacon: boolean | null
+    activitylevel: $Enums.activity
     _count: UniversityusersCountAggregateOutputType | null
     _avg: UniversityusersAvgAggregateOutputType | null
     _sum: UniversityusersSumAggregateOutputType | null
@@ -3737,7 +3777,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean
     tookcourse?: boolean
-    ispriestordeacon?: boolean
+    activitylevel?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3755,7 +3795,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean
     tookcourse?: boolean
-    ispriestordeacon?: boolean
+    activitylevel?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3773,7 +3813,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean
     tookcourse?: boolean
-    ispriestordeacon?: boolean
+    activitylevel?: boolean
     User?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["universityusers"]>
 
@@ -3791,10 +3831,10 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean
     tookcourse?: boolean
-    ispriestordeacon?: boolean
+    activitylevel?: boolean
   }
 
-  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "holidayincampus" | "tookcourse" | "ispriestordeacon", ExtArgs["result"]["universityusers"]>
+  export type universityusersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userid" | "departmentname" | "sponsorshiptype" | "participation" | "cafeteriaaccess" | "mealcard" | "batch" | "confessionfather" | "advisors" | "role" | "coursetaken" | "holidayincampus" | "tookcourse" | "activitylevel", ExtArgs["result"]["universityusers"]>
   export type universityusersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     User?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3824,7 +3864,7 @@ export namespace Prisma {
       coursetaken: boolean
       holidayincampus: boolean | null
       tookcourse: boolean | null
-      ispriestordeacon: boolean | null
+      activitylevel: $Enums.activity
     }, ExtArgs["result"]["universityusers"]>
     composites: {}
   }
@@ -4262,7 +4302,7 @@ export namespace Prisma {
     readonly coursetaken: FieldRef<"universityusers", 'Boolean'>
     readonly holidayincampus: FieldRef<"universityusers", 'Boolean'>
     readonly tookcourse: FieldRef<"universityusers", 'Boolean'>
-    readonly ispriestordeacon: FieldRef<"universityusers", 'Boolean'>
+    readonly activitylevel: FieldRef<"universityusers", 'activity'>
   }
     
 
@@ -4708,6 +4748,7 @@ export namespace Prisma {
     mothertongue: 'mothertongue',
     createdAt: 'createdAt',
     region: 'region',
+    clergicalstatus: 'clergicalstatus',
     telegram_username: 'telegram_username'
   };
 
@@ -4739,7 +4780,7 @@ export namespace Prisma {
     coursetaken: 'coursetaken',
     holidayincampus: 'holidayincampus',
     tookcourse: 'tookcourse',
-    ispriestordeacon: 'ispriestordeacon'
+    activitylevel: 'activitylevel'
   };
 
   export type UniversityusersScalarFieldEnum = (typeof UniversityusersScalarFieldEnum)[keyof typeof UniversityusersScalarFieldEnum]
@@ -4873,6 +4914,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'clerical_status'
+   */
+  export type Enumclerical_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'clerical_status'>
+    
+
+
+  /**
+   * Reference to a field of type 'clerical_status[]'
+   */
+  export type ListEnumclerical_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'clerical_status[]'>
+    
+
+
+  /**
    * Reference to a field of type 'sponsorship_type'
    */
   export type Enumsponsorship_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'sponsorship_type'>
@@ -4936,6 +4991,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'activity'
+   */
+  export type EnumactivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity'>
+    
+
+
+  /**
+   * Reference to a field of type 'activity[]'
+   */
+  export type ListEnumactivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4972,6 +5041,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableFilter<"User"> | Date | string | null
     region?: Enumregions_typeFilter<"User"> | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFilter<"User"> | $Enums.clerical_status
     telegram_username?: StringFilter<"User"> | string
     universityusers?: XOR<UniversityusersNullableScalarRelationFilter, universityusersWhereInput> | null
   }
@@ -4993,6 +5063,7 @@ export namespace Prisma {
     mothertongue?: SortOrder
     createdAt?: SortOrderInput | SortOrder
     region?: SortOrder
+    clergicalstatus?: SortOrder
     telegram_username?: SortOrder
     universityusers?: universityusersOrderByWithRelationInput
   }
@@ -5018,6 +5089,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableFilter<"User"> | Date | string | null
     region?: Enumregions_typeFilter<"User"> | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFilter<"User"> | $Enums.clerical_status
     universityusers?: XOR<UniversityusersNullableScalarRelationFilter, universityusersWhereInput> | null
   }, "userid" | "studentid" | "phone" | "useremail" | "telegram_username">
 
@@ -5038,6 +5110,7 @@ export namespace Prisma {
     mothertongue?: SortOrder
     createdAt?: SortOrderInput | SortOrder
     region?: SortOrder
+    clergicalstatus?: SortOrder
     telegram_username?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
@@ -5066,6 +5139,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeWithAggregatesFilter<"User"> | $Enums.languages_type
     createdAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     region?: Enumregions_typeWithAggregatesFilter<"User"> | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusWithAggregatesFilter<"User"> | $Enums.clerical_status
     telegram_username?: StringWithAggregatesFilter<"User"> | string
   }
 
@@ -5140,7 +5214,7 @@ export namespace Prisma {
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
-    ispriestordeacon?: BoolNullableFilter<"universityusers"> | boolean | null
+    activitylevel?: EnumactivityFilter<"universityusers"> | $Enums.activity
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -5158,7 +5232,7 @@ export namespace Prisma {
     coursetaken?: SortOrder
     holidayincampus?: SortOrderInput | SortOrder
     tookcourse?: SortOrderInput | SortOrder
-    ispriestordeacon?: SortOrderInput | SortOrder
+    activitylevel?: SortOrder
     User?: UserOrderByWithRelationInput
   }
 
@@ -5179,7 +5253,7 @@ export namespace Prisma {
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
-    ispriestordeacon?: BoolNullableFilter<"universityusers"> | boolean | null
+    activitylevel?: EnumactivityFilter<"universityusers"> | $Enums.activity
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "userid">
 
@@ -5197,7 +5271,7 @@ export namespace Prisma {
     coursetaken?: SortOrder
     holidayincampus?: SortOrderInput | SortOrder
     tookcourse?: SortOrderInput | SortOrder
-    ispriestordeacon?: SortOrderInput | SortOrder
+    activitylevel?: SortOrder
     _count?: universityusersCountOrderByAggregateInput
     _avg?: universityusersAvgOrderByAggregateInput
     _max?: universityusersMaxOrderByAggregateInput
@@ -5222,7 +5296,7 @@ export namespace Prisma {
     coursetaken?: BoolWithAggregatesFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
-    ispriestordeacon?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
+    activitylevel?: EnumactivityWithAggregatesFilter<"universityusers"> | $Enums.activity
   }
 
   export type UserCreateInput = {
@@ -5241,6 +5315,7 @@ export namespace Prisma {
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
     region?: $Enums.regions_type
+    clergicalstatus?: $Enums.clerical_status
     telegram_username?: string
     universityusers?: universityusersCreateNestedOneWithoutUserInput
   }
@@ -5262,6 +5337,7 @@ export namespace Prisma {
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
     region?: $Enums.regions_type
+    clergicalstatus?: $Enums.clerical_status
     telegram_username?: string
     universityusers?: universityusersUncheckedCreateNestedOneWithoutUserInput
   }
@@ -5282,6 +5358,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
     universityusers?: universityusersUpdateOneWithoutUserNestedInput
   }
@@ -5303,6 +5380,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
     universityusers?: universityusersUncheckedUpdateOneWithoutUserNestedInput
   }
@@ -5324,6 +5402,7 @@ export namespace Prisma {
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
     region?: $Enums.regions_type
+    clergicalstatus?: $Enums.clerical_status
     telegram_username?: string
   }
 
@@ -5343,6 +5422,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
@@ -5363,6 +5443,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
@@ -5432,7 +5513,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    ispriestordeacon?: boolean | null
+    activitylevel?: $Enums.activity
     User: UserCreateNestedOneWithoutUniversityusersInput
   }
 
@@ -5450,7 +5531,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    ispriestordeacon?: boolean | null
+    activitylevel?: $Enums.activity
   }
 
   export type universityusersUpdateInput = {
@@ -5466,7 +5547,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
     User?: UserUpdateOneRequiredWithoutUniversityusersNestedInput
   }
 
@@ -5484,7 +5565,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
   }
 
   export type universityusersCreateManyInput = {
@@ -5501,7 +5582,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    ispriestordeacon?: boolean | null
+    activitylevel?: $Enums.activity
   }
 
   export type universityusersUpdateManyMutationInput = {
@@ -5517,7 +5598,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
   }
 
   export type universityusersUncheckedUpdateManyInput = {
@@ -5534,7 +5615,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -5628,6 +5709,13 @@ export namespace Prisma {
     not?: NestedEnumregions_typeFilter<$PrismaModel> | $Enums.regions_type
   }
 
+  export type Enumclerical_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.clerical_status | Enumclerical_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    not?: NestedEnumclerical_statusFilter<$PrismaModel> | $Enums.clerical_status
+  }
+
   export type UniversityusersNullableScalarRelationFilter = {
     is?: universityusersWhereInput | null
     isNot?: universityusersWhereInput | null
@@ -5655,6 +5743,7 @@ export namespace Prisma {
     mothertongue?: SortOrder
     createdAt?: SortOrder
     region?: SortOrder
+    clergicalstatus?: SortOrder
     telegram_username?: SortOrder
   }
 
@@ -5679,6 +5768,7 @@ export namespace Prisma {
     mothertongue?: SortOrder
     createdAt?: SortOrder
     region?: SortOrder
+    clergicalstatus?: SortOrder
     telegram_username?: SortOrder
   }
 
@@ -5699,6 +5789,7 @@ export namespace Prisma {
     mothertongue?: SortOrder
     createdAt?: SortOrder
     region?: SortOrder
+    clergicalstatus?: SortOrder
     telegram_username?: SortOrder
   }
 
@@ -5826,6 +5917,16 @@ export namespace Prisma {
     _max?: NestedEnumregions_typeFilter<$PrismaModel>
   }
 
+  export type Enumclerical_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.clerical_status | Enumclerical_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    not?: NestedEnumclerical_statusWithAggregatesFilter<$PrismaModel> | $Enums.clerical_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumclerical_statusFilter<$PrismaModel>
+    _max?: NestedEnumclerical_statusFilter<$PrismaModel>
+  }
+
   export type adminCountOrderByAggregateInput = {
     adminid?: SortOrder
     studentid?: SortOrder
@@ -5896,6 +5997,13 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type EnumactivityFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
+    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivityFilter<$PrismaModel> | $Enums.activity
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -5915,7 +6023,7 @@ export namespace Prisma {
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
     tookcourse?: SortOrder
-    ispriestordeacon?: SortOrder
+    activitylevel?: SortOrder
   }
 
   export type universityusersAvgOrderByAggregateInput = {
@@ -5937,7 +6045,7 @@ export namespace Prisma {
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
     tookcourse?: SortOrder
-    ispriestordeacon?: SortOrder
+    activitylevel?: SortOrder
   }
 
   export type universityusersMinOrderByAggregateInput = {
@@ -5954,7 +6062,7 @@ export namespace Prisma {
     coursetaken?: SortOrder
     holidayincampus?: SortOrder
     tookcourse?: SortOrder
-    ispriestordeacon?: SortOrder
+    activitylevel?: SortOrder
   }
 
   export type universityusersSumOrderByAggregateInput = {
@@ -6018,6 +6126,16 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type EnumactivityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
+    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivityWithAggregatesFilter<$PrismaModel> | $Enums.activity
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumactivityFilter<$PrismaModel>
+    _max?: NestedEnumactivityFilter<$PrismaModel>
+  }
+
   export type universityusersCreateNestedOneWithoutUserInput = {
     create?: XOR<universityusersCreateWithoutUserInput, universityusersUncheckedCreateWithoutUserInput>
     connectOrCreate?: universityusersCreateOrConnectWithoutUserInput
@@ -6060,6 +6178,10 @@ export namespace Prisma {
 
   export type Enumregions_typeFieldUpdateOperationsInput = {
     set?: $Enums.regions_type
+  }
+
+  export type Enumclerical_statusFieldUpdateOperationsInput = {
+    set?: $Enums.clerical_status
   }
 
   export type universityusersUpdateOneWithoutUserNestedInput = {
@@ -6118,6 +6240,10 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type EnumactivityFieldUpdateOperationsInput = {
+    set?: $Enums.activity
   }
 
   export type UserUpdateOneRequiredWithoutUniversityusersNestedInput = {
@@ -6215,6 +6341,13 @@ export namespace Prisma {
     in?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
     notIn?: $Enums.regions_type[] | ListEnumregions_typeFieldRefInput<$PrismaModel>
     not?: NestedEnumregions_typeFilter<$PrismaModel> | $Enums.regions_type
+  }
+
+  export type NestedEnumclerical_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.clerical_status | Enumclerical_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    not?: NestedEnumclerical_statusFilter<$PrismaModel> | $Enums.clerical_status
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6357,6 +6490,16 @@ export namespace Prisma {
     _max?: NestedEnumregions_typeFilter<$PrismaModel>
   }
 
+  export type NestedEnumclerical_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.clerical_status | Enumclerical_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clerical_status[] | ListEnumclerical_statusFieldRefInput<$PrismaModel>
+    not?: NestedEnumclerical_statusWithAggregatesFilter<$PrismaModel> | $Enums.clerical_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumclerical_statusFilter<$PrismaModel>
+    _max?: NestedEnumclerical_statusFilter<$PrismaModel>
+  }
+
   export type NestedEnumsponsorship_typeFilter<$PrismaModel = never> = {
     equals?: $Enums.sponsorship_type | Enumsponsorship_typeFieldRefInput<$PrismaModel>
     in?: $Enums.sponsorship_type[] | ListEnumsponsorship_typeFieldRefInput<$PrismaModel>
@@ -6393,6 +6536,13 @@ export namespace Prisma {
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumactivityFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
+    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivityFilter<$PrismaModel> | $Enums.activity
   }
 
   export type NestedEnumsponsorship_typeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6451,6 +6601,16 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedEnumactivityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
+    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivityWithAggregatesFilter<$PrismaModel> | $Enums.activity
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumactivityFilter<$PrismaModel>
+    _max?: NestedEnumactivityFilter<$PrismaModel>
+  }
+
   export type universityusersCreateWithoutUserInput = {
     departmentname: string
     sponsorshiptype: $Enums.sponsorship_type
@@ -6464,7 +6624,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    ispriestordeacon?: boolean | null
+    activitylevel?: $Enums.activity
   }
 
   export type universityusersUncheckedCreateWithoutUserInput = {
@@ -6480,7 +6640,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    ispriestordeacon?: boolean | null
+    activitylevel?: $Enums.activity
   }
 
   export type universityusersCreateOrConnectWithoutUserInput = {
@@ -6512,7 +6672,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
   }
 
   export type universityusersUncheckedUpdateWithoutUserInput = {
@@ -6528,7 +6688,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    ispriestordeacon?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
   }
 
   export type UserCreateWithoutUniversityusersInput = {
@@ -6547,6 +6707,7 @@ export namespace Prisma {
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
     region?: $Enums.regions_type
+    clergicalstatus?: $Enums.clerical_status
     telegram_username?: string
   }
 
@@ -6567,6 +6728,7 @@ export namespace Prisma {
     mothertongue?: $Enums.languages_type
     createdAt?: Date | string | null
     region?: $Enums.regions_type
+    clergicalstatus?: $Enums.clerical_status
     telegram_username?: string
   }
 
@@ -6602,6 +6764,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
@@ -6622,6 +6785,7 @@ export namespace Prisma {
     mothertongue?: Enumlanguages_typeFieldUpdateOperationsInput | $Enums.languages_type
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     region?: Enumregions_typeFieldUpdateOperationsInput | $Enums.regions_type
+    clergicalstatus?: Enumclerical_statusFieldUpdateOperationsInput | $Enums.clerical_status
     telegram_username?: StringFieldUpdateOperationsInput | string
   }
 
