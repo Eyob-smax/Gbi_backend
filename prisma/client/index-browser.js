@@ -223,7 +223,8 @@ exports.regions_type = exports.$Enums.regions_type = {
 
 exports.sponsorship_type = exports.$Enums.sponsorship_type = {
   Government: 'Government',
-  Self_Sponsored: 'Self_Sponsored'
+  Self_Sponsored: 'Self_Sponsored',
+  Scholarship: 'Scholarship'
 };
 
 exports.participation_type = exports.$Enums.participation_type = {

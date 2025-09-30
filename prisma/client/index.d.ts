@@ -129,7 +129,8 @@ export type role_type = (typeof role_type)[keyof typeof role_type]
 
 export const sponsorship_type: {
   Government: 'Government',
-  Self_Sponsored: 'Self_Sponsored'
+  Self_Sponsored: 'Self_Sponsored',
+  Scholarship: 'Scholarship'
 };
 
 export type sponsorship_type = (typeof sponsorship_type)[keyof typeof sponsorship_type]
