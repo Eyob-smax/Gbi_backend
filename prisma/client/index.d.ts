@@ -5073,7 +5073,6 @@ export namespace Prisma {
     studentid?: string
     phone?: string
     useremail?: string
-    telegram_username?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -5090,8 +5089,9 @@ export namespace Prisma {
     createdAt?: DateTimeNullableFilter<"User"> | Date | string | null
     region?: Enumregions_typeFilter<"User"> | $Enums.regions_type
     clergicalstatus?: Enumclerical_statusFilter<"User"> | $Enums.clerical_status
+    telegram_username?: StringFilter<"User"> | string
     universityusers?: XOR<UniversityusersNullableScalarRelationFilter, universityusersWhereInput> | null
-  }, "userid" | "studentid" | "phone" | "useremail" | "telegram_username">
+  }, "userid" | "studentid" | "phone" | "useremail">
 
   export type UserOrderByWithAggregationInput = {
     userid?: SortOrder
