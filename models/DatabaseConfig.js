@@ -1,4 +1,5 @@
 import { PrismaClient } from "../prisma/client/index.js";
+
 export const prisma = new PrismaClient();
 
 const MAX_RETRIES = 10;
