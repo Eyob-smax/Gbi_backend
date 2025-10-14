@@ -33,7 +33,27 @@ export type universityusers = $Result.DefaultSelection<Prisma.$universityusersPa
  * Enums
  */
 export namespace $Enums {
-  export const gender_type: {
+  export const activity_type: {
+  Very_Active: 'Very_Active',
+  Active: 'Active',
+  Less_Active: 'Less_Active',
+  Not_Active: 'Not_Active'
+};
+
+export type activity_type = (typeof activity_type)[keyof typeof activity_type]
+
+
+export const clerical_status: {
+  Deacon: 'Deacon',
+  Priest: 'Priest',
+  Other: 'Other',
+  None: 'None'
+};
+
+export type clerical_status = (typeof clerical_status)[keyof typeof clerical_status]
+
+
+export const gender_type: {
   Female: 'Female',
   Male: 'Male'
 };
@@ -113,25 +133,6 @@ export const participation_type: {
 export type participation_type = (typeof participation_type)[keyof typeof participation_type]
 
 
-export const activity: {
-  Very_Active: 'Very_Active',
-  Active: 'Active',
-  Less_Active: 'Less_Active',
-  Not_Active: 'Not_Active'
-};
-
-export type activity = (typeof activity)[keyof typeof activity]
-
-
-export const clerical_status: {
-  Deacon: 'Deacon',
-  Priest: 'Priest',
-  None: 'None'
-};
-
-export type clerical_status = (typeof clerical_status)[keyof typeof clerical_status]
-
-
 export const role_type: {
   Member: 'Member',
   ClassSecretary: 'ClassSecretary',
@@ -156,6 +157,14 @@ export type sponsorship_type = (typeof sponsorship_type)[keyof typeof sponsorshi
 
 }
 
+export type activity_type = $Enums.activity_type
+
+export const activity_type: typeof $Enums.activity_type
+
+export type clerical_status = $Enums.clerical_status
+
+export const clerical_status: typeof $Enums.clerical_status
+
 export type gender_type = $Enums.gender_type
 
 export const gender_type: typeof $Enums.gender_type
@@ -179,14 +188,6 @@ export const disability_type: typeof $Enums.disability_type
 export type participation_type = $Enums.participation_type
 
 export const participation_type: typeof $Enums.participation_type
-
-export type activity = $Enums.activity
-
-export const activity: typeof $Enums.activity
-
-export type clerical_status = $Enums.clerical_status
-
-export const clerical_status: typeof $Enums.clerical_status
 
 export type role_type = $Enums.role_type
 
@@ -3540,7 +3541,7 @@ export namespace Prisma {
     coursetaken: boolean | null
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    activitylevel: $Enums.activity | null
+    activitylevel: $Enums.activity_type | null
   }
 
   export type UniversityusersMaxAggregateOutputType = {
@@ -3557,7 +3558,7 @@ export namespace Prisma {
     coursetaken: boolean | null
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    activitylevel: $Enums.activity | null
+    activitylevel: $Enums.activity_type | null
   }
 
   export type UniversityusersCountAggregateOutputType = {
@@ -3741,7 +3742,7 @@ export namespace Prisma {
     coursetaken: boolean
     holidayincampus: boolean | null
     tookcourse: boolean | null
-    activitylevel: $Enums.activity
+    activitylevel: $Enums.activity_type
     _count: UniversityusersCountAggregateOutputType | null
     _avg: UniversityusersAvgAggregateOutputType | null
     _sum: UniversityusersSumAggregateOutputType | null
@@ -3864,7 +3865,7 @@ export namespace Prisma {
       coursetaken: boolean
       holidayincampus: boolean | null
       tookcourse: boolean | null
-      activitylevel: $Enums.activity
+      activitylevel: $Enums.activity_type
     }, ExtArgs["result"]["universityusers"]>
     composites: {}
   }
@@ -4302,7 +4303,7 @@ export namespace Prisma {
     readonly coursetaken: FieldRef<"universityusers", 'Boolean'>
     readonly holidayincampus: FieldRef<"universityusers", 'Boolean'>
     readonly tookcourse: FieldRef<"universityusers", 'Boolean'>
-    readonly activitylevel: FieldRef<"universityusers", 'activity'>
+    readonly activitylevel: FieldRef<"universityusers", 'activity_type'>
   }
     
 
@@ -4991,16 +4992,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'activity'
+   * Reference to a field of type 'activity_type'
    */
-  export type EnumactivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity'>
+  export type Enumactivity_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity_type'>
     
 
 
   /**
-   * Reference to a field of type 'activity[]'
+   * Reference to a field of type 'activity_type[]'
    */
-  export type ListEnumactivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity[]'>
+  export type ListEnumactivity_typeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'activity_type[]'>
     
 
 
@@ -5214,7 +5215,7 @@ export namespace Prisma {
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
-    activitylevel?: EnumactivityFilter<"universityusers"> | $Enums.activity
+    activitylevel?: Enumactivity_typeFilter<"universityusers"> | $Enums.activity_type
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -5253,7 +5254,7 @@ export namespace Prisma {
     coursetaken?: BoolFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableFilter<"universityusers"> | boolean | null
-    activitylevel?: EnumactivityFilter<"universityusers"> | $Enums.activity
+    activitylevel?: Enumactivity_typeFilter<"universityusers"> | $Enums.activity_type
     User?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "userid">
 
@@ -5296,7 +5297,7 @@ export namespace Prisma {
     coursetaken?: BoolWithAggregatesFilter<"universityusers"> | boolean
     holidayincampus?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
     tookcourse?: BoolNullableWithAggregatesFilter<"universityusers"> | boolean | null
-    activitylevel?: EnumactivityWithAggregatesFilter<"universityusers"> | $Enums.activity
+    activitylevel?: Enumactivity_typeWithAggregatesFilter<"universityusers"> | $Enums.activity_type
   }
 
   export type UserCreateInput = {
@@ -5513,7 +5514,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    activitylevel?: $Enums.activity
+    activitylevel?: $Enums.activity_type
     User: UserCreateNestedOneWithoutUniversityusersInput
   }
 
@@ -5531,7 +5532,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    activitylevel?: $Enums.activity
+    activitylevel?: $Enums.activity_type
   }
 
   export type universityusersUpdateInput = {
@@ -5547,7 +5548,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
     User?: UserUpdateOneRequiredWithoutUniversityusersNestedInput
   }
 
@@ -5565,7 +5566,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
   }
 
   export type universityusersCreateManyInput = {
@@ -5582,7 +5583,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    activitylevel?: $Enums.activity
+    activitylevel?: $Enums.activity_type
   }
 
   export type universityusersUpdateManyMutationInput = {
@@ -5598,7 +5599,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
   }
 
   export type universityusersUncheckedUpdateManyInput = {
@@ -5615,7 +5616,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -5997,11 +5998,11 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type EnumactivityFilter<$PrismaModel = never> = {
-    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
-    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    not?: NestedEnumactivityFilter<$PrismaModel> | $Enums.activity
+  export type Enumactivity_typeFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity_type | Enumactivity_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivity_typeFilter<$PrismaModel> | $Enums.activity_type
   }
 
   export type UserScalarRelationFilter = {
@@ -6126,14 +6127,14 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type EnumactivityWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
-    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    not?: NestedEnumactivityWithAggregatesFilter<$PrismaModel> | $Enums.activity
+  export type Enumactivity_typeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity_type | Enumactivity_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivity_typeWithAggregatesFilter<$PrismaModel> | $Enums.activity_type
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumactivityFilter<$PrismaModel>
-    _max?: NestedEnumactivityFilter<$PrismaModel>
+    _min?: NestedEnumactivity_typeFilter<$PrismaModel>
+    _max?: NestedEnumactivity_typeFilter<$PrismaModel>
   }
 
   export type universityusersCreateNestedOneWithoutUserInput = {
@@ -6242,8 +6243,8 @@ export namespace Prisma {
     set?: boolean
   }
 
-  export type EnumactivityFieldUpdateOperationsInput = {
-    set?: $Enums.activity
+  export type Enumactivity_typeFieldUpdateOperationsInput = {
+    set?: $Enums.activity_type
   }
 
   export type UserUpdateOneRequiredWithoutUniversityusersNestedInput = {
@@ -6538,11 +6539,11 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type NestedEnumactivityFilter<$PrismaModel = never> = {
-    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
-    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    not?: NestedEnumactivityFilter<$PrismaModel> | $Enums.activity
+  export type NestedEnumactivity_typeFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity_type | Enumactivity_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivity_typeFilter<$PrismaModel> | $Enums.activity_type
   }
 
   export type NestedEnumsponsorship_typeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6601,14 +6602,14 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type NestedEnumactivityWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.activity | EnumactivityFieldRefInput<$PrismaModel>
-    in?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.activity[] | ListEnumactivityFieldRefInput<$PrismaModel>
-    not?: NestedEnumactivityWithAggregatesFilter<$PrismaModel> | $Enums.activity
+  export type NestedEnumactivity_typeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.activity_type | Enumactivity_typeFieldRefInput<$PrismaModel>
+    in?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.activity_type[] | ListEnumactivity_typeFieldRefInput<$PrismaModel>
+    not?: NestedEnumactivity_typeWithAggregatesFilter<$PrismaModel> | $Enums.activity_type
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumactivityFilter<$PrismaModel>
-    _max?: NestedEnumactivityFilter<$PrismaModel>
+    _min?: NestedEnumactivity_typeFilter<$PrismaModel>
+    _max?: NestedEnumactivity_typeFilter<$PrismaModel>
   }
 
   export type universityusersCreateWithoutUserInput = {
@@ -6624,7 +6625,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    activitylevel?: $Enums.activity
+    activitylevel?: $Enums.activity_type
   }
 
   export type universityusersUncheckedCreateWithoutUserInput = {
@@ -6640,7 +6641,7 @@ export namespace Prisma {
     coursetaken?: boolean
     holidayincampus?: boolean | null
     tookcourse?: boolean | null
-    activitylevel?: $Enums.activity
+    activitylevel?: $Enums.activity_type
   }
 
   export type universityusersCreateOrConnectWithoutUserInput = {
@@ -6672,7 +6673,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
   }
 
   export type universityusersUncheckedUpdateWithoutUserInput = {
@@ -6688,7 +6689,7 @@ export namespace Prisma {
     coursetaken?: BoolFieldUpdateOperationsInput | boolean
     holidayincampus?: NullableBoolFieldUpdateOperationsInput | boolean | null
     tookcourse?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    activitylevel?: EnumactivityFieldUpdateOperationsInput | $Enums.activity
+    activitylevel?: Enumactivity_typeFieldUpdateOperationsInput | $Enums.activity_type
   }
 
   export type UserCreateWithoutUniversityusersInput = {

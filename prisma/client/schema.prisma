@@ -54,8 +54,22 @@ model universityusers {
   coursetaken      Boolean            @default(true)
   holidayincampus  Boolean?           @default(false)
   tookcourse       Boolean?           @default(false)
-  activitylevel    activity           @default(Active)
+  activitylevel    activity_type      @default(Active)
   User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
+}
+
+enum activity_type {
+  Very_Active
+  Active
+  Less_Active
+  Not_Active
+}
+
+enum clerical_status {
+  Deacon
+  Priest
+  Other
+  None
 }
 
 enum gender_type {
@@ -117,19 +131,6 @@ enum participation_type {
   Professional_and_Community_Development_Section                 @map("Professional and Community Development Section")
   Batch_and_Programs_Coordination_Section                        @map("Batch and Programs Coordination Section")
   Member_Care_Advice_and_Capacity_Building_Section               @map("Member Care Advice and Capacity Building Section")
-  None
-}
-
-enum activity {
-  Very_Active
-  Active
-  Less_Active
-  Not_Active
-}
-
-enum clerical_status {
-  Deacon
-  Priest
   None
 }
 

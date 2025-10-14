@@ -38,7 +38,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, message: "Admin created", admin });
 });
 
-// ✅ Admin Login
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentid, adminpassword } = req.body;
 
@@ -66,16 +65,13 @@ const logAdmin = asyncHandler(async (req, res) => {
     ),
   };
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "Logged in successfully",
-      admin: adminObject,
-    });
+  res.status(200).json({
+    success: true,
+    message: "Logged in successfully",
+    admin: adminObject,
+  });
 });
 
-// ✅ Get All Admins
 const getAdmins = asyncHandler(async (req, res) => {
   const admins = await prisma.admin.findMany({
     orderBy: { createdAt: "desc" },
@@ -203,12 +199,10 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
   await prisma.admin.deleteMany({
     where: { adminusername: { notIn: superAdmins } },
   });
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "All non-super admins deleted successfully",
-    });
+  res.status(200).json({
+    success: true,
+    message: "All non-super admins deleted successfully",
+  });
 });
 
 // ✅ Logout Admin

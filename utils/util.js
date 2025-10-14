@@ -49,7 +49,9 @@ export function JoiValidator() {
     mothertongue: Joi.string().optional(),
     isphysicallydisabled: Joi.string().optional(),
     createdAt: Joi.date().optional(),
-    clergicalstatus: Joi.string().allow("", null).optional(),
+    clergicalstatus: Joi.string()
+      .allow("None", "Priest", "Other", "Deacon", null)
+      .optional(),
     universityusers: {
       userid: Joi.number().allow("", null).optional(),
       departmentname: Joi.string().required(),

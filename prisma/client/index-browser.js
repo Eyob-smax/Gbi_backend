@@ -225,6 +225,7 @@ exports.regions_type = exports.$Enums.regions_type = {
 exports.clerical_status = exports.$Enums.clerical_status = {
   Deacon: 'Deacon',
   Priest: 'Priest',
+  Other: 'Other',
   None: 'None'
 };
 
@@ -265,7 +266,7 @@ exports.role_type = exports.$Enums.role_type = {
   None: 'None'
 };
 
-exports.activity = exports.$Enums.activity = {
+exports.activity_type = exports.$Enums.activity_type = {
   Very_Active: 'Very_Active',
   Active: 'Active',
   Less_Active: 'Less_Active',
