@@ -6,8 +6,8 @@ import jwt from "jsonwebtoken";
 import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
-import { prisma } from "./models/DatabaseConfig.js";
-
+import { createPrismaClient } from "./models/DatabaseConfig.js";
+const prisma = createPrismaClient().client;
 const app = express();
 // app.use(
 //   cors({

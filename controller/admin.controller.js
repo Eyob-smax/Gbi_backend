@@ -1,12 +1,14 @@
-import { prisma } from "../models/DatabaseConfig.js";
 import { JoiAdminValidator } from "../utils/util.js";
 import { asyncHandler } from "../utils/util.js";
 import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { createPrismaClient } from "../models/DatabaseConfig.js";
 
 dotenv.config();
+
+const prisma = createPrismaClient().client;
 
 const schema = JoiAdminValidator();
 
@@ -40,15 +42,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentid, adminpassword } = req.body;
-
-  await prisma.admin.create({
-    data: {
-      studentid: "UGR-6756-15",
-      adminusername: "Super Admin",
-      adminpassword: await hashPassword("@gbi_admin7867"),
-    },
-  });
-
   if (!studentid || !adminpassword) {
     return res
       .status(400)

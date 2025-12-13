@@ -1,7 +1,8 @@
+import { createPrismaClient } from "../models/DatabaseConfig.js";
 import { asyncHandler } from "../utils/util.js";
-import { prisma } from "../models/DatabaseConfig.js";
 import { JoiValidator } from "../utils/util.js";
 const schema = JoiValidator();
+const prisma = createPrismaClient().client;
 
 const addUser = asyncHandler(async (req, res) => {
   const { error } = schema.validate(req.body);
