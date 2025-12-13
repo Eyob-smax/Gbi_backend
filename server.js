@@ -9,12 +9,14 @@ import { logoutAdmin } from "./controller/admin.controller.js";
 import { prisma } from "./models/DatabaseConfig.js";
 
 const app = express();
-app.use(
-  cors({
-    origin: ["https://6kilogbigubae.vercel.app"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://6kilogbigubae.vercel.app", "*"],
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -58,10 +60,11 @@ app.get("/api/auth/current", async (req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   const errorResponse = handleError(err);
   res.status(500).json(errorResponse);
 });
 
-app.listen(process.env.PORT || 5500, () =>
+app.listen(6500, () =>
   console.log("the server running on https://localhost:5500")
 );

