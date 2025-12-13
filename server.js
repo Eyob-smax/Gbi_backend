@@ -11,7 +11,7 @@ const prisma = createPrismaClient().client;
 const app = express();
 app.use(
   cors({
-    origin: ["https://6kilogbigubae.vercel.app", "*"],
+    origin: ["https://6kilogbigubae.vercel.app"],
     credentials: true,
   })
 );
@@ -63,6 +63,4 @@ app.use((err, req, res, next) => {
   res.status(500).json(errorResponse);
 });
 
-app.listen(process.env.PORT || 6500, () =>
-  console.log("the server running on https://localhost:5500")
-);
+app.listen(process.env.PORT || 6500, () => console.log("the server running"));
