@@ -1,39 +1,61 @@
-import { PrismaClient } from "../prisma/client/index.js";
-
-export const prisma = new PrismaClient();
-
-const MAX_RETRIES = 10;
-const RETRY_DELAY_MS = 2000;
-
-async function connectPrismaWithRetry(attempt = 1) {
-  try {
-    await prisma.$connect();
-    console.log("✅ Connected to database via Prisma");
-  } catch (error) {
-    console.error(
-      `❌ Prisma connection error (Attempt ${attempt}):`,
-      error.message
-    );
-
-    if (attempt < MAX_RETRIES) {
-      console.log(`🔄 Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
-      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
-      await connectPrismaWithRetry(attempt + 1);
-    } else {
-      console.error(
-        "❌ All retry attempts(please check your db config) failed. Exiting..."
-      );
-      process.exit(1);
-    }
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../prisma/generated/client/client.ts";
+import dotenv from "dotenv";
+dotenv.config();
+export const createPrismaClient = () => {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is required");
   }
-}
 
-(async () => {
-  await connectPrismaWithRetry(3);
-})();
+  const pool = new PrismaPg({ connectionString });
+  const client = new PrismaClient({ adapter: pool });
 
-process.on("SIGINT", async () => {
-  console.warn("📴 Disconnecting Prisma...");
-  await prisma.$disconnect();
-  process.exit(0);
-});
+  const MAX_RETRIES = 5;
+  const INITIAL_RETRY_DELAY_MS = 1000;
+
+  const getRetryDelay = (attempt) =>
+    INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+
+  const connectWithRetry = async (attempt = 1) => {
+    try {
+      await client.$connect();
+      console.log("✅ Connected to the database successfully!");
+    } catch (error) {
+      console.error(
+        `❌ Database connection failed (attempt ${attempt}):`,
+        error.message
+      );
+
+      if (attempt >= MAX_RETRIES) {
+        console.error(
+          "🚫 Max retries reached. Could not connect to the database. Exiting..."
+        );
+        process.exit(1);
+      }
+
+      const delay = getRetryDelay(attempt);
+      console.log(`🔄 Retrying in ${delay / 1000} seconds...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      return connectWithRetry(attempt + 1); // Recursive retry
+    }
+  };
+
+  // Graceful shutdown
+  const disconnect = async () => {
+    await client.$disconnect();
+    console.log("🛑 Disconnected from the database");
+  };
+
+  // Lifecycle hooks (for NestJS or manual use)
+  const onModuleInit = () => connectWithRetry();
+  const onModuleDestroy = () => disconnect();
+
+  // Return client + lifecycle methods
+  return {
+    client,
+    onModuleInit,
+    onModuleDestroy,
+  };
+};

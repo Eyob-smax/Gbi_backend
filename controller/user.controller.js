@@ -1,7 +1,8 @@
+import { createPrismaClient } from "../models/DatabaseConfig.js";
 import { asyncHandler } from "../utils/util.js";
-import { prisma } from "../models/DatabaseConfig.js";
 import { JoiValidator } from "../utils/util.js";
 const schema = JoiValidator();
+const prisma = createPrismaClient().client;
 
 const addUser = asyncHandler(async (req, res) => {
   const { error } = schema.validate(req.body);
@@ -58,6 +59,9 @@ const addUser = asyncHandler(async (req, res) => {
               ? "None"
               : req.body?.universityusers?.role,
           mealcard: req.body?.universityusers?.mealcard || "non",
+          cafeterianame: req.body?.universityusers?.cafeterianame || null,
+          emergencyphone: req.body?.universityusers?.emergencyphone || null,
+          emergencyname: req.body?.universityusers?.emergencyname || null,
           cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
           holidayincampus: req.body?.universityusers?.holidayincampus,
           tookcourse: req.body?.universityusers?.tookcourse,
@@ -156,6 +160,9 @@ const updateUser = asyncHandler(async (req, res) => {
             advisors: req.body?.universityusers?.universityusers?.advisors,
             role: req.body?.universityusers?.role,
             mealcard: req.body?.universityusers?.mealcard,
+            cafeterianame: body?.universityusers?.cafeterianame,
+            emergencyname: req.body?.universityusers?.emergencyname || null,
+            emergencyphone: req.body?.universityusers?.emergencyphone || null,
             cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
             holidayincampus: req.body?.universityusers?.holidayincampus,
             tookcourse: req.body?.universityusers?.tookcourse,

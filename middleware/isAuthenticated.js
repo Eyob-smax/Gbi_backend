@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
-import { prisma } from "../models/DatabaseConfig.js";
+import { createPrismaClient } from "../models/DatabaseConfig.js";
 
+const prisma = createPrismaClient().client;
 function verifyToken(req) {
   const token = req.cookies.jwt;
   if (!token) throw new Error("No token");
