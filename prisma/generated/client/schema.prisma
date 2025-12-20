@@ -3,20 +3,20 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"   
-  output   = "./generated/client"
-  engineType  = "client"
-  moduleFormat = "esm"  
+  provider     = "prisma-client-js"
+  output       = "./generated/client"
+  engineType   = "client"
+  moduleFormat = "esm"
 }
 
-enum activity_type{
+enum activity_type {
   Very_Active
   Active
   Less_Active
   Not_Active
 }
 
-enum clerical_status{
+enum clerical_status {
   Deacon
   Priest
   Other
@@ -85,8 +85,6 @@ enum participation_type {
   None
 }
 
-
-
 enum role_type {
   Member
   ClassSecretary
@@ -103,6 +101,7 @@ enum sponsorship_type {
   Self_Sponsored
   Scholarship
 }
+
 model User {
   userid               Int              @id @default(autoincrement())
   studentid            String           @unique @db.VarChar(20)
@@ -113,7 +112,7 @@ model User {
   baptismalname        String           @default("None") @db.VarChar(50)
   phone                String           @unique @db.VarChar(20)
   birthdate            DateTime         @db.Date
-  useremail            String?           @unique @default("not_specified") @db.VarChar(320)
+  useremail            String?          @unique @default("not_specified") @db.VarChar(320)
   nationality          String           @db.VarChar(50)
   isphysicallydisabled disability_type  @default(None)
   zonename             String           @default("not_specified") @db.VarChar(50)
@@ -121,7 +120,7 @@ model User {
   createdAt            DateTime?        @default(now())
   region               regions_type     @default(Not_Specified)
   clergicalstatus      clerical_status  @default(None)
-  telegram_username    String            @default("not_specified") @db.VarChar(50)
+  telegram_username    String           @default("not_specified") @db.VarChar(50)
   universityusers      universityusers?
 }
 
@@ -139,18 +138,17 @@ model universityusers {
   sponsorshiptype  sponsorship_type
   participation    participation_type @default(None)
   cafeteriaaccess  Boolean?           @default(false)
-  mealcard         String?            @db.VarChar(100) @default("Not Specified")
+  mealcard         String?            @default("Not Specified") @db.VarChar(100)
   cafeterianame    String?            @db.VarChar(100)
   emergencyname    String?            @db.VarChar(100)
   emergencyphone   String?            @db.VarChar(20)
   batch            Int
-  confessionfather String?            @db.VarChar(100) @default("Not Specified")
-  advisors         advisor_type       @default(No)   
+  confessionfather String?            @default("Not Specified") @db.VarChar(100)
+  advisors         advisor_type       @default(No)
   role             role_type          @default(None)
   coursetaken      Boolean            @default(true)
   holidayincampus  Boolean?           @default(false)
   tookcourse       Boolean?           @default(false)
-  activitylevel    activity_type           @default(Active)
-  User             User               @relation(fields: [userid], references: [userid], onUpdate:Cascade, onDelete: Cascade)
+  activitylevel    activity_type      @default(Active)
+  User             User               @relation(fields: [userid], references: [userid], onUpdate: Cascade, onDelete: Cascade)
 }
-
