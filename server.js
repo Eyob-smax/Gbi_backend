@@ -63,4 +63,6 @@ app.use((err, req, res, next) => {
   res.status(500).json(errorResponse);
 });
 
-app.listen(process.env.PORT || 6500, () => console.log("the server running"));
+app.listen(process.env.PORT || 6500, () =>
+  console.log("the server running on port " + (process.env.PORT || 6500))
+);

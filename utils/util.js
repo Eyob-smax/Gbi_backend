@@ -28,53 +28,127 @@ export const comparePassword = async (storedPassword, suppliedPassword) => {
   const buf = await scryptAsync(suppliedPassword, salt, 64);
   return buf.toString("hex") === hashedPassword;
 };
+
 export function JoiValidator() {
   return Joi.object({
-    userid: Joi.number().allow("", null).optional(),
-    studentid: Joi.string(),
+    studentid: Joi.string().max(20).required(),
     firstname: Joi.string().max(50).required(),
     middlename: Joi.string().max(50).required(),
     lastname: Joi.string().max(50).required(),
-    telegram_username: Joi.string().allow("", null).optional(),
     gender: Joi.string().valid("Male", "Female").required(),
-    baptismalname: Joi.string().allow("", null).optional(),
-    phone: Joi.string().required(),
-    birthdate: Joi.date().required(),
-    useremail: Joi.string().email().max(320).required(),
-    telegramusername: Joi.string().allow("", null).optional(),
+    baptismalname: Joi.string().max(50).allow("", null).default("None"),
+    phone: Joi.string().max(20).required(),
+    birthdate: Joi.date().iso().required(),
+    useremail: Joi.string()
+      .email({ tlds: { allow: false } })
+      .optional()
+      .max(320)
+      .allow("", null)
+      .allow("not_specified")
+      .default("not_specified"),
     nationality: Joi.string().max(50).required(),
-    region: Joi.string().optional(),
-    disabled: Joi.string(),
-    zonename: Joi.string().allow("", null).optional(),
-    mothertongue: Joi.string().optional(),
-    isphysicallydisabled: Joi.string().optional(),
-    createdAt: Joi.date().optional(),
+    region: Joi.string()
+      .valid(
+        "Addis_Ababa",
+        "Dire_Dawa",
+        "Tigray",
+        "Afar",
+        "Amhara",
+        "Oromia",
+        "Somali",
+        "Benishangul_Gumuz",
+        "SNNPR",
+        "Sidama",
+        "South_West_Ethiopia_Peoples_Region",
+        "Central_Ethiopia_Region",
+        "South_Ethiopia_Region",
+        "Harari",
+        "not_specified"
+      )
+      .default("not_specified"),
+    mothertongue: Joi.string()
+      .valid(
+        "Amharic",
+        "Oromifa",
+        "Tigrigna",
+        "English",
+        "Other",
+        "not_specified"
+      )
+      .default("not_specified"),
+    zonename: Joi.string().max(50).allow("", null).default("not_specified"),
+    isphysicallydisabled: Joi.string()
+      .valid(
+        "None",
+        "Physical",
+        "Visual",
+        "Hearing",
+        "Intellectual",
+        "Psychosocial",
+        "Other"
+      )
+      .default("None"),
     clergicalstatus: Joi.string()
-      .allow("None", "Priest", "Other", "Deacon", null)
-      .optional(),
-    universityusers: {
-      userid: Joi.number().allow("", null).optional(),
-      departmentname: Joi.string().required(),
+      .valid("Deacon", "Priest", "Other", "None")
+      .default("None"),
+    telegram_username: Joi.string()
+      .max(50)
+      .allow("", null)
+      .default("not_specified"),
+
+    // Nested universityusers
+    universityusers: Joi.object({
+      departmentname: Joi.string().max(100).required(),
       sponsorshiptype: Joi.string()
         .valid("Government", "Self_Sponsored", "Scholarship")
-        .optional(),
-      participation: Joi.string().required(),
-      coursetaken: Joi.boolean().allow("", null).optional(),
-      cafeteriaaccess: Joi.boolean().optional(),
-      cafeterianame: Joi.string().allow("", null).optional(),
-      emergencyphone: Joi.string().allow("", null).optional(),
-      emergencyname: Joi.string().allow("", null).optional(),
-      holidayincampus: Joi.boolean().optional(),
-      batch: Joi.number().required(),
-      confessionfather: Joi.string().allow("", null).optional(),
-      tookcourse: Joi.boolean().allow("", null).optional(),
-      activitylevel: Joi.string().allow("", null).optional(),
-      advisors: Joi.string().optional(),
-      role: Joi.string().required(),
-      mealcard: Joi.string().allow("", null).optional().max(20),
-      createdAt: Joi.date().allow("", null).optional(),
-    },
-  });
+        .required(),
+      participation: Joi.string()
+        .valid(
+          "Gbi_Gubaye_Secretariat",
+          "Audit_and_Inspection_Section",
+          "Education_and_Apostolic_Service_Section",
+          "Accounting_and_Assets_Section",
+          "Development_and_Income_Collection_Section",
+          "Languages_and_Special_Interests_Section",
+          "Hymns_and_Arts_Section",
+          "Planning_Monitoring_Reports_and_Information_Management_Section",
+          "Professional_and_Community_Development_Section",
+          "Batch_and_Programs_Coordination_Section",
+          "Member_Care_Advice_and_Capacity_Building_Section",
+          "None"
+        )
+        .required(),
+      batch: Joi.number().integer().positive().required(),
+      coursetaken: Joi.boolean().default(true),
+      tookcourse: Joi.boolean().allow(null),
+      cafeteriaaccess: Joi.boolean().allow(null),
+      holidayincampus: Joi.boolean().allow(null),
+      mealcard: Joi.string().max(100).allow("", null).default("not_specified"),
+      cafeterianame: Joi.string().max(100).allow("", null),
+      emergencyname: Joi.string().max(100).allow("", null),
+      emergencyphone: Joi.string().max(20).allow("", null),
+      confessionfather: Joi.string()
+        .max(100)
+        .allow("", null)
+        .default("not_specified"),
+      advisors: Joi.string().valid("Yes", "No").default("No"),
+      role: Joi.string()
+        .valid(
+          "Member",
+          "ClassSecretary",
+          "ClassTeamLead",
+          "ClassManager",
+          "SubclassSecretary",
+          "SubclassTeamLead",
+          "SubclassManager",
+          "None"
+        )
+        .required(),
+      activitylevel: Joi.string()
+        .valid("Very_Active", "Active", "Less_Active", "Not_Active")
+        .default("Active"),
+    }).required(),
+  }).options({ stripUnknown: true });
 }
 
 export function JoiAdminValidator() {
