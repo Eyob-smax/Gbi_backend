@@ -113,7 +113,7 @@ model User {
   baptismalname        String           @default("None") @db.VarChar(50)
   phone                String           @unique @db.VarChar(20)
   birthdate            DateTime         @db.Date
-  useremail            String?           @unique @default("not_specified") @db.VarChar(320)
+  useremail            String?          @unique @default("not_specified") @db.VarChar(320)
   nationality          String           @db.VarChar(50)
   isphysicallydisabled disability_type  @default(None)
   zonename             String           @default("not_specified") @db.VarChar(50)
@@ -139,12 +139,12 @@ model universityusers {
   sponsorshiptype  sponsorship_type
   participation    participation_type @default(None)
   cafeteriaaccess  Boolean?           @default(false)
-  mealcard         String?            @db.VarChar(100) @default("Not Specified")
+  mealcard         String?            @db.VarChar(100) @default("not_specified")
   cafeterianame    String?            @db.VarChar(100)
   emergencyname    String?            @db.VarChar(100)
   emergencyphone   String?            @db.VarChar(20)
   batch            Int
-  confessionfather String?            @db.VarChar(100) @default("Not Specified")
+  confessionfather String?            @db.VarChar(100) @default("not_specified")
   advisors         advisor_type       @default(No)   
   role             role_type          @default(None)
   coursetaken      Boolean            @default(true)

@@ -1,115 +1,82 @@
 import { createPrismaClient } from "../models/DatabaseConfig.js";
 import { asyncHandler } from "../utils/util.js";
 import { JoiValidator } from "../utils/util.js";
+
 const schema = JoiValidator();
 const prisma = createPrismaClient().client;
 
+// Helper to check invalid studentid format
+const validateStudentIdFormat = (id, res) => {
+  if (id.includes("/")) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Invalid Student ID format. Use hyphen (-) instead of slash (/).",
+    });
+  }
+  return null;
+};
+
 const addUser = asyncHandler(async (req, res) => {
-  const { error } = schema.validate(req.body);
+  const { error, value } = schema.validate(req.body);
   if (error) {
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
   }
-  if (req.body?.studentid.includes("/")) {
-    return res.status(400).json({
-      success: false,
-      message: "Please only USE Hyphen(-), for Student Id",
-    });
-  }
+
+  const validationError = validateStudentIdFormat(value.studentid, res);
+  if (validationError) return validationError;
 
   const existingUser = await prisma.user.findUnique({
-    where: { studentid: req.body.studentid },
+    where: { studentid: value.studentid },
   });
-
   if (existingUser) {
     return res
       .status(400)
-      .json({ success: false, message: "User already existed!" });
+      .json({ success: false, message: "User already exists!" });
   }
+
+  const data = value;
+  const participation = data.universityusers.participation;
+
   const user = await prisma.user.create({
     data: {
-      studentid: req.body?.studentid,
-      firstname: req.body?.firstname,
-      middlename: req.body?.middlename,
-      lastname: req.body?.lastname,
-      telegram_username: req.body?.telegram_username,
-      gender: req.body?.gender,
-      baptismalname: req.body?.baptismalname,
-      phone: req.body?.phone,
-      birthdate: new Date(req.body?.birthdate),
-      useremail: req.body?.useremail,
-      nationality: req.body?.nationality,
-      region: req.body?.region,
-      mothertongue: req.body?.mothertongue,
-      zonename: req.body?.zonename,
-      isphysicallydisabled: req.body?.isphysicallydisabled,
-      clergicalstatus: req.body?.clergicalstatus,
+      ...data,
+      birthdate: new Date(data.birthdate),
       universityusers: {
         create: {
-          departmentname: req.body?.universityusers?.departmentname,
-          coursetaken: req.body?.universityusers?.coursetaken,
-          sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
-          participation: req.body?.universityusers?.participation,
-          batch: Number(req.body?.universityusers?.batch),
-          confessionfather: req.body?.universityusers?.confessionfather || null,
-          advisors: req.body?.universityusers?.advisors,
-          role:
-            req.body?.universityusers?.participation === "None"
-              ? "None"
-              : req.body?.universityusers?.role,
-          mealcard: req.body?.universityusers?.mealcard || "non",
-          cafeterianame: req.body?.universityusers?.cafeterianame || null,
-          emergencyphone: req.body?.universityusers?.emergencyphone || null,
-          emergencyname: req.body?.universityusers?.emergencyname || null,
-          cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
-          holidayincampus: req.body?.universityusers?.holidayincampus,
-          tookcourse: req.body?.universityusers?.tookcourse,
-          activitylevel: req.body?.universityusers?.activitylevel,
+          ...data.universityusers,
+          role: participation === "None" ? "None" : data.universityusers.role,
+          batch: Number(data.universityusers.batch),
         },
       },
     },
-    include: {
-      universityusers: true,
-    },
+    include: { universityusers: true },
   });
 
   res.status(201).json({
     success: true,
-    user: { ...user, birthdate: new Date(user.birthdate) },
-  });
-});
-
-const getUsers = asyncHandler(async (req, res) => {
-  const [users] = await Promise.all([
-    prisma.user.findMany({
-      orderBy: { userid: "desc" },
-      include: { universityusers: true },
-    }),
-  ]);
-
-  res.status(200).json({
-    success: true,
-    users,
+    user: {
+      ...user,
+      birthdate: user.birthdate.toISOString(),
+    },
   });
 });
 
 const updateUser = asyncHandler(async (req, res) => {
   const studentId = req.params?.id;
-  if (!studentId)
+  if (!studentId) {
     return res
       .status(400)
-      .json({ success: false, message: "Invalid ID format" });
-  if (studentId.includes("/")) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid ID format, hint: don't use / use - instead!",
-    });
+      .json({ success: false, message: "Student ID is required" });
   }
 
-  const { error } = schema.validate(req.body);
+  const validationError = validateStudentIdFormat(studentId, res);
+  if (validationError) return validationError;
+
+  const { error, value } = schema.validate(req.body);
   if (error) {
-    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
@@ -120,98 +87,109 @@ const updateUser = asyncHandler(async (req, res) => {
     include: { universityusers: true },
   });
 
-  if (!existingUser)
+  if (!existingUser) {
     return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  const participation = value.universityusers.participation;
 
   const updatedUser = await prisma.user.update({
     where: { studentid: studentId },
     data: {
-      studentid: req.body.studentid,
-      firstname: req.body.firstname,
-      middlename: req.body.middlename,
-      lastname: req.body.lastname,
-      telegram_username: req.body?.telegram_username,
-      gender: req.body.gender,
-      baptismalname: req.body.baptismalname,
-      phone: req.body.phone,
-      birthdate: new Date(req.body.birthdate),
-      useremail: req.body.useremail,
-      nationality: req.body.nationality,
-      mothertongue: req.body.mothertongue,
-      zonename: req.body.zonename,
-      isphysicallydisabled: req.body.isphysicallydisabled,
-      region: req.body?.region,
-      clergicalstatus: req.body?.clergicalstatus,
+      ...value,
+      birthdate: new Date(value.birthdate),
       universityusers: {
         update: {
-          where: {
-            userid: req.body?.userid,
-          },
+          where: { userid: existingUser.userid }, // Fixed: use existing userid
           data: {
-            departmentname: req.body?.universityusers.departmentname,
-            sponsorshiptype: req.body?.universityusers?.sponsorshiptype,
-            participation: req.body?.universityusers?.participation,
-            batch: Number(req.body?.universityusers?.batch),
-            coursetaken: req.body?.universityusers?.coursetaken,
+            ...value.universityusers,
+            batch: Number(value.universityusers.batch),
+            role:
+              participation === "None" ? "None" : value.universityusers.role,
             confessionfather:
-              req.body?.universityusers?.confessionfather !== undefined
-                ? req.body?.universityusers?.confessionfather
-                : existingUser.universityusers?.confessionfather,
-            advisors: req.body?.universityusers?.universityusers?.advisors,
-            role: req.body?.universityusers?.role,
-            mealcard: req.body?.universityusers?.mealcard,
-            cafeterianame: body?.universityusers?.cafeterianame,
-            emergencyname: req.body?.universityusers?.emergencyname || null,
-            emergencyphone: req.body?.universityusers?.emergencyphone || null,
-            cafeteriaaccess: req.body?.universityusers?.cafeteriaaccess,
-            holidayincampus: req.body?.universityusers?.holidayincampus,
-            tookcourse: req.body?.universityusers?.tookcourse,
-            activitylevel: req.body?.universityusers?.activitylevel,
+              value.universityusers.confessionfather ??
+              existingUser.universityusers.confessionfather,
+            mealcard:
+              value.universityusers.mealcard ??
+              existingUser.universityusers.mealcard,
+            emergencyname:
+              value.universityusers.emergencyname ??
+              existingUser.universityusers.emergencyname,
+            emergencyphone:
+              value.universityusers.emergencyphone ??
+              existingUser.universityusers.emergencyphone,
+            cafeterianame:
+              value.universityusers.cafeterianame ??
+              existingUser.universityusers.cafeterianame,
           },
         },
       },
     },
-    include: {
-      universityusers: true,
-    },
+    include: { universityusers: true },
   });
 
   res.json({
     success: true,
-    updatedUser: { ...updatedUser, birthdate: new Date(updatedUser.birthdate) },
+    updatedUser: {
+      ...updatedUser,
+      birthdate: updatedUser.birthdate.toISOString(),
+    },
   });
+});
+
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany({
+    orderBy: { userid: "desc" },
+    include: { universityusers: true },
+  });
+
+  const formatted = users.map((u) => ({
+    ...u,
+    birthdate: u.birthdate.toISOString(),
+  }));
+
+  res.status(200).json({ success: true, users: formatted });
 });
 
 const getUser = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
+  if (!studentId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID is required" });
+  }
 
-  if (!studentId) return res.status(400).json({ error: "Invalid ID" });
-  if (id.includes("/"))
-    return res.status(400).json({
-      success: false,
-      error: "Invalid ID format, hint: don't use / use - instead",
-    });
+  const validationError = validateStudentIdFormat(studentId, res);
+  if (validationError) return validationError;
+
   const user = await prisma.user.findUnique({
     where: { studentid: studentId },
     include: { universityusers: true },
   });
 
-  if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
 
-  res.json({ success: true, user });
+  res.json({
+    success: true,
+    user: {
+      ...user,
+      birthdate: user.birthdate.toISOString(),
+    },
+  });
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
   if (!studentId) {
-    return res.status(400).json({ success: false, message: "ID not found" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID is required" });
   }
 
-  if (studentId.includes("/"))
-    return res.status(400).json({
-      success: false,
-      error: "Invalid ID format, hint: don't use / use - instead",
-    });
+  const validationError = validateStudentIdFormat(studentId, res);
+  if (validationError) return validationError;
 
   const userExists = await prisma.user.findUnique({
     where: { studentid: studentId },
@@ -229,9 +207,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const deleteAllUsers = asyncHandler(async (req, res) => {
-  const users = await prisma.user.findMany();
-
-  if (users.length === 0) {
+  const count = await prisma.user.count();
+  if (count === 0) {
     return res.status(404).json({ success: false, message: "No users found" });
   }
 

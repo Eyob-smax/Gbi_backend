@@ -138,12 +138,12 @@ model universityusers {
   sponsorshiptype  sponsorship_type
   participation    participation_type @default(None)
   cafeteriaaccess  Boolean?           @default(false)
-  mealcard         String?            @default("Not Specified") @db.VarChar(100)
+  mealcard         String?            @default("not_specified") @db.VarChar(100)
   cafeterianame    String?            @db.VarChar(100)
   emergencyname    String?            @db.VarChar(100)
   emergencyphone   String?            @db.VarChar(20)
   batch            Int
-  confessionfather String?            @default("Not Specified") @db.VarChar(100)
+  confessionfather String?            @default("not_specified") @db.VarChar(100)
   advisors         advisor_type       @default(No)
   role             role_type          @default(None)
   coursetaken      Boolean            @default(true)
