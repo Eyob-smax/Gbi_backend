@@ -4,6 +4,7 @@ import {
   deleteUser,
   getUser,
   getUsers,
+  getAnalytics,
   updateUser,
   deleteAllUsers,
 } from "../controller/user.controller.js";
@@ -23,5 +24,8 @@ router
   .put(protect, updateUser)
   .delete(protect, deleteUser)
   .get(protect, getUser);
+
+// analytics for admin dashboard
+router.route("/analytics").get(protect, isGeneralAdmin, getAnalytics);
 
 export default router;
