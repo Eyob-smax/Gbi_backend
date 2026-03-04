@@ -5,7 +5,7 @@ import { JoiValidator } from "../utils/util.js";
 const schema = JoiValidator();
 const prisma = createPrismaClient().client;
 
-// Helper to check invalid studentid format
+// Thuiss is for Helper to check invalid studentid format
 const validateStudentIdFormat = (id, res) => {
   if (id.includes("/")) {
     return res.status(400).json({
@@ -136,10 +136,20 @@ const updateUser = asyncHandler(async (req, res) => {
     },
   });
 });
-
+// after this i refactor some of the codes for pagination fetch from the server
 const getUsers = asyncHandler(async (req, res) => {
+  // pagination parameters: page and limit (defaults)
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = (page - 1) * limit;
+
+  // count total users so frontend can calculate pages
+  const totalUsers = await prisma.user.count();
+
   const users = await prisma.user.findMany({
     orderBy: { userid: "desc" },
+    skip: offset,
+    take: limit,
     include: { universityusers: true },
   });
 
@@ -148,7 +158,24 @@ const getUsers = asyncHandler(async (req, res) => {
     birthdate: u.birthdate.toISOString(),
   }));
 
-  res.status(200).json({ success: true, users: formatted });
+  const totalPages = limit > 0 ? Math.ceil(totalUsers / limit) : 1;
+  const hasNext = page < totalPages;
+  const hasPrev = page > 1;
+
+  res.status(200).json({
+    success: true,
+    users: formatted,
+    pagination: {
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      limit,
+      hasNext,
+      hasPrev,
+      nextUrl: hasNext ? `/user?page=${page + 1}&limit=${limit}` : undefined,
+      prevUrl: hasPrev ? `/user?page=${page - 1}&limit=${limit}` : undefined,
+    },
+  });
 });
 
 const getUser = asyncHandler(async (req, res) => {
@@ -218,4 +245,53 @@ const deleteAllUsers = asyncHandler(async (req, res) => {
     .json({ success: true, message: "All users deleted successfully" });
 });
 
-export { getUser, updateUser, getUsers, addUser, deleteUser, deleteAllUsers };
+const getAnalytics = asyncHandler(async (req, res) => {
+  const total = await prisma.user.count();
+
+  // This is just like fetch participation and role for all users' university record
+  const uniRecords = await prisma.user.findMany({
+    select: {
+      universityusers: { select: { participation: true, role: true } },
+    },
+  });
+
+  let participatingCount = 0;
+  let activeCount = 0;
+  const participationBreakdown = {};
+
+  uniRecords.forEach((r) => {
+    const u = r.universityusers || {};
+    const participation = u.participation ?? "None";
+    const role = u.role ?? "None";
+
+    if (participation !== "None") participatingCount += 1;
+    if (role !== "None") activeCount += 1;
+
+    participationBreakdown[participation] =
+      (participationBreakdown[participation] || 0) + 1;
+  });
+
+  const participationRate =
+    total === 0 ? 0 : Number(((participatingCount / total) * 100).toFixed(2));
+
+  res.status(200).json({
+    success: true,
+    analytics: {
+      total,
+      activeUsers: activeCount,
+      participating: participatingCount,
+      participationRate,
+      participationBreakdown,
+    },
+  });
+});
+
+export {
+  getUser,
+  updateUser,
+  getUsers,
+  addUser,
+  deleteUser,
+  deleteAllUsers,
+  getAnalytics,
+};
