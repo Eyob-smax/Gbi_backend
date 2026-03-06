@@ -5,6 +5,25 @@ import { JoiValidator } from "../utils/util.js";
 const schema = JoiValidator();
 const prisma = createPrismaClient().client;
 
+const isOwner = (adminStudentId, userCreatedBy) =>
+  !!adminStudentId && !!userCreatedBy && adminStudentId === userCreatedBy;
+
+const canEditUser = (admin, user) => {
+  if (admin?.isSuperAdmin || admin?.editAnyUser) return true;
+  if (admin?.editSpecificUsers || admin?.registerUsers) {
+    return isOwner(admin.studentid, user.createdBy);
+  }
+  return false;
+};
+
+const canDeleteUser = (admin, user) => {
+  if (admin?.isSuperAdmin || admin?.removeAnyUsers) return true;
+  if (admin?.removeSpecificUsers || admin?.registerUsers) {
+    return isOwner(admin.studentid, user.createdBy);
+  }
+  return false;
+};
+
 // Thuiss is for Helper to check invalid studentid format
 const validateStudentIdFormat = (id, res) => {
   if (id.includes("/")) {
@@ -18,6 +37,13 @@ const validateStudentIdFormat = (id, res) => {
 };
 
 const addUser = asyncHandler(async (req, res) => {
+  if (!req.admin?.isSuperAdmin && !req.admin?.registerUsers) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized to register users",
+    });
+  }
+
   const { error, value } = schema.validate(req.body);
   if (error) {
     return res
@@ -43,6 +69,7 @@ const addUser = asyncHandler(async (req, res) => {
   const user = await prisma.user.create({
     data: {
       ...data,
+      createdBy: req.admin?.studentid ?? null,
       birthdate: new Date(data.birthdate),
       universityusers: {
         create: {
@@ -89,6 +116,13 @@ const updateUser = asyncHandler(async (req, res) => {
 
   if (!existingUser) {
     return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (!canEditUser(req.admin, existingUser)) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized to edit this user",
+    });
   }
 
   const participation = value.universityusers.participation;
@@ -143,10 +177,32 @@ const getUsers = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = (page - 1) * limit;
 
+  const where = {};
+
+  if (!req.admin?.isSuperAdmin && !req.admin?.readUsers) {
+    if (req.admin?.registerUsers) {
+      where.createdBy = req.admin.studentid;
+    } else {
+      return res.status(200).json({
+        success: true,
+        users: [],
+        pagination: {
+          totalUsers: 0,
+          totalPages: 0,
+          currentPage: page,
+          limit,
+          hasNext: false,
+          hasPrev: false,
+        },
+      });
+    }
+  }
+
   // count total users so frontend can calculate pages
-  const totalUsers = await prisma.user.count();
+  const totalUsers = await prisma.user.count({ where });
 
   const users = await prisma.user.findMany({
+    where,
     orderBy: { userid: "desc" },
     skip: offset,
     take: limit,
@@ -198,6 +254,17 @@ const getUser = asyncHandler(async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
+  if (
+    !req.admin?.isSuperAdmin &&
+    !req.admin?.readUsers &&
+    !isOwner(req.admin?.studentid, user.createdBy)
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized to view this user",
+    });
+  }
+
   res.json({
     success: true,
     user: {
@@ -224,6 +291,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   if (!userExists) {
     return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (!canDeleteUser(req.admin, userExists)) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized to delete this user",
+    });
   }
 
   await prisma.user.delete({

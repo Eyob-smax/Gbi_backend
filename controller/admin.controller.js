@@ -1,20 +1,72 @@
-import { JoiAdminValidator } from "../utils/util.js";
 import { asyncHandler } from "../utils/util.js";
 import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import Joi from "joi";
 import { createPrismaClient } from "../models/DatabaseConfig.js";
 
 dotenv.config();
 
 const prisma = createPrismaClient().client;
 
-const schema = JoiAdminValidator();
+const updateSchema = Joi.object({
+  studentid: Joi.string().max(15),
+  adminusername: Joi.string().max(50),
+  adminpassword: Joi.string(),
+  permissions: Joi.object({
+    readUsers: Joi.boolean(),
+    registerUsers: Joi.boolean(),
+    editAnyUser: Joi.boolean(),
+    editSpecificUsers: Joi.boolean(),
+    removeAnyUsers: Joi.boolean(),
+    removeSpecificUsers: Joi.boolean(),
+  }),
+}).min(1);
+
+const DEFAULT_PERMISSIONS = {
+  readUsers: false,
+  registerUsers: false,
+  editAnyUser: false,
+  editSpecificUsers: false,
+  removeAnyUsers: false,
+  removeSpecificUsers: false,
+};
+
+const buildPermissions = (
+  permissions = {},
+  fallback = DEFAULT_PERMISSIONS,
+) => ({
+  readUsers: permissions.readUsers ?? fallback.readUsers,
+  registerUsers: permissions.registerUsers ?? fallback.registerUsers,
+  editAnyUser: permissions.editAnyUser ?? fallback.editAnyUser,
+  editSpecificUsers:
+    permissions.editSpecificUsers ?? fallback.editSpecificUsers,
+  removeAnyUsers: permissions.removeAnyUsers ?? fallback.removeAnyUsers,
+  removeSpecificUsers:
+    permissions.removeSpecificUsers ?? fallback.removeSpecificUsers,
+});
+
+const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
+  studentid: admin.studentid,
+  adminusername: admin.adminusername,
+  createdAt: admin.createdAt,
+  isSuperAdmin: superAdmins.includes(admin.adminusername),
+  role: superAdmins.includes(admin.adminusername) ? "Super Admin" : "Admin",
+  usersCreatedCount,
+  permissions: {
+    readUsers: admin.readUsers,
+    registerUsers: admin.registerUsers,
+    editAnyUser: admin.editAnyUser,
+    editSpecificUsers: admin.editSpecificUsers,
+    removeAnyUsers: admin.removeAnyUsers,
+    removeSpecificUsers: admin.removeSpecificUsers,
+  },
+});
 
 // ✅ Register Admin
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { studentid, adminusername, adminpassword } = req.body;
+  const { studentid, adminusername, adminpassword, permissions } = req.body;
 
   if (!studentid || !adminusername || !adminpassword) {
     return res
@@ -34,10 +86,16 @@ const registerAdmin = asyncHandler(async (req, res) => {
       studentid,
       adminusername,
       adminpassword: await hashPassword(adminpassword),
+      ...buildPermissions(permissions),
     },
   });
 
-  res.status(201).json({ success: true, message: "Admin created", admin });
+  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  res.status(201).json({
+    success: true,
+    message: "Admin created",
+    admin: toAdminResponse(admin, superAdmins),
+  });
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
@@ -62,8 +120,16 @@ const logAdmin = asyncHandler(async (req, res) => {
     adminusername: admin.adminusername,
     createdAt: admin.createdAt.toISOString(),
     isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
-      admin.adminusername
+      admin.adminusername,
     ),
+    permissions: {
+      readUsers: admin.readUsers,
+      registerUsers: admin.registerUsers,
+      editAnyUser: admin.editAnyUser,
+      editSpecificUsers: admin.editSpecificUsers,
+      removeAnyUsers: admin.removeAnyUsers,
+      removeSpecificUsers: admin.removeSpecificUsers,
+    },
   };
 
   res.status(200).json({
@@ -79,11 +145,23 @@ const getAdmins = asyncHandler(async (req, res) => {
   });
   const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
 
-  const adminsWithRoles = admins.map((admin) => ({
-    ...admin,
-    isSuperAdmin: superAdmins.includes(admin.adminusername),
-    role: superAdmins.includes(admin.adminusername) ? "Super Admin" : "Admin",
-  }));
+  const createdCountRows = await prisma.user.groupBy({
+    by: ["createdBy"],
+    _count: { _all: true },
+    where: {
+      createdBy: {
+        not: null,
+      },
+    },
+  });
+
+  const createdCounts = Object.fromEntries(
+    createdCountRows.map((row) => [row.createdBy, row._count._all]),
+  );
+
+  const adminsWithRoles = admins.map((admin) =>
+    toAdminResponse(admin, superAdmins, createdCounts[admin.studentid] ?? 0),
+  );
 
   res.status(200).json({ success: true, admins: adminsWithRoles });
 });
@@ -103,7 +181,10 @@ const getAdmin = asyncHandler(async (req, res) => {
   if (!admin)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
-  res.status(200).json({ success: true, admin });
+  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  res
+    .status(200)
+    .json({ success: true, admin: toAdminResponse(admin, superAdmins) });
 });
 
 // ✅ Update Admin (including changing studentid)
@@ -115,13 +196,18 @@ const updateAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Invalid ID format" });
   }
 
-  const { error } = schema.validate(req.body);
+  const { error } = updateSchema.validate(req.body);
   if (error)
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
 
-  const { studentid: newId, adminusername, adminpassword } = req.body;
+  const {
+    studentid: newId,
+    adminusername,
+    adminpassword,
+    permissions,
+  } = req.body;
 
   const existingUser = await prisma.admin.findUnique({
     where: { studentid: currentId },
@@ -146,13 +232,27 @@ const updateAdmin = asyncHandler(async (req, res) => {
       studentid: newId || existingUser.studentid,
       adminusername: adminusername || existingUser.adminusername,
       adminpassword:
-        adminpassword === "previous one"
+        adminpassword === undefined || adminpassword === ""
           ? existingUser.adminpassword
-          : await hashPassword(adminpassword),
+          : adminpassword === "previous one"
+            ? existingUser.adminpassword
+            : await hashPassword(adminpassword),
+      ...buildPermissions(permissions, {
+        readUsers: existingUser.readUsers,
+        registerUsers: existingUser.registerUsers,
+        editAnyUser: existingUser.editAnyUser,
+        editSpecificUsers: existingUser.editSpecificUsers,
+        removeAnyUsers: existingUser.removeAnyUsers,
+        removeSpecificUsers: existingUser.removeSpecificUsers,
+      }),
     },
   });
 
-  res.status(200).json({ success: true, updatedAdmin });
+  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  res.status(200).json({
+    success: true,
+    updatedAdmin: toAdminResponse(updatedAdmin, superAdmins),
+  });
 });
 
 // ✅ Delete Admin

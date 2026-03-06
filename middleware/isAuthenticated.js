@@ -13,11 +13,18 @@ function verifyToken(req) {
 export async function protect(req, res, next) {
   try {
     const decoded = verifyToken(req);
+    const superAdmins = JSON.parse(process.env.SUPER_ADMINS || "[]");
     const admin = await prisma.admin.findUnique({
       where: { studentid: decoded.studentid },
       select: {
         studentid: true,
         adminusername: true,
+        readUsers: true,
+        registerUsers: true,
+        editAnyUser: true,
+        editSpecificUsers: true,
+        removeAnyUsers: true,
+        removeSpecificUsers: true,
       },
     });
 
@@ -27,8 +34,10 @@ export async function protect(req, res, next) {
         message: "User not found with the given token",
       });
     }
-
-    req.admin = admin;
+    req.admin = {
+      ...admin,
+      isSuperAdmin: superAdmins.includes(admin.adminusername),
+    };
     next();
   } catch (error) {
     res.status(401).json({
