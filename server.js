@@ -71,6 +71,14 @@ app.get("/api/auth/current", async (req, res) => {
         isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
           user.adminusername,
         ),
+        permissions: {
+          readUsers: user.readUsers,
+          registerUsers: user.registerUsers,
+          editAnyUser: user.editAnyUser,
+          editSpecificUsers: user.editSpecificUsers,
+          removeAnyUsers: user.removeAnyUsers,
+          removeSpecificUsers: user.removeSpecificUsers,
+        },
       },
     });
   } catch (error) {

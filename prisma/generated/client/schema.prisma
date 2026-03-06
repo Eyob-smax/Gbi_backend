@@ -105,6 +105,7 @@ enum sponsorship_type {
 model User {
   userid               Int              @id @default(autoincrement())
   studentid            String           @unique @db.VarChar(20)
+  createdBy            String?          @db.VarChar(20)
   firstname            String           @db.VarChar(50)
   middlename           String           @db.VarChar(50)
   lastname             String           @db.VarChar(50)
@@ -125,11 +126,17 @@ model User {
 }
 
 model admin {
-  adminid       Int       @id @default(autoincrement())
-  studentid     String    @unique @db.VarChar(20)
-  adminusername String    @db.VarChar(50)
-  adminpassword String    @db.VarChar(1000)
-  createdAt     DateTime? @default(now())
+  adminid             Int       @id @default(autoincrement())
+  studentid           String    @unique @db.VarChar(20)
+  adminusername       String    @db.VarChar(50)
+  adminpassword       String    @db.VarChar(1000)
+  readUsers           Boolean   @default(false)
+  registerUsers       Boolean   @default(false)
+  editAnyUser         Boolean   @default(false)
+  editSpecificUsers   Boolean   @default(false)
+  removeAnyUsers      Boolean   @default(false)
+  removeSpecificUsers Boolean   @default(false)
+  createdAt           DateTime? @default(now())
 }
 
 model universityusers {
