@@ -7,13 +7,16 @@ import {
   logAdmin,
   registerAdmin,
   deleteAllAdmins,
-  logoutAdmin,
 } from "../controller/admin.controller.js";
 import protect from "../middleware/isAuthenticated.js";
 import { isGeneralAdmin } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
+// Public routes (must be defined before /:id to avoid parameter capture)
+router.route("/login").post(logAdmin);
+
+// Protected admin management routes
 router
   .route("/")
   .get(protect, isGeneralAdmin, getAdmins)
@@ -25,8 +28,5 @@ router
   .get(protect, isGeneralAdmin, getAdmin)
   .put(protect, isGeneralAdmin, updateAdmin)
   .delete(protect, isGeneralAdmin, deleteAdmin);
-
-router.route("/login").post(logAdmin);
-router.route("/register").post(registerAdmin);
 
 export default router;

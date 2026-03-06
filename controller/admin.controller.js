@@ -2,7 +2,6 @@ import { asyncHandler } from "../utils/util.js";
 import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import Joi from "joi";
 import { createPrismaClient } from "../models/DatabaseConfig.js";
 
@@ -34,18 +33,19 @@ const DEFAULT_PERMISSIONS = {
 };
 
 const buildPermissions = (
-  permissions = {},
+  permissions,
   fallback = DEFAULT_PERMISSIONS,
-) => ({
-  readUsers: permissions.readUsers ?? fallback.readUsers,
-  registerUsers: permissions.registerUsers ?? fallback.registerUsers,
-  editAnyUser: permissions.editAnyUser ?? fallback.editAnyUser,
-  editSpecificUsers:
-    permissions.editSpecificUsers ?? fallback.editSpecificUsers,
-  removeAnyUsers: permissions.removeAnyUsers ?? fallback.removeAnyUsers,
-  removeSpecificUsers:
-    permissions.removeSpecificUsers ?? fallback.removeSpecificUsers,
-});
+) => {
+  const p = permissions ?? {};
+  return {
+    readUsers: p.readUsers ?? fallback.readUsers,
+    registerUsers: p.registerUsers ?? fallback.registerUsers,
+    editAnyUser: p.editAnyUser ?? fallback.editAnyUser,
+    editSpecificUsers: p.editSpecificUsers ?? fallback.editSpecificUsers,
+    removeAnyUsers: p.removeAnyUsers ?? fallback.removeAnyUsers,
+    removeSpecificUsers: p.removeSpecificUsers ?? fallback.removeSpecificUsers,
+  };
+};
 
 const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
   studentid: admin.studentid,
@@ -115,27 +115,12 @@ const logAdmin = asyncHandler(async (req, res) => {
 
   buildToken(res, admin.studentid, admin.adminusername);
 
-  const adminObject = {
-    studentid: admin.studentid,
-    adminusername: admin.adminusername,
-    createdAt: admin.createdAt.toISOString(),
-    isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
-      admin.adminusername,
-    ),
-    permissions: {
-      readUsers: admin.readUsers,
-      registerUsers: admin.registerUsers,
-      editAnyUser: admin.editAnyUser,
-      editSpecificUsers: admin.editSpecificUsers,
-      removeAnyUsers: admin.removeAnyUsers,
-      removeSpecificUsers: admin.removeSpecificUsers,
-    },
-  };
+  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
 
   res.status(200).json({
     success: true,
     message: "Logged in successfully",
-    admin: adminObject,
+    admin: toAdminResponse(admin, superAdmins),
   });
 });
 
@@ -261,22 +246,16 @@ const deleteAdmin = asyncHandler(async (req, res) => {
   if (!studentId || studentId.includes("/"))
     return res.status(400).json({ success: false, message: "Invalid ID" });
 
-  const token = req.cookies.jwt;
-  if (!token)
-    return res
-      .status(401)
-      .json({ success: false, message: "Not authenticated" });
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const userExists = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
   if (!userExists)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
+  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
   if (
-    decoded.studentid !== studentId &&
-    JSON.parse(process.env.SUPER_ADMINS).includes(userExists.adminusername)
+    req.admin.studentid !== studentId &&
+    superAdmins.includes(userExists.adminusername)
   ) {
     return res
       .status(403)

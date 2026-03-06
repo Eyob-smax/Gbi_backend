@@ -13,6 +13,9 @@ import protect, { isGeneralAdmin } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
+// Named routes must come before /:id to avoid parameter capture
+router.route("/analytics").get(protect, isGeneralAdmin, getAnalytics);
+
 router
   .route("/")
   .post(protect, addUser)
@@ -24,8 +27,5 @@ router
   .put(protect, updateUser)
   .delete(protect, deleteUser)
   .get(protect, getUser);
-
-// analytics for admin dashboard
-router.route("/analytics").get(protect, isGeneralAdmin, getAnalytics);
 
 export default router;
