@@ -9,7 +9,7 @@ export function getAuthCookieOptions() {
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    sameSite: isProduction ? "None" : "Lax",
     path: "/",
   };
 }
