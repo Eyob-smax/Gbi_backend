@@ -1,8 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import dotenv from "dotenv";
 import { PrismaClient } from "../prisma/generated/client/index.js";
-dotenv.config();
+
+let _instance = null;
+
 export const createPrismaClient = () => {
+  if (_instance) return _instance;
+
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is required");
@@ -24,12 +27,12 @@ export const createPrismaClient = () => {
     } catch (error) {
       console.error(
         `❌ Database connection failed (attempt ${attempt}):`,
-        error.message
+        error.message,
       );
 
       if (attempt >= MAX_RETRIES) {
         console.error(
-          "🚫 Max retries reached. Could not connect to the database. Exiting..."
+          "🚫 Max retries reached. Could not connect to the database. Exiting...",
         );
         process.exit(1);
       }
@@ -38,24 +41,23 @@ export const createPrismaClient = () => {
       console.log(`🔄 Retrying in ${delay / 1000} seconds...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
 
-      return connectWithRetry(attempt + 1); // Recursive retry
+      return connectWithRetry(attempt + 1);
     }
   };
 
-  // Graceful shutdown
   const disconnect = async () => {
     await client.$disconnect();
     console.log("🛑 Disconnected from the database");
   };
 
-  // Lifecycle hooks (for NestJS or manual use)
   const onModuleInit = () => connectWithRetry();
   const onModuleDestroy = () => disconnect();
 
-  // Return client + lifecycle methods
-  return {
+  _instance = {
     client,
     onModuleInit,
     onModuleDestroy,
   };
+
+  return _instance;
 };

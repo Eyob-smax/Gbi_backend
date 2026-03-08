@@ -173,8 +173,8 @@ const updateUser = asyncHandler(async (req, res) => {
 // after this i refactor some of the codes for pagination fetch from the server
 const getUsers = asyncHandler(async (req, res) => {
   // pagination parameters: page and limit (defaults)
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 10;
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const offset = (page - 1) * limit;
 
   const where = {};

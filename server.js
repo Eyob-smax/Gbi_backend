@@ -63,7 +63,7 @@ app.get("/api/auth/current", protect, (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  console.error(err);
   const errorResponse = handleError(err);
   res.status(500).json(errorResponse);
 });
