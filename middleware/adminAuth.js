@@ -4,12 +4,12 @@ const AUTH_COOKIE_NAME = "jwt";
 const AUTH_COOKIE_MAX_AGE = 10 * 24 * 60 * 60 * 1000;
 
 export function getAuthCookieOptions() {
-  // const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === "production";
 
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "none",
+    sameSite: isProduction ? "None" : "Lax",
     path: "/",
   };
 }
