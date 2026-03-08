@@ -12,7 +12,8 @@ const prisma = createPrismaClient().client;
 const getSuperAdmins = () => {
   try {
     return JSON.parse(process.env.SUPER_ADMINS || "[]");
-  } catch {
+  } catch (error) {
+    console.error("Failed to parse SUPER_ADMINS:", error);
     return [];
   }
 };
@@ -20,7 +21,7 @@ const getSuperAdmins = () => {
 const registerSchema = Joi.object({
   studentid: Joi.string().max(15).required(),
   adminusername: Joi.string().max(50).required(),
-  adminpassword: Joi.string().min(1).required(),
+  adminpassword: Joi.string().min(8).required(),
   permissions: Joi.object({
     readUsers: Joi.boolean(),
     registerUsers: Joi.boolean(),
