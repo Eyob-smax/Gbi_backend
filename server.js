@@ -8,17 +8,14 @@ import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
 import protect from "./middleware/isAuthenticated.js";
 
-// load environment variables early so they are available everywhere
 dotenv.config();
 
 const app = express();
 
-// enable CORS for the frontend origin(s) defined in .env
-// allow localhost and 127.0.0.1 variants in development
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "http://localhost:7173",
-  "http://127.0.0.1:7173",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
 ];
 
 app.use(
