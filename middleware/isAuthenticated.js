@@ -29,7 +29,7 @@ export async function protect(req, res, next) {
     });
 
     if (!admin) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
         message: "User not found with the given token",
       });
@@ -47,40 +47,14 @@ export async function protect(req, res, next) {
   }
 }
 
-export async function isGeneralAdmin(req, res, next) {
-  try {
-    const decoded = verifyToken(req);
-
-    const superAdmins = JSON.parse(process.env.SUPER_ADMINS || "[]");
-    const generalAdmin = await prisma.admin.findFirst({
-      where: {
-        studentid: decoded.studentid,
-        adminusername: {
-          in: superAdmins,
-        },
-      },
-      select: {
-        studentid: true,
-        adminusername: true,
-      },
-    });
-
-    if (!generalAdmin) {
-      return res.status(403).json({
-        success: false,
-        message: "General admin not found or unauthorized!",
-      });
-    }
-
-    req.admin = generalAdmin;
-    next();
-  } catch (error) {
-    console.error("General admin check failed:", error);
-    res.status(401).json({
+export function isGeneralAdmin(req, res, next) {
+  if (!req.admin?.isSuperAdmin) {
+    return res.status(403).json({
       success: false,
-      message: "Not authorized: " + error.message,
+      message: "General admin not found or unauthorized!",
     });
   }
+  next();
 }
 
 export default protect;

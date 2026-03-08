@@ -9,6 +9,28 @@ dotenv.config();
 
 const prisma = createPrismaClient().client;
 
+const getSuperAdmins = () => {
+  try {
+    return JSON.parse(process.env.SUPER_ADMINS || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const registerSchema = Joi.object({
+  studentid: Joi.string().max(15).required(),
+  adminusername: Joi.string().max(50).required(),
+  adminpassword: Joi.string().min(1).required(),
+  permissions: Joi.object({
+    readUsers: Joi.boolean(),
+    registerUsers: Joi.boolean(),
+    editAnyUser: Joi.boolean(),
+    editSpecificUsers: Joi.boolean(),
+    removeAnyUsers: Joi.boolean(),
+    removeSpecificUsers: Joi.boolean(),
+  }),
+});
+
 const updateSchema = Joi.object({
   studentid: Joi.string().max(15),
   adminusername: Joi.string().max(50),
@@ -66,13 +88,14 @@ const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
 
 // ✅ Register Admin
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { studentid, adminusername, adminpassword, permissions } = req.body;
-
-  if (!studentid || !adminusername || !adminpassword) {
+  const { error, value } = registerSchema.validate(req.body);
+  if (error) {
     return res
       .status(400)
-      .json({ success: false, message: "Missing required fields" });
+      .json({ success: false, message: error.details[0].message });
   }
+
+  const { studentid, adminusername, adminpassword, permissions } = value;
 
   const isAdminExist = await prisma.admin.findUnique({ where: { studentid } });
   if (isAdminExist) {
@@ -90,7 +113,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
     },
   });
 
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   res.status(201).json({
     success: true,
     message: "Admin created",
@@ -115,7 +138,7 @@ const logAdmin = asyncHandler(async (req, res) => {
 
   buildToken(res, admin.studentid, admin.adminusername);
 
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
 
   res.status(200).json({
     success: true,
@@ -128,7 +151,7 @@ const getAdmins = asyncHandler(async (req, res) => {
   const admins = await prisma.admin.findMany({
     orderBy: { createdAt: "desc" },
   });
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
 
   const createdCountRows = await prisma.user.groupBy({
     by: ["createdBy"],
@@ -166,7 +189,7 @@ const getAdmin = asyncHandler(async (req, res) => {
   if (!admin)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   res
     .status(200)
     .json({ success: true, admin: toAdminResponse(admin, superAdmins) });
@@ -233,7 +256,7 @@ const updateAdmin = asyncHandler(async (req, res) => {
     },
   });
 
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   res.status(200).json({
     success: true,
     updatedAdmin: toAdminResponse(updatedAdmin, superAdmins),
@@ -252,7 +275,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
   if (!userExists)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   if (
     req.admin.studentid !== studentId &&
     superAdmins.includes(userExists.adminusername)
@@ -270,7 +293,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
 
 // ✅ Delete All Non-Super Admins
 const deleteAllAdmins = asyncHandler(async (req, res) => {
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   if (!superAdmins.length)
     return res
       .status(400)
