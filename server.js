@@ -40,7 +40,8 @@ app.use(cookieParser());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
-app.get("/api/logout", protect, logoutAdmin);
+app.post("/api/auth/logout", logoutAdmin);
+app.route("/api/logout").get(logoutAdmin).post(logoutAdmin);
 
 app.get("/api/auth/current", protect, (req, res) => {
   res.json({
@@ -50,6 +51,7 @@ app.get("/api/auth/current", protect, (req, res) => {
       adminusername: req.admin.adminusername,
       isAuthenticated: true,
       isSuperAdmin: req.admin.isSuperAdmin,
+      role: req.admin.isSuperAdmin ? "Super Admin" : "Admin",
       permissions: {
         readUsers: req.admin.readUsers,
         registerUsers: req.admin.registerUsers,
