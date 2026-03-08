@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/util.js";
-import buildToken from "../middleware/adminAuth.js";
+import buildToken, { clearAuthCookie } from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
 import Joi from "joi";
 import { createPrismaClient } from "../models/DatabaseConfig.js";
@@ -52,10 +52,7 @@ const DEFAULT_PERMISSIONS = {
   removeSpecificUsers: false,
 };
 
-const buildPermissions = (
-  permissions,
-  fallback = DEFAULT_PERMISSIONS,
-) => {
+const buildPermissions = (permissions, fallback = DEFAULT_PERMISSIONS) => {
   const p = permissions ?? {};
   return {
     readUsers: p.readUsers ?? fallback.readUsers,
@@ -86,7 +83,9 @@ const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
 
 const validateIdParam = (id, res) => {
   if (!id || id.includes("/")) {
-    return res.status(400).json({ success: false, message: "Invalid ID format" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid ID format" });
   }
   return null;
 };
@@ -288,7 +287,10 @@ const deleteAdmin = asyncHandler(async (req, res) => {
     if (!req.admin.isSuperAdmin) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to delete this admin" });
+        .json({
+          success: false,
+          message: "Not authorized to delete this admin",
+        });
     }
   }
 
@@ -317,13 +319,7 @@ const deleteAllAdmins = asyncHandler(async (req, res) => {
 
 // ✅ Logout Admin
 const logoutAdmin = asyncHandler(async (req, res) => {
-  res.clearCookie("jwt", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    maxAge: 0,
-  });
+  clearAuthCookie(res);
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
