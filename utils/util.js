@@ -151,29 +151,6 @@ export function JoiValidator() {
   }).options({ stripUnknown: true });
 }
 
-export function JoiAdminValidator() {
-  return Joi.object({
-    studentid: Joi.string().max(15).required(),
-    adminusername: Joi.string().max(50).required(),
-    adminpassword: Joi.string().required(),
-    permissions: Joi.object({
-      readUsers: Joi.boolean().default(false),
-      registerUsers: Joi.boolean().default(false),
-      editAnyUser: Joi.boolean().default(false),
-      editSpecificUsers: Joi.boolean().default(false),
-      removeAnyUsers: Joi.boolean().default(false),
-      removeSpecificUsers: Joi.boolean().default(false),
-    }).default({
-      readUsers: false,
-      registerUsers: false,
-      editAnyUser: false,
-      editSpecificUsers: false,
-      removeAnyUsers: false,
-      removeSpecificUsers: false,
-    }),
-  });
-}
-
 export function handleError(err) {
   // --- Common Database Errors (P2xxx) ---
 

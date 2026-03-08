@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import {
   getAdmin,
   updateAdmin,
@@ -13,8 +14,19 @@ import { isGeneralAdmin } from "../middleware/isAuthenticated.js";
 
 const router = express.Router();
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 attempts per window
+  message: {
+    success: false,
+    message: "Too many login attempts, please try again after 15 minutes",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Public routes (must be defined before /:id to avoid parameter capture)
-router.route("/login").post(logAdmin);
+router.route("/login").post(loginLimiter, logAdmin);
 
 // Protected admin management routes
 router
