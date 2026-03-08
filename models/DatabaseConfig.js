@@ -1,10 +1,10 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../prisma/generated/client/index.js";
 
-let _instance = null;
+let prismaInstance = null;
 
 export const createPrismaClient = () => {
-  if (_instance) return _instance;
+  if (prismaInstance) return prismaInstance;
 
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -53,11 +53,11 @@ export const createPrismaClient = () => {
   const onModuleInit = () => connectWithRetry();
   const onModuleDestroy = () => disconnect();
 
-  _instance = {
+  prismaInstance = {
     client,
     onModuleInit,
     onModuleDestroy,
   };
 
-  return _instance;
+  return prismaInstance;
 };
