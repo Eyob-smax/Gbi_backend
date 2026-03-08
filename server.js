@@ -3,16 +3,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import UserRoutes from "./routes/user.routes.js";
 import AdminRoutes from "./routes/admin.routes.js";
-import jwt from "jsonwebtoken";
 import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
-import { createPrismaClient } from "./models/DatabaseConfig.js";
+import protect from "./middleware/isAuthenticated.js";
 
 // load environment variables early so they are available everywhere
 dotenv.config();
 
-const prisma = createPrismaClient().client;
 const app = express();
 
 // enable CORS for the frontend origin(s) defined in .env
@@ -42,44 +40,30 @@ app.use(cookieParser());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
-app.get("/api/logout", logoutAdmin);
+app.get("/api/logout", protect, logoutAdmin);
 
-app.get("/api/auth/current", async (req, res) => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Not authenticated" });
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await prisma.admin.findUnique({
-      where: { studentid: decoded?.studentid },
-    });
-
-    if (!user || !decoded) {
-      throw new Error(
-        "Please provide valid token or this user didn't access in our DB!",
-      );
-    }
-    res.json({
-      success: true,
-      user: {
-        studentid: user.studentid,
-        adminusername: user.adminusername,
-        isAuthenticated: true,
-        isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
-          user.adminusername,
-        ),
+app.get("/api/auth/current", protect, (req, res) => {
+  res.json({
+    success: true,
+    user: {
+      studentid: req.admin.studentid,
+      adminusername: req.admin.adminusername,
+      isAuthenticated: true,
+      isSuperAdmin: req.admin.isSuperAdmin,
+      permissions: {
+        readUsers: req.admin.readUsers,
+        registerUsers: req.admin.registerUsers,
+        editAnyUser: req.admin.editAnyUser,
+        editSpecificUsers: req.admin.editSpecificUsers,
+        removeAnyUsers: req.admin.removeAnyUsers,
+        removeSpecificUsers: req.admin.removeSpecificUsers,
       },
-    });
-  } catch (error) {
-    res.status(401).json({ success: false, message: "Invalid token" });
-  }
+    },
+  });
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  console.error(err);
   const errorResponse = handleError(err);
   res.status(500).json(errorResponse);
 });

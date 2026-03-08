@@ -1,26 +1,106 @@
-import { JoiAdminValidator } from "../utils/util.js";
 import { asyncHandler } from "../utils/util.js";
 import buildToken from "../middleware/adminAuth.js";
 import { hashPassword, comparePassword } from "../utils/util.js";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import Joi from "joi";
 import { createPrismaClient } from "../models/DatabaseConfig.js";
-
-dotenv.config();
 
 const prisma = createPrismaClient().client;
 
-const schema = JoiAdminValidator();
+const getSuperAdmins = () => {
+  try {
+    return JSON.parse(process.env.SUPER_ADMINS || "[]");
+  } catch (error) {
+    console.error("Failed to parse SUPER_ADMINS:", error);
+    return [];
+  }
+};
+
+const registerSchema = Joi.object({
+  studentid: Joi.string().max(15).required(),
+  adminusername: Joi.string().max(50).required(),
+  adminpassword: Joi.string().min(8).required(),
+  permissions: Joi.object({
+    readUsers: Joi.boolean(),
+    registerUsers: Joi.boolean(),
+    editAnyUser: Joi.boolean(),
+    editSpecificUsers: Joi.boolean(),
+    removeAnyUsers: Joi.boolean(),
+    removeSpecificUsers: Joi.boolean(),
+  }),
+});
+
+const updateSchema = Joi.object({
+  studentid: Joi.string().max(15),
+  adminusername: Joi.string().max(50),
+  adminpassword: Joi.string().min(8),
+  permissions: Joi.object({
+    readUsers: Joi.boolean(),
+    registerUsers: Joi.boolean(),
+    editAnyUser: Joi.boolean(),
+    editSpecificUsers: Joi.boolean(),
+    removeAnyUsers: Joi.boolean(),
+    removeSpecificUsers: Joi.boolean(),
+  }),
+}).min(1);
+
+const DEFAULT_PERMISSIONS = {
+  readUsers: false,
+  registerUsers: false,
+  editAnyUser: false,
+  editSpecificUsers: false,
+  removeAnyUsers: false,
+  removeSpecificUsers: false,
+};
+
+const buildPermissions = (
+  permissions,
+  fallback = DEFAULT_PERMISSIONS,
+) => {
+  const p = permissions ?? {};
+  return {
+    readUsers: p.readUsers ?? fallback.readUsers,
+    registerUsers: p.registerUsers ?? fallback.registerUsers,
+    editAnyUser: p.editAnyUser ?? fallback.editAnyUser,
+    editSpecificUsers: p.editSpecificUsers ?? fallback.editSpecificUsers,
+    removeAnyUsers: p.removeAnyUsers ?? fallback.removeAnyUsers,
+    removeSpecificUsers: p.removeSpecificUsers ?? fallback.removeSpecificUsers,
+  };
+};
+
+const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
+  studentid: admin.studentid,
+  adminusername: admin.adminusername,
+  createdAt: admin.createdAt,
+  isSuperAdmin: superAdmins.includes(admin.adminusername),
+  role: superAdmins.includes(admin.adminusername) ? "Super Admin" : "Admin",
+  usersCreatedCount,
+  permissions: {
+    readUsers: admin.readUsers,
+    registerUsers: admin.registerUsers,
+    editAnyUser: admin.editAnyUser,
+    editSpecificUsers: admin.editSpecificUsers,
+    removeAnyUsers: admin.removeAnyUsers,
+    removeSpecificUsers: admin.removeSpecificUsers,
+  },
+});
+
+const validateIdParam = (id, res) => {
+  if (!id || id.includes("/")) {
+    return res.status(400).json({ success: false, message: "Invalid ID format" });
+  }
+  return null;
+};
 
 // ✅ Register Admin
 const registerAdmin = asyncHandler(async (req, res) => {
-  const { studentid, adminusername, adminpassword } = req.body;
-
-  if (!studentid || !adminusername || !adminpassword) {
+  const { error, value } = registerSchema.validate(req.body);
+  if (error) {
     return res
       .status(400)
-      .json({ success: false, message: "Missing required fields" });
+      .json({ success: false, message: error.details[0].message });
   }
+
+  const { studentid, adminusername, adminpassword, permissions } = value;
 
   const isAdminExist = await prisma.admin.findUnique({ where: { studentid } });
   if (isAdminExist) {
@@ -34,10 +114,16 @@ const registerAdmin = asyncHandler(async (req, res) => {
       studentid,
       adminusername,
       adminpassword: await hashPassword(adminpassword),
+      ...buildPermissions(permissions),
     },
   });
 
-  res.status(201).json({ success: true, message: "Admin created", admin });
+  const superAdmins = getSuperAdmins();
+  res.status(201).json({
+    success: true,
+    message: "Admin created",
+    admin: toAdminResponse(admin, superAdmins),
+  });
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
@@ -55,21 +141,14 @@ const logAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
-  buildToken(res, admin.studentid, admin.adminusername);
+  buildToken(res, admin.studentid);
 
-  const adminObject = {
-    studentid: admin.studentid,
-    adminusername: admin.adminusername,
-    createdAt: admin.createdAt.toISOString(),
-    isSuperAdmin: JSON.parse(process.env.SUPER_ADMINS).includes(
-      admin.adminusername
-    ),
-  };
+  const superAdmins = getSuperAdmins();
 
   res.status(200).json({
     success: true,
     message: "Logged in successfully",
-    admin: adminObject,
+    admin: toAdminResponse(admin, superAdmins),
   });
 });
 
@@ -77,13 +156,25 @@ const getAdmins = asyncHandler(async (req, res) => {
   const admins = await prisma.admin.findMany({
     orderBy: { createdAt: "desc" },
   });
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
 
-  const adminsWithRoles = admins.map((admin) => ({
-    ...admin,
-    isSuperAdmin: superAdmins.includes(admin.adminusername),
-    role: superAdmins.includes(admin.adminusername) ? "Super Admin" : "Admin",
-  }));
+  const createdCountRows = await prisma.user.groupBy({
+    by: ["createdBy"],
+    _count: { _all: true },
+    where: {
+      createdBy: {
+        not: null,
+      },
+    },
+  });
+
+  const createdCounts = Object.fromEntries(
+    createdCountRows.map((row) => [row.createdBy, row._count._all]),
+  );
+
+  const adminsWithRoles = admins.map((admin) =>
+    toAdminResponse(admin, superAdmins, createdCounts[admin.studentid] ?? 0),
+  );
 
   res.status(200).json({ success: true, admins: adminsWithRoles });
 });
@@ -91,11 +182,8 @@ const getAdmins = asyncHandler(async (req, res) => {
 // ✅ Get Single Admin
 const getAdmin = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
-  if (!studentId || studentId.includes("/")) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid ID format" });
-  }
+  const validationError = validateIdParam(studentId, res);
+  if (validationError) return validationError;
 
   const admin = await prisma.admin.findUnique({
     where: { studentid: studentId },
@@ -103,25 +191,30 @@ const getAdmin = asyncHandler(async (req, res) => {
   if (!admin)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
-  res.status(200).json({ success: true, admin });
+  const superAdmins = getSuperAdmins();
+  res
+    .status(200)
+    .json({ success: true, admin: toAdminResponse(admin, superAdmins) });
 });
 
 // ✅ Update Admin (including changing studentid)
 const updateAdmin = asyncHandler(async (req, res) => {
   const currentId = req.params.id;
-  if (!currentId || currentId.includes("/")) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid ID format" });
-  }
+  const validationError = validateIdParam(currentId, res);
+  if (validationError) return validationError;
 
-  const { error } = schema.validate(req.body);
+  const { error } = updateSchema.validate(req.body);
   if (error)
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
 
-  const { studentid: newId, adminusername, adminpassword } = req.body;
+  const {
+    studentid: newId,
+    adminusername,
+    adminpassword,
+    permissions,
+  } = req.body;
 
   const existingUser = await prisma.admin.findUnique({
     where: { studentid: currentId },
@@ -146,41 +239,57 @@ const updateAdmin = asyncHandler(async (req, res) => {
       studentid: newId || existingUser.studentid,
       adminusername: adminusername || existingUser.adminusername,
       adminpassword:
-        adminpassword === "previous one"
+        adminpassword === undefined
           ? existingUser.adminpassword
           : await hashPassword(adminpassword),
+      ...buildPermissions(permissions, {
+        readUsers: existingUser.readUsers,
+        registerUsers: existingUser.registerUsers,
+        editAnyUser: existingUser.editAnyUser,
+        editSpecificUsers: existingUser.editSpecificUsers,
+        removeAnyUsers: existingUser.removeAnyUsers,
+        removeSpecificUsers: existingUser.removeSpecificUsers,
+      }),
     },
   });
 
-  res.status(200).json({ success: true, updatedAdmin });
+  const superAdmins = getSuperAdmins();
+  res.status(200).json({
+    success: true,
+    updatedAdmin: toAdminResponse(updatedAdmin, superAdmins),
+  });
 });
 
 // ✅ Delete Admin
 const deleteAdmin = asyncHandler(async (req, res) => {
   const studentId = req.params.id;
-  if (!studentId || studentId.includes("/"))
-    return res.status(400).json({ success: false, message: "Invalid ID" });
+  const validationError = validateIdParam(studentId, res);
+  if (validationError) return validationError;
 
-  const token = req.cookies.jwt;
-  if (!token)
-    return res
-      .status(401)
-      .json({ success: false, message: "Not authenticated" });
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const userExists = await prisma.admin.findUnique({
     where: { studentid: studentId },
   });
   if (!userExists)
     return res.status(404).json({ success: false, message: "Admin not found" });
 
-  if (
-    decoded.studentid !== studentId &&
-    JSON.parse(process.env.SUPER_ADMINS).includes(userExists.adminusername)
-  ) {
-    return res
-      .status(403)
-      .json({ success: false, message: "Not authorized to delete this admin" });
+  const superAdmins = getSuperAdmins();
+  if (superAdmins.includes(userExists.adminusername)) {
+    // Count how many super admins still exist in the DB
+    const superAdminCount = await prisma.admin.count({
+      where: { adminusername: { in: superAdmins } },
+    });
+    if (superAdminCount <= 1) {
+      return res.status(403).json({
+        success: false,
+        message: "Cannot delete the last super admin",
+      });
+    }
+    // Only a super admin can delete another super admin
+    if (!req.admin.isSuperAdmin) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Not authorized to delete this admin" });
+    }
   }
 
   await prisma.admin.delete({ where: { studentid: studentId } });
@@ -191,7 +300,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
 
 // ✅ Delete All Non-Super Admins
 const deleteAllAdmins = asyncHandler(async (req, res) => {
-  const superAdmins = JSON.parse(process.env.SUPER_ADMINS);
+  const superAdmins = getSuperAdmins();
   if (!superAdmins.length)
     return res
       .status(400)

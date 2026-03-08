@@ -63,7 +63,7 @@ export function JoiValidator() {
         "Central_Ethiopia_Region",
         "South_Ethiopia_Region",
         "Harari",
-        "not_specified"
+        "not_specified",
       )
       .default("not_specified"),
     mothertongue: Joi.string()
@@ -73,7 +73,7 @@ export function JoiValidator() {
         "Tigrigna",
         "English",
         "Other",
-        "not_specified"
+        "not_specified",
       )
       .default("not_specified"),
     zonename: Joi.string().max(50).allow("", null).default("not_specified"),
@@ -85,7 +85,7 @@ export function JoiValidator() {
         "Hearing",
         "Intellectual",
         "Psychosocial",
-        "Other"
+        "Other",
       )
       .default("None"),
     clergicalstatus: Joi.string()
@@ -115,7 +115,7 @@ export function JoiValidator() {
           "Professional_and_Community_Development_Section",
           "Batch_and_Programs_Coordination_Section",
           "Member_Care_Advice_and_Capacity_Building_Section",
-          "None"
+          "None",
         )
         .required(),
       batch: Joi.number().integer().positive().required(),
@@ -141,7 +141,7 @@ export function JoiValidator() {
           "SubclassSecretary",
           "SubclassTeamLead",
           "SubclassManager",
-          "None"
+          "None",
         )
         .required(),
       activitylevel: Joi.string()
@@ -149,14 +149,6 @@ export function JoiValidator() {
         .default("Active"),
     }).required(),
   }).options({ stripUnknown: true });
-}
-
-export function JoiAdminValidator() {
-  return Joi.object({
-    studentid: Joi.string().max(15).required(),
-    adminusername: Joi.string().max(50).required(),
-    adminpassword: Joi.string().required(),
-  });
 }
 
 export function handleError(err) {

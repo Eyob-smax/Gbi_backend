@@ -1,12 +1,7 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
 
-function buildToken(res, studentid, username) {
-  const generalAdmin = JSON.parse(process.env.SUPER_ADMINS);
-  const isAdmin = generalAdmin.includes(username);
-
-  const token = jwt.sign({ studentid, isAdmin }, process.env.JWT_SECRET, {
+function buildToken(res, studentid) {
+  const token = jwt.sign({ studentid }, process.env.JWT_SECRET, {
     expiresIn: "10d",
   });
 
