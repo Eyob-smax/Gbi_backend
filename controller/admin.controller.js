@@ -285,12 +285,10 @@ const deleteAdmin = asyncHandler(async (req, res) => {
     }
     // Only a super admin can delete another super admin
     if (!req.admin.isSuperAdmin) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Not authorized to delete this admin",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this admin",
+      });
     }
   }
 

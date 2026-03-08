@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../prisma/generated/client/index.js";
+import "dotenv/config";
 
 let prismaInstance = null;
 
