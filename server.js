@@ -7,6 +7,7 @@ import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
 import protect from "./middleware/isAuthenticated.js";
+import { getFilterOptions } from "./controller/filterOptions.controller.js";
 
 dotenv.config();
 
@@ -15,7 +16,9 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:7173",
+  "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:7173",
 ];
 
 app.use(
@@ -37,6 +40,7 @@ app.use(cookieParser());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
+app.get("/api/filter-options", protect, getFilterOptions);
 app.post("/api/auth/logout", logoutAdmin);
 app.route("/api/logout").get(logoutAdmin).post(logoutAdmin);
 
