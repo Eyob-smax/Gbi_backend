@@ -1,6 +1,7 @@
 import { createPrismaClient } from "../models/DatabaseConfig.js";
 import { asyncHandler } from "../utils/util.js";
 import { JoiValidator } from "../utils/util.js";
+import { buildUserFilters } from "../utils/filterBuilder.js";
 
 const schema = JoiValidator();
 const prisma = createPrismaClient().client;
@@ -172,12 +173,11 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 // after this i refactor some of the codes for pagination fetch from the server
 const getUsers = asyncHandler(async (req, res) => {
-  // pagination parameters: page and limit (defaults)
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const offset = (page - 1) * limit;
 
-  const where = {};
+  const where = buildUserFilters(req.query);
 
   if (!req.admin?.isSuperAdmin && !req.admin?.readUsers) {
     if (req.admin?.registerUsers) {
@@ -198,7 +198,6 @@ const getUsers = asyncHandler(async (req, res) => {
     }
   }
 
-  // count total users so frontend can calculate pages
   const totalUsers = await prisma.user.count({ where });
 
   const users = await prisma.user.findMany({
