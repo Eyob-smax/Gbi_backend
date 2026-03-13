@@ -153,6 +153,7 @@ exports.Prisma.AdminScalarFieldEnum = {
   editSpecificUsers: 'editSpecificUsers',
   removeAnyUsers: 'removeAnyUsers',
   removeSpecificUsers: 'removeSpecificUsers',
+  passwordUpdatedAt: 'passwordUpdatedAt',
   createdAt: 'createdAt'
 };
 

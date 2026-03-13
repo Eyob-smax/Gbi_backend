@@ -67,6 +67,7 @@ const buildPermissions = (permissions, fallback = DEFAULT_PERMISSIONS) => {
 const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
   studentid: admin.studentid,
   adminusername: admin.adminusername,
+  passwordUpdatedAt: admin.passwordUpdatedAt,
   createdAt: admin.createdAt,
   isSuperAdmin: superAdmins.includes(admin.adminusername),
   role: superAdmins.includes(admin.adminusername) ? "Super Admin" : "Admin",
@@ -146,16 +147,54 @@ const registerAdmin = asyncHandler(async (req, res) => {
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
+  const rawStudentId = normalizeText(req.body.studentid);
   const studentid = normalizeOptionalText(req.body.studentid);
-  const adminpassword = normalizeOptionalText(req.body.adminpassword);
-  if (!studentid || !adminpassword) {
+  const rawPassword = normalizeText(req.body.adminpassword);
+  const normalizedPassword = normalizeOptionalText(req.body.adminpassword);
+
+  if (!studentid || !rawPassword || !normalizedPassword) {
     return res
       .status(400)
       .json({ success: false, message: "Missing credentials" });
   }
 
-  const admin = await prisma.admin.findUnique({ where: { studentid } });
-  if (!admin || !(await comparePassword(admin.adminpassword, adminpassword))) {
+  const studentIdCandidates = Array.from(
+    new Set([studentid, rawStudentId].filter(Boolean)),
+  );
+
+  const admin = await prisma.admin.findFirst({
+    where: {
+      studentid: {
+        in: studentIdCandidates,
+      },
+    },
+  });
+
+  if (!admin) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid credentials" });
+  }
+
+  let isPasswordMatch = false;
+  try {
+    isPasswordMatch = await comparePassword(
+      admin.adminpassword,
+      normalizedPassword,
+    );
+  } catch {
+    isPasswordMatch = false;
+  }
+
+  if (!isPasswordMatch && rawPassword !== normalizedPassword) {
+    try {
+      isPasswordMatch = await comparePassword(admin.adminpassword, rawPassword);
+    } catch {
+      isPasswordMatch = false;
+    }
+  }
+
+  if (!isPasswordMatch) {
     return res
       .status(401)
       .json({ success: false, message: "Invalid credentials" });
@@ -201,7 +240,7 @@ const getAdmins = asyncHandler(async (req, res) => {
 
 // ✅ Get Single Admin
 const getAdmin = asyncHandler(async (req, res) => {
-  const studentId = req.params.id;
+  const studentId = normalizeOptionalText(req.params.id);
   const validationError = validateIdParam(studentId, res);
   if (validationError) return validationError;
 
@@ -247,6 +286,8 @@ const updateAdmin = asyncHandler(async (req, res) => {
     });
   }
 
+  const hasPasswordUpdate = normalizedPassword !== undefined;
+
   const existingUser = await prisma.admin.findUnique({
     where: { studentid: currentId },
   });
@@ -273,6 +314,9 @@ const updateAdmin = asyncHandler(async (req, res) => {
         normalizedPassword === undefined
           ? existingUser.adminpassword
           : await hashPassword(normalizedPassword),
+      passwordUpdatedAt: hasPasswordUpdate
+        ? new Date()
+        : existingUser.passwordUpdatedAt,
       ...buildPermissions(permissions, {
         readUsers: existingUser.readUsers,
         registerUsers: existingUser.registerUsers,
@@ -293,7 +337,7 @@ const updateAdmin = asyncHandler(async (req, res) => {
 
 // ✅ Delete Admin
 const deleteAdmin = asyncHandler(async (req, res) => {
-  const studentId = req.params.id;
+  const studentId = normalizeOptionalText(req.params.id);
   const validationError = validateIdParam(studentId, res);
   if (validationError) return validationError;
 
