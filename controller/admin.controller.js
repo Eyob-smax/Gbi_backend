@@ -81,8 +81,19 @@ const toAdminResponse = (admin, superAdmins = [], usersCreatedCount = 0) => ({
   },
 });
 
+const normalizeText = (value) =>
+  typeof value === "string" ? value.trim() : value;
+
+const normalizeOptionalText = (value) => {
+  const normalized = normalizeText(value);
+  return typeof normalized === "string" && normalized.length === 0
+    ? undefined
+    : normalized;
+};
+
 const validateIdParam = (id, res) => {
-  if (!id || id.includes("/")) {
+  const normalizedId = normalizeOptionalText(id);
+  if (!normalizedId || normalizedId.includes("/")) {
     return res
       .status(400)
       .json({ success: false, message: "Invalid ID format" });
@@ -99,7 +110,16 @@ const registerAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: error.details[0].message });
   }
 
-  const { studentid, adminusername, adminpassword, permissions } = value;
+  const studentid = normalizeOptionalText(value.studentid);
+  const adminusername = normalizeOptionalText(value.adminusername);
+  const adminpassword = normalizeOptionalText(value.adminpassword);
+  const { permissions } = value;
+
+  if (!studentid || !adminusername || !adminpassword) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing credentials" });
+  }
 
   const isAdminExist = await prisma.admin.findUnique({ where: { studentid } });
   if (isAdminExist) {
@@ -126,7 +146,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
 });
 
 const logAdmin = asyncHandler(async (req, res) => {
-  const { studentid, adminpassword } = req.body;
+  const studentid = normalizeOptionalText(req.body.studentid);
+  const adminpassword = normalizeOptionalText(req.body.adminpassword);
   if (!studentid || !adminpassword) {
     return res
       .status(400)
@@ -198,7 +219,7 @@ const getAdmin = asyncHandler(async (req, res) => {
 
 // ✅ Update Admin (including changing studentid)
 const updateAdmin = asyncHandler(async (req, res) => {
-  const currentId = req.params.id;
+  const currentId = normalizeOptionalText(req.params.id);
   const validationError = validateIdParam(currentId, res);
   if (validationError) return validationError;
 
@@ -215,8 +236,10 @@ const updateAdmin = asyncHandler(async (req, res) => {
     permissions,
   } = req.body;
 
-  const normalizedPassword =
-    typeof adminpassword === "string" ? adminpassword.trim() : undefined;
+  const normalizedNewId = normalizeOptionalText(newId);
+  const normalizedAdminUsername = normalizeOptionalText(adminusername);
+
+  const normalizedPassword = normalizeOptionalText(adminpassword);
   if (normalizedPassword !== undefined && normalizedPassword.length < 8) {
     return res.status(400).json({
       success: false,
@@ -231,9 +254,9 @@ const updateAdmin = asyncHandler(async (req, res) => {
     return res.status(404).json({ success: false, message: "Admin not found" });
 
   // Check for studentid conflict
-  if (newId && newId !== currentId) {
+  if (normalizedNewId && normalizedNewId !== currentId) {
     const conflict = await prisma.admin.findUnique({
-      where: { studentid: newId },
+      where: { studentid: normalizedNewId },
     });
     if (conflict)
       return res
@@ -244,8 +267,8 @@ const updateAdmin = asyncHandler(async (req, res) => {
   const updatedAdmin = await prisma.admin.update({
     where: { studentid: currentId },
     data: {
-      studentid: newId || existingUser.studentid,
-      adminusername: adminusername || existingUser.adminusername,
+      studentid: normalizedNewId || existingUser.studentid,
+      adminusername: normalizedAdminUsername || existingUser.adminusername,
       adminpassword:
         normalizedPassword === undefined
           ? existingUser.adminpassword
