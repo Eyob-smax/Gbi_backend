@@ -176,6 +176,18 @@ const getUsers = asyncHandler(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const offset = (page - 1) * limit;
+  const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
+  const participation =
+    typeof req.query.participation === "string"
+      ? req.query.participation.trim()
+      : "";
+  const department =
+    typeof req.query.department === "string" ? req.query.department.trim() : "";
+  const sortBy =
+    typeof req.query.sortBy === "string" ? req.query.sortBy.trim() : "";
+  const sortOrder = req.query.sortOrder === "asc" ? "asc" : "desc";
+  const parsedBatch = parseInt(req.query.batch, 10);
+  const hasBatch = Number.isInteger(parsedBatch) && parsedBatch > 0;
 
   const where = {};
 
@@ -198,12 +210,43 @@ const getUsers = asyncHandler(async (req, res) => {
     }
   }
 
+  if (q) {
+    where.OR = [
+      { studentid: { contains: q, mode: "insensitive" } },
+      { firstname: { contains: q, mode: "insensitive" } },
+      { middlename: { contains: q, mode: "insensitive" } },
+      { lastname: { contains: q, mode: "insensitive" } },
+      { phone: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
+  if (hasBatch || participation || department) {
+    where.universityusers = {
+      ...(hasBatch ? { batch: parsedBatch } : {}),
+      ...(participation ? { participation } : {}),
+      ...(department
+        ? { departmentname: { contains: department, mode: "insensitive" } }
+        : {}),
+    };
+  }
+
+  let orderBy = { userid: "desc" };
+  if (sortBy === "firstname" || sortBy === "lastname" || sortBy === "studentid") {
+    orderBy = { [sortBy]: sortOrder };
+  } else if (
+    sortBy === "batch" ||
+    sortBy === "participation" ||
+    sortBy === "departmentname"
+  ) {
+    orderBy = { universityusers: { [sortBy]: sortOrder } };
+  }
+
   // count total users so frontend can calculate pages
   const totalUsers = await prisma.user.count({ where });
 
   const users = await prisma.user.findMany({
     where,
-    orderBy: { userid: "desc" },
+    orderBy,
     skip: offset,
     take: limit,
     include: { universityusers: true },

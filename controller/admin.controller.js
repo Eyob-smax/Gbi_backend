@@ -215,6 +215,15 @@ const updateAdmin = asyncHandler(async (req, res) => {
     permissions,
   } = req.body;
 
+  const normalizedPassword =
+    typeof adminpassword === "string" ? adminpassword.trim() : undefined;
+  if (normalizedPassword !== undefined && normalizedPassword.length < 8) {
+    return res.status(400).json({
+      success: false,
+      message: "adminpassword must be at least 8 characters",
+    });
+  }
+
   const existingUser = await prisma.admin.findUnique({
     where: { studentid: currentId },
   });
@@ -238,9 +247,9 @@ const updateAdmin = asyncHandler(async (req, res) => {
       studentid: newId || existingUser.studentid,
       adminusername: adminusername || existingUser.adminusername,
       adminpassword:
-        adminpassword === undefined
+        normalizedPassword === undefined
           ? existingUser.adminpassword
-          : await hashPassword(adminpassword),
+          : await hashPassword(normalizedPassword),
       ...buildPermissions(permissions, {
         readUsers: existingUser.readUsers,
         registerUsers: existingUser.registerUsers,
