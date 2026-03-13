@@ -181,13 +181,38 @@ const getUsers = asyncHandler(async (req, res) => {
     typeof req.query.participation === "string"
       ? req.query.participation.trim()
       : "";
-  const department =
-    typeof req.query.department === "string" ? req.query.department.trim() : "";
+  const departmentname =
+    typeof req.query.departmentname === "string"
+      ? req.query.departmentname.trim()
+      : typeof req.query.department === "string"
+        ? req.query.department.trim()
+        : "";
+  const gender =
+    typeof req.query.gender === "string" ? req.query.gender.trim() : "";
+  const sponsorshiptype =
+    typeof req.query.sponsorshiptype === "string"
+      ? req.query.sponsorshiptype.trim()
+      : "";
+  const clergicalstatus =
+    typeof req.query.clergicalstatus === "string"
+      ? req.query.clergicalstatus.trim()
+      : "";
   const sortBy =
     typeof req.query.sortBy === "string" ? req.query.sortBy.trim() : "";
   const sortOrder = req.query.sortOrder === "asc" ? "asc" : "desc";
   const parsedBatch = parseInt(req.query.batch, 10);
   const hasBatch = Number.isInteger(parsedBatch) && parsedBatch > 0;
+
+  const parseBooleanQuery = (value) => {
+    if (typeof value !== "string") return undefined;
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true") return true;
+    if (normalized === "false") return false;
+    return undefined;
+  };
+
+  const cafeteriaaccess = parseBooleanQuery(req.query.cafeteriaaccess);
+  const tookcourse = parseBooleanQuery(req.query.tookcourse);
 
   const where = {};
 
@@ -220,23 +245,50 @@ const getUsers = asyncHandler(async (req, res) => {
     ];
   }
 
-  if (hasBatch || participation || department) {
+  if (gender) {
+    where.gender = gender;
+  }
+
+  if (clergicalstatus) {
+    where.clergicalstatus = clergicalstatus;
+  }
+
+  if (
+    hasBatch ||
+    participation ||
+    departmentname ||
+    sponsorshiptype ||
+    cafeteriaaccess !== undefined ||
+    tookcourse !== undefined
+  ) {
     where.universityusers = {
       ...(hasBatch ? { batch: parsedBatch } : {}),
       ...(participation ? { participation } : {}),
-      ...(department
-        ? { departmentname: { contains: department, mode: "insensitive" } }
+      ...(departmentname
+        ? { departmentname: { contains: departmentname, mode: "insensitive" } }
         : {}),
+      ...(sponsorshiptype ? { sponsorshiptype } : {}),
+      ...(cafeteriaaccess !== undefined ? { cafeteriaaccess } : {}),
+      ...(tookcourse !== undefined ? { tookcourse } : {}),
     };
   }
 
   let orderBy = { userid: "desc" };
-  if (sortBy === "firstname" || sortBy === "lastname" || sortBy === "studentid") {
+  if (
+    sortBy === "firstname" ||
+    sortBy === "lastname" ||
+    sortBy === "studentid" ||
+    sortBy === "gender" ||
+    sortBy === "clergicalstatus"
+  ) {
     orderBy = { [sortBy]: sortOrder };
   } else if (
     sortBy === "batch" ||
     sortBy === "participation" ||
-    sortBy === "departmentname"
+    sortBy === "departmentname" ||
+    sortBy === "sponsorshiptype" ||
+    sortBy === "cafeteriaaccess" ||
+    sortBy === "tookcourse"
   ) {
     orderBy = { universityusers: { [sortBy]: sortOrder } };
   }

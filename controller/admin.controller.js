@@ -176,21 +176,32 @@ const logAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
-  let isPasswordMatch = false;
-  try {
-    isPasswordMatch = await comparePassword(
-      admin.adminpassword,
-      normalizedPassword,
-    );
-  } catch {
-    isPasswordMatch = false;
-  }
+  const passwordCandidates = Array.from(
+    new Set([normalizedPassword, rawPassword].filter(Boolean)),
+  );
 
-  if (!isPasswordMatch && rawPassword !== normalizedPassword) {
-    try {
-      isPasswordMatch = await comparePassword(admin.adminpassword, rawPassword);
-    } catch {
-      isPasswordMatch = false;
+  let isPasswordMatch = false;
+  let migrateLegacyPassword = false;
+
+  for (const candidate of passwordCandidates) {
+    if (isPasswordMatch) break;
+
+    // Current format is "<hash>.<salt>". Legacy/plain-text values don't include ".".
+    if (
+      typeof admin.adminpassword === "string" &&
+      admin.adminpassword.includes(".")
+    ) {
+      try {
+        isPasswordMatch = await comparePassword(admin.adminpassword, candidate);
+      } catch {
+        isPasswordMatch = false;
+      }
+      continue;
+    }
+
+    if (admin.adminpassword === candidate) {
+      isPasswordMatch = true;
+      migrateLegacyPassword = true;
     }
   }
 
@@ -198,6 +209,17 @@ const logAdmin = asyncHandler(async (req, res) => {
     return res
       .status(401)
       .json({ success: false, message: "Invalid credentials" });
+  }
+
+  if (migrateLegacyPassword) {
+    const hashed = await hashPassword(normalizedPassword);
+    await prisma.admin.update({
+      where: { studentid: admin.studentid },
+      data: {
+        adminpassword: hashed,
+        passwordUpdatedAt: admin.passwordUpdatedAt ?? new Date(),
+      },
+    });
   }
 
   buildToken(res, admin.studentid);
