@@ -2522,6 +2522,7 @@ export namespace Prisma {
     editSpecificUsers: boolean | null
     removeAnyUsers: boolean | null
     removeSpecificUsers: boolean | null
+    passwordUpdatedAt: Date | null
     createdAt: Date | null
   }
 
@@ -2536,6 +2537,7 @@ export namespace Prisma {
     editSpecificUsers: boolean | null
     removeAnyUsers: boolean | null
     removeSpecificUsers: boolean | null
+    passwordUpdatedAt: Date | null
     createdAt: Date | null
   }
 
@@ -2550,6 +2552,7 @@ export namespace Prisma {
     editSpecificUsers: number
     removeAnyUsers: number
     removeSpecificUsers: number
+    passwordUpdatedAt: number
     createdAt: number
     _all: number
   }
@@ -2574,6 +2577,7 @@ export namespace Prisma {
     editSpecificUsers?: true
     removeAnyUsers?: true
     removeSpecificUsers?: true
+    passwordUpdatedAt?: true
     createdAt?: true
   }
 
@@ -2588,6 +2592,7 @@ export namespace Prisma {
     editSpecificUsers?: true
     removeAnyUsers?: true
     removeSpecificUsers?: true
+    passwordUpdatedAt?: true
     createdAt?: true
   }
 
@@ -2602,6 +2607,7 @@ export namespace Prisma {
     editSpecificUsers?: true
     removeAnyUsers?: true
     removeSpecificUsers?: true
+    passwordUpdatedAt?: true
     createdAt?: true
     _all?: true
   }
@@ -2703,6 +2709,7 @@ export namespace Prisma {
     editSpecificUsers: boolean
     removeAnyUsers: boolean
     removeSpecificUsers: boolean
+    passwordUpdatedAt: Date | null
     createdAt: Date | null
     _count: AdminCountAggregateOutputType | null
     _avg: AdminAvgAggregateOutputType | null
@@ -2736,6 +2743,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -2750,6 +2758,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -2764,6 +2773,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["admin"]>
 
@@ -2778,10 +2788,11 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: boolean
     createdAt?: boolean
   }
 
-  export type adminOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"adminid" | "studentid" | "adminusername" | "adminpassword" | "readUsers" | "registerUsers" | "editAnyUser" | "editSpecificUsers" | "removeAnyUsers" | "removeSpecificUsers" | "createdAt", ExtArgs["result"]["admin"]>
+  export type adminOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"adminid" | "studentid" | "adminusername" | "adminpassword" | "readUsers" | "registerUsers" | "editAnyUser" | "editSpecificUsers" | "removeAnyUsers" | "removeSpecificUsers" | "passwordUpdatedAt" | "createdAt", ExtArgs["result"]["admin"]>
 
   export type $adminPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "admin"
@@ -2797,6 +2808,7 @@ export namespace Prisma {
       editSpecificUsers: boolean
       removeAnyUsers: boolean
       removeSpecificUsers: boolean
+      passwordUpdatedAt: Date | null
       createdAt: Date | null
     }, ExtArgs["result"]["admin"]>
     composites: {}
@@ -3231,6 +3243,7 @@ export namespace Prisma {
     readonly editSpecificUsers: FieldRef<"admin", 'Boolean'>
     readonly removeAnyUsers: FieldRef<"admin", 'Boolean'>
     readonly removeSpecificUsers: FieldRef<"admin", 'Boolean'>
+    readonly passwordUpdatedAt: FieldRef<"admin", 'DateTime'>
     readonly createdAt: FieldRef<"admin", 'DateTime'>
   }
     
@@ -4900,6 +4913,7 @@ export namespace Prisma {
     editSpecificUsers: 'editSpecificUsers',
     removeAnyUsers: 'removeAnyUsers',
     removeSpecificUsers: 'removeSpecificUsers',
+    passwordUpdatedAt: 'passwordUpdatedAt',
     createdAt: 'createdAt'
   };
 
@@ -5305,6 +5319,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFilter<"admin"> | boolean
     removeAnyUsers?: BoolFilter<"admin"> | boolean
     removeSpecificUsers?: BoolFilter<"admin"> | boolean
+    passwordUpdatedAt?: DateTimeNullableFilter<"admin"> | Date | string | null
     createdAt?: DateTimeNullableFilter<"admin"> | Date | string | null
   }
 
@@ -5319,6 +5334,7 @@ export namespace Prisma {
     editSpecificUsers?: SortOrder
     removeAnyUsers?: SortOrder
     removeSpecificUsers?: SortOrder
+    passwordUpdatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrderInput | SortOrder
   }
 
@@ -5336,6 +5352,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFilter<"admin"> | boolean
     removeAnyUsers?: BoolFilter<"admin"> | boolean
     removeSpecificUsers?: BoolFilter<"admin"> | boolean
+    passwordUpdatedAt?: DateTimeNullableFilter<"admin"> | Date | string | null
     createdAt?: DateTimeNullableFilter<"admin"> | Date | string | null
   }, "adminid" | "studentid">
 
@@ -5350,6 +5367,7 @@ export namespace Prisma {
     editSpecificUsers?: SortOrder
     removeAnyUsers?: SortOrder
     removeSpecificUsers?: SortOrder
+    passwordUpdatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrderInput | SortOrder
     _count?: adminCountOrderByAggregateInput
     _avg?: adminAvgOrderByAggregateInput
@@ -5372,6 +5390,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolWithAggregatesFilter<"admin"> | boolean
     removeAnyUsers?: BoolWithAggregatesFilter<"admin"> | boolean
     removeSpecificUsers?: BoolWithAggregatesFilter<"admin"> | boolean
+    passwordUpdatedAt?: DateTimeNullableWithAggregatesFilter<"admin"> | Date | string | null
     createdAt?: DateTimeNullableWithAggregatesFilter<"admin"> | Date | string | null
   }
 
@@ -5657,6 +5676,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: Date | string | null
     createdAt?: Date | string | null
   }
 
@@ -5671,6 +5691,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: Date | string | null
     createdAt?: Date | string | null
   }
 
@@ -5684,6 +5705,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
     removeAnyUsers?: BoolFieldUpdateOperationsInput | boolean
     removeSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
+    passwordUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -5698,6 +5720,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
     removeAnyUsers?: BoolFieldUpdateOperationsInput | boolean
     removeSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
+    passwordUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -5712,6 +5735,7 @@ export namespace Prisma {
     editSpecificUsers?: boolean
     removeAnyUsers?: boolean
     removeSpecificUsers?: boolean
+    passwordUpdatedAt?: Date | string | null
     createdAt?: Date | string | null
   }
 
@@ -5725,6 +5749,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
     removeAnyUsers?: BoolFieldUpdateOperationsInput | boolean
     removeSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
+    passwordUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -5739,6 +5764,7 @@ export namespace Prisma {
     editSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
     removeAnyUsers?: BoolFieldUpdateOperationsInput | boolean
     removeSpecificUsers?: BoolFieldUpdateOperationsInput | boolean
+    passwordUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -6209,6 +6235,7 @@ export namespace Prisma {
     editSpecificUsers?: SortOrder
     removeAnyUsers?: SortOrder
     removeSpecificUsers?: SortOrder
+    passwordUpdatedAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6227,6 +6254,7 @@ export namespace Prisma {
     editSpecificUsers?: SortOrder
     removeAnyUsers?: SortOrder
     removeSpecificUsers?: SortOrder
+    passwordUpdatedAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6241,6 +6269,7 @@ export namespace Prisma {
     editSpecificUsers?: SortOrder
     removeAnyUsers?: SortOrder
     removeSpecificUsers?: SortOrder
+    passwordUpdatedAt?: SortOrder
     createdAt?: SortOrder
   }
 

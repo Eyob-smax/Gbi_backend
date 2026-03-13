@@ -136,6 +136,7 @@ model admin {
   editSpecificUsers   Boolean   @default(false)
   removeAnyUsers      Boolean   @default(false)
   removeSpecificUsers Boolean   @default(false)
+  passwordUpdatedAt   DateTime?
   createdAt           DateTime? @default(now())
 }
 
