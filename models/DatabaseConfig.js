@@ -1,5 +1,5 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../prisma/generated/client/index.js";
+import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 
 let prismaInstance = null;
@@ -12,8 +12,9 @@ export const createPrismaClient = () => {
     throw new Error("DATABASE_URL environment variable is required");
   }
 
-  const pool = new PrismaPg({ connectionString });
-  const client = new PrismaClient({ adapter: pool });
+  // Prisma v7 requires a driver adapter — url/directUrl are no longer in schema.prisma
+  const adapter = new PrismaPg({ connectionString });
+  const client = new PrismaClient({ adapter });
 
   const MAX_RETRIES = 5;
   const INITIAL_RETRY_DELAY_MS = 1000;

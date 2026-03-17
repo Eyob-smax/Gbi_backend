@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import UserRoutes from "./routes/user.routes.js";
 import AdminRoutes from "./routes/admin.routes.js";
+import RoleRoutes from "./routes/role.routes.js";
 import { handleError } from "./utils/util.js";
 import cookieParser from "cookie-parser";
 import { logoutAdmin } from "./controller/admin.controller.js";
@@ -16,6 +17,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:7173",
   "http://127.0.0.1:5173",
+  "http://localhost:5173",
 ];
 
 app.use(
@@ -37,6 +39,7 @@ app.use(cookieParser());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
+app.use("/api/role", RoleRoutes);
 app.post("/api/auth/logout", logoutAdmin);
 app.route("/api/logout").get(logoutAdmin).post(logoutAdmin);
 

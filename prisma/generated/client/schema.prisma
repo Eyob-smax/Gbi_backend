@@ -140,6 +140,17 @@ model admin {
   createdAt           DateTime? @default(now())
 }
 
+model Role {
+  id                  Int     @id @default(autoincrement())
+  name                String  @unique @db.VarChar(50)
+  readUsers           Boolean @default(false)
+  registerUsers       Boolean @default(false)
+  editAnyUser         Boolean @default(false)
+  editSpecificUsers   Boolean @default(false)
+  removeAnyUsers      Boolean @default(false)
+  removeSpecificUsers Boolean @default(false)
+}
+
 model universityusers {
   userid           Int                @id
   departmentname   String             @db.VarChar(100)

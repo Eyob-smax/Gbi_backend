@@ -19,6 +19,7 @@ const registerSchema = Joi.object({
   studentid: Joi.string().max(15).required(),
   adminusername: Joi.string().max(50).required(),
   adminpassword: Joi.string().min(8).required(),
+  roleName: Joi.string().max(50).required(),
   permissions: Joi.object({
     readUsers: Joi.boolean(),
     registerUsers: Joi.boolean(),
@@ -114,9 +115,10 @@ const registerAdmin = asyncHandler(async (req, res) => {
   const studentid = normalizeOptionalText(value.studentid);
   const adminusername = normalizeOptionalText(value.adminusername);
   const adminpassword = normalizeOptionalText(value.adminpassword);
+  const roleName = normalizeOptionalText(value.roleName);
   const { permissions } = value;
 
-  if (!studentid || !adminusername || !adminpassword) {
+  if (!studentid || !adminusername || !adminpassword || !roleName) {
     return res
       .status(400)
       .json({ success: false, message: "Missing credentials" });
@@ -129,12 +131,31 @@ const registerAdmin = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Admin already exists" });
   }
 
+  const selectedRole = await prisma.role.findUnique({
+    where: { name: roleName },
+  });
+
+  if (!selectedRole) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Selected role does not exist" });
+  }
+
+  const rolePermissions = {
+    readUsers: selectedRole.readUsers,
+    registerUsers: selectedRole.registerUsers,
+    editAnyUser: selectedRole.editAnyUser,
+    editSpecificUsers: selectedRole.editSpecificUsers,
+    removeAnyUsers: selectedRole.removeAnyUsers,
+    removeSpecificUsers: selectedRole.removeSpecificUsers,
+  };
+
   const admin = await prisma.admin.create({
     data: {
       studentid,
       adminusername,
       adminpassword: await hashPassword(adminpassword),
-      ...buildPermissions(permissions),
+      ...buildPermissions(permissions, rolePermissions),
     },
   });
 
