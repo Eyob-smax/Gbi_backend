@@ -157,6 +157,17 @@ exports.Prisma.AdminScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.RoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  readUsers: 'readUsers',
+  registerUsers: 'registerUsers',
+  editAnyUser: 'editAnyUser',
+  editSpecificUsers: 'editSpecificUsers',
+  removeAnyUsers: 'removeAnyUsers',
+  removeSpecificUsers: 'removeSpecificUsers'
+};
+
 exports.Prisma.UniversityusersScalarFieldEnum = {
   userid: 'userid',
   departmentname: 'departmentname',
@@ -287,6 +298,7 @@ exports.activity_type = exports.$Enums.activity_type = {
 exports.Prisma.ModelName = {
   User: 'User',
   admin: 'admin',
+  Role: 'Role',
   universityusers: 'universityusers'
 };
 
