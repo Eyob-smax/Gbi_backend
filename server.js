@@ -18,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:7173",
   "http://127.0.0.1:5173",
   "http://localhost:5173",
+  'https://6kilogbigubae.vercel.app'
 ];
 
 app.use(
