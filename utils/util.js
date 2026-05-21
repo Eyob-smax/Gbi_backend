@@ -44,7 +44,7 @@ export function JoiValidator() {
   return Joi.object({
     studentid: Joi.string().max(20).required(),
     firstname: Joi.string().max(50).required(),
-    middlename: Joi.string().max(50).required(),
+    middlename: Joi.string().max(50).allow("", null).default(""),
     lastname: Joi.string().max(50).required(),
     gender: Joi.string().valid("Male", "Female").required(),
     baptismalname: Joi.string().max(50).allow("", null).default("None"),
@@ -56,7 +56,7 @@ export function JoiValidator() {
       .max(320)
       .allow("", null)
       .allow("not_specified")
-      .default("not_specified"),
+      .default(null),
     nationality: Joi.string().max(50).required(),
     region: Joi.string()
       .valid(
