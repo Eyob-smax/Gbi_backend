@@ -51,6 +51,10 @@ const addUser = asyncHandler(async (req, res) => {
       .json({ success: false, message: error.details[0].message });
   }
 
+  if (!value.useremail || value.useremail === "not_specified" || (typeof value.useremail === "string" && value.useremail.trim() === "")) {
+    value.useremail = null;
+  }
+
   const validationError = validateStudentIdFormat(value.studentid, res);
   if (validationError) return validationError;
 
@@ -107,6 +111,10 @@ const updateUser = asyncHandler(async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
+  }
+
+  if (!value.useremail || value.useremail === "not_specified" || (typeof value.useremail === "string" && value.useremail.trim() === "")) {
+    value.useremail = null;
   }
 
   const existingUser = await prisma.user.findUnique({
